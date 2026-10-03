@@ -14,11 +14,9 @@ namespace ProjetoExtensionista2026_2
         [STAThread]
         static void Main()
         {
-            Console.WriteLine("Hello, World!");
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
-            
+            Application.Run(new formLogin());    
         }
     }
 }
