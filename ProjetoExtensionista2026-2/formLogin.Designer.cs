@@ -42,7 +42,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.userTxtBox.ForeColor = System.Drawing.SystemColors.WindowFrame;
-            this.userTxtBox.Location = new System.Drawing.Point(404, 204);
+            this.userTxtBox.Location = new System.Drawing.Point(404, 251);
             this.userTxtBox.Name = "userTxtBox";
             this.userTxtBox.Size = new System.Drawing.Size(201, 20);
             this.userTxtBox.TabIndex = 0;
@@ -54,7 +54,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pwdTxtBox.ForeColor = System.Drawing.SystemColors.WindowFrame;
-            this.pwdTxtBox.Location = new System.Drawing.Point(404, 230);
+            this.pwdTxtBox.Location = new System.Drawing.Point(404, 277);
             this.pwdTxtBox.Name = "pwdTxtBox";
             this.pwdTxtBox.Size = new System.Drawing.Size(201, 20);
             this.pwdTxtBox.TabIndex = 1;
@@ -63,7 +63,7 @@
             // loginButton
             // 
             this.loginButton.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.loginButton.Location = new System.Drawing.Point(404, 264);
+            this.loginButton.Location = new System.Drawing.Point(404, 311);
             this.loginButton.Name = "loginButton";
             this.loginButton.Size = new System.Drawing.Size(200, 27);
             this.loginButton.TabIndex = 3;
@@ -76,7 +76,7 @@
             this.lockIcon.Image = global::ProjetoExtensionista2026_2.Properties.Resources.cadeado;
             this.lockIcon.ImageLocation = "";
             this.lockIcon.InitialImage = ((System.Drawing.Image)(resources.GetObject("lockIcon.InitialImage")));
-            this.lockIcon.Location = new System.Drawing.Point(433, 88);
+            this.lockIcon.Location = new System.Drawing.Point(433, 135);
             this.lockIcon.Name = "lockIcon";
             this.lockIcon.Size = new System.Drawing.Size(130, 110);
             this.lockIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
