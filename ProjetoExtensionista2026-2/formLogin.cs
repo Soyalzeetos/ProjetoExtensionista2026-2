@@ -22,6 +22,12 @@ namespace ProjetoExtensionista2026_2
             if (pwdTxtBox.Text != "")
             {
                 lockIcon.Image = Properties.Resources.cadeado_aberto; // Altere para o ícone de cadeado aberto
+
+                formCadastro cadastro = new formCadastro();
+                cadastro.FormClosed += (s, args) => this.Close();
+
+                cadastro.Show();
+                this.Hide();
             }
             else
             {
