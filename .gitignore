@@ -361,3 +361,11 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Linux scripts e arquivos locais
+run.sh
+*.sh
+
+# IDEs (VS Code / Rider)
+.vscode/
+.idea/
