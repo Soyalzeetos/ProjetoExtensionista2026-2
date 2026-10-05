@@ -45,8 +45,10 @@
             this.userTxtBox.Location = new System.Drawing.Point(404, 251);
             this.userTxtBox.Name = "userTxtBox";
             this.userTxtBox.Size = new System.Drawing.Size(201, 20);
-            this.userTxtBox.TabIndex = 0;
-            this.userTxtBox.Text = "Email...";
+            this.userTxtBox.TabIndex = 1;
+            this.userTxtBox.Text = "Insira seu nome de usuário";
+            this.userTxtBox.Enter += new System.EventHandler(this.TextBox_Enter);
+            this.userTxtBox.Leave += new System.EventHandler(this.TxtSenha_Leave);
             // 
             // pwdTxtBox
             // 
@@ -58,7 +60,9 @@
             this.pwdTxtBox.Name = "pwdTxtBox";
             this.pwdTxtBox.Size = new System.Drawing.Size(201, 20);
             this.pwdTxtBox.TabIndex = 1;
-            this.pwdTxtBox.Text = "Password";
+            this.pwdTxtBox.Text = "Insira sua senha";
+            this.pwdTxtBox.Enter += new System.EventHandler(this.TextBox_Enter);
+            this.pwdTxtBox.Leave += new System.EventHandler(this.TxtSenha_Leave);
             // 
             // loginButton
             // 
@@ -66,14 +70,13 @@
             this.loginButton.Location = new System.Drawing.Point(404, 311);
             this.loginButton.Name = "loginButton";
             this.loginButton.Size = new System.Drawing.Size(200, 27);
-            this.loginButton.TabIndex = 3;
+            this.loginButton.TabIndex = 0;
             this.loginButton.Text = "Login";
             this.loginButton.UseVisualStyleBackColor = false;
             this.loginButton.Click += new System.EventHandler(this.AlternarCadeado);
             // 
             // lockIcon
             // 
-            this.lockIcon.Image = global::ProjetoExtensionista2026_2.Properties.Resources.cadeado;
             this.lockIcon.ImageLocation = "";
             this.lockIcon.InitialImage = ((System.Drawing.Image)(resources.GetObject("lockIcon.InitialImage")));
             this.lockIcon.Location = new System.Drawing.Point(433, 135);
