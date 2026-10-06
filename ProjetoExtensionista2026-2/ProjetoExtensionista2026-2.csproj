@@ -60,6 +60,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SQL\Connection.cs" />
     <Compile Include="UcCadastroCategoria.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -114,6 +115,7 @@
   <ItemGroup>
     <Content Include="assets\cadeado-aberto.png" />
     <Content Include="assets\cadeado.png" />
+    <Content Include="SQL\init.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
