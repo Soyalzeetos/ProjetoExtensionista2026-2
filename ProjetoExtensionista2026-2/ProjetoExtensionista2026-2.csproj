@@ -25,7 +25,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="assets\cadeado-aberto.png" />
     <Content Include="assets\cadeado.png" />
