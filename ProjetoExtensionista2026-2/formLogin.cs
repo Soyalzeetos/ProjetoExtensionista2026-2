@@ -25,14 +25,18 @@ namespace ProjetoExtensionista2026_2
         {
             string senha = pwdTxtBox.Text;
             string hash = senha.GetHashCode().ToString();
-            SQL.Connection conexao = new SQL.Connection();
-            bool isConnected = conexao.TestConnection();
+            bool isConnected = ProjetoExtensionista2026_2.SQL.Connection.TestConnection();
             if (!isConnected)
             {
                 MessageBox.Show("Falha na conexão com o banco de dados. Verifique sua conexão e tente novamente.", "Erro de Conexão", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
-            return Program.verificarHash2(hash, "Pablo é lindo");   
+            else
+            {
+                MessageBox.Show("Conexão com o banco de dados estabelecida com sucesso.", "Conexão Estabelecida", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return Program.verificarHash2(hash, "Pablo é lindo");
+            }
+              
         }
 
         private void AlternarCadeado(object sender, EventArgs e)
