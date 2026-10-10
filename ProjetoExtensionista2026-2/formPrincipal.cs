@@ -15,6 +15,11 @@ namespace ProjetoExtensionista2026_2
         public formPrincipal()
         {
             InitializeComponent();
+            listBoxSidebar.Items.Clear();
+            listBoxSidebar.Items.Add("Principal");
+            listBoxSidebar.Items.Add("Cadastro");
+            listBoxSidebar.Items.Add("Vendas");
+            listBoxSidebar.Items.Add("Sair");
         }
         private void AbrirFormNoWorkspace(object formFilho)
         {
@@ -34,9 +39,26 @@ namespace ProjetoExtensionista2026_2
             fh.Show();
         }
 
-        private void buttonCadastro(object sender, EventArgs e)
+        private void IdentificarSidebarListBox(object sender, EventArgs e)
         {
-            AbrirFormNoWorkspace(new formCadastro());
+            if (listBoxSidebar.SelectedItem == null)
+                return;
+            string opcaoSelecionada = listBoxSidebar.SelectedItem.ToString();
+            switch (opcaoSelecionada)
+            {
+                case "Cadastro":
+                    AbrirFormNoWorkspace(new formCadastro());
+                    break;
+
+                case "Vendas":
+                    // Exemplo de outro form
+                    AbrirFormNoWorkspace(new formVenda());
+                    break;
+
+                case "Sair":
+                    Application.Exit();
+                    break;
+            }
         }
     }
 }

@@ -111,6 +111,7 @@
             this.Controls.Add(this.panelConteudo);
             this.Name = "formCadastro";
             this.Text = "Cadastrar";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
