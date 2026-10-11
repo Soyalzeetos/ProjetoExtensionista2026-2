@@ -369,3 +369,7 @@ run.sh
 # IDEs (VS Code / Rider)
 .vscode/
 .idea/
+
+# Ignore environment files containing secrets
+.env
+.env.*

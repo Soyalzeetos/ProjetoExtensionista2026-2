@@ -31,4 +31,10 @@
     <Content Include="assets\cadeado.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include=".env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
