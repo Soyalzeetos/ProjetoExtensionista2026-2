@@ -1,4 +1,4 @@
-﻿using DotNetEnv;
+using DotNetEnv;
 using Microsoft.IdentityModel.Protocols;
 using Npgsql;
 using System;
@@ -16,7 +16,16 @@ namespace ProjetoExtensionista2026_2.SQL
     {
         public static bool TestConnection()
         {
-            DotNetEnv.Env.Load();
+            string envFile = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
+            if (System.IO.File.Exists(envFile))
+            {
+                DotNetEnv.Env.Load(envFile);
+            }
+            else
+            {
+                DotNetEnv.Env.TraversePath().Load();
+            }
+
             var connString = Environment.GetEnvironmentVariable("SUPABASE_CONNECTION");
             if (string.IsNullOrWhiteSpace(connString))
                 throw new ArgumentException("SUPABASE_CONNECTION está nula ou vazia.");

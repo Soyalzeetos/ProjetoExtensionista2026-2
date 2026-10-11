@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,6 +19,7 @@ namespace ProjetoExtensionista2026_2
             listBoxSidebar.Items.Add("Principal");
             listBoxSidebar.Items.Add("Cadastro");
             listBoxSidebar.Items.Add("Vendas");
+            listBoxSidebar.Items.Add("Configurações");
             listBoxSidebar.Items.Add("Sair");
         }
         private void AbrirFormNoWorkspace(object formFilho)
@@ -32,6 +33,8 @@ namespace ProjetoExtensionista2026_2
             fh.TopLevel = false;            // IMPORTANTE: Diz que ele não é uma janela independente
             fh.FormBorderStyle = FormBorderStyle.None; // Remove a barra de fechar/minimizar do form filho
             fh.Dock = DockStyle.Fill;       // Faz o form filho ocupar todo o espaço do painel workspace
+
+            GerenciadorTema.AplicarTema(fh); // aplicar tema ativo
 
             // Adiciona o form ao painel e o exibe
             this.panelWorkspace.Controls.Add(fh);
@@ -53,6 +56,10 @@ namespace ProjetoExtensionista2026_2
                 case "Vendas":
                     // Exemplo de outro form
                     AbrirFormNoWorkspace(new formVenda());
+                    break;
+
+                case "Configurações":
+                    AbrirFormNoWorkspace(new FormConfig());
                     break;
 
                 case "Sair":
