@@ -15,7 +15,7 @@ namespace ProjetoExtensionista2026_2.SQL
         public bool TestConnection()
         {
             // tenta carregar .env (se DotNetEnv estiver disponível)
-            try { Env.Load(); } catch { /* ignorar se falhar */ }
+            try {  Env.Load(); } catch { /* ignorar se falhar */ }
 
             // 1) tentar variável de ambiente
             var conn = Environment.GetEnvironmentVariable("SUPABASE_CONNECTION");
