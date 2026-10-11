@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace ProjetoExtensionista2026_2
@@ -31,15 +32,38 @@ namespace ProjetoExtensionista2026_2
             AtualizarTextoBotao();
         }
 
+        private void btnTestarBanco_Click(object sender, EventArgs e)
+        {
+            lblStatusBanco.Text = "Conectando ao Supabase...";
+            lblStatusBanco.ForeColor = Color.DarkOrange;
+            btnTestarBanco.Enabled = false;
+            this.Refresh();
+
+            bool conectado = SQL.Connection.TestConnection();
+
+            if (conectado)
+            {
+                lblStatusBanco.Text = "🟢 Conexão estabelecida com sucesso!";
+                lblStatusBanco.ForeColor = Color.ForestGreen;
+            }
+            else
+            {
+                lblStatusBanco.Text = "🔴 Falha na conexão com o banco de dados!";
+                lblStatusBanco.ForeColor = Color.Red;
+            }
+
+            btnTestarBanco.Enabled = true;
+        }
+
         private void AtualizarTextoBotao()
         {
             if (GerenciadorTema.ModoEscuro)
             {
-                btnAlternarTema.Text = "udar para Modo Claro";
+                btnAlternarTema.Text = "Mudar para Modo Claro";
             }
             else
             {
-                btnAlternarTema.Text = "Mudar para Modo Escuro";
+                btnAlternarTema.Text = " Mudar para Modo Escuro";
             }
         }
     }

@@ -1,13 +1,7 @@
 using DotNetEnv;
-using Microsoft.IdentityModel.Protocols;
 using Npgsql;
 using System;
-using System.Configuration;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace ProjetoExtensionista2026_2.SQL
@@ -16,31 +10,40 @@ namespace ProjetoExtensionista2026_2.SQL
     {
         public static bool TestConnection()
         {
-            string envFile = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
-            if (System.IO.File.Exists(envFile))
+            try
             {
-                DotNetEnv.Env.Load(envFile);
+                string envFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
+                if (File.Exists(envFile))
+                {
+                    DotNetEnv.Env.Load(envFile);
+                }
+                else
+                {
+                    DotNetEnv.Env.TraversePath().Load();
+                }
+
+                var connString = Environment.GetEnvironmentVariable("SUPABASE_CONNECTION");
+                if (string.IsNullOrWhiteSpace(connString))
+                    return false;
+
+                connString = Regex.Replace(connString, "Server=", "Host=", RegexOptions.IgnoreCase);
+
+                var builder = new NpgsqlConnectionStringBuilder(connString);
+                if (string.IsNullOrWhiteSpace(builder.Host))
+                    return false;
+
+                using (var conn = new NpgsqlConnection(builder.ConnectionString))
+                {
+                    conn.Open();
+                    conn.Close();
+                }
+
+                return true;
             }
-            else
+            catch (Exception)
             {
-                DotNetEnv.Env.TraversePath().Load();
+                return false;
             }
-
-            var connString = Environment.GetEnvironmentVariable("SUPABASE_CONNECTION");
-            if (string.IsNullOrWhiteSpace(connString))
-                throw new ArgumentException("SUPABASE_CONNECTION está nula ou vazia.");
-
-
-            connString = Regex.Replace(connString, "Server=", "Host=", RegexOptions.IgnoreCase);
-
-            var builder = new NpgsqlConnectionStringBuilder(connString);
-            if (string.IsNullOrWhiteSpace(builder.Host))
-                throw new ArgumentException("Host can't be null. Defina 'Host' na connection string.");
-
-            var conn = new NpgsqlConnection(builder.ConnectionString);
-            conn.Open();
-            conn.Close();
-            return true;
         }
     }
 }
