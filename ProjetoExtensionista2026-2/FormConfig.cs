@@ -43,12 +43,12 @@ namespace ProjetoExtensionista2026_2
 
             if (conectado)
             {
-                lblStatusBanco.Text = "🟢 Conexão estabelecida com sucesso!";
+                lblStatusBanco.Text = "Conexão estabelecida com sucesso!";
                 lblStatusBanco.ForeColor = Color.ForestGreen;
             }
             else
             {
-                lblStatusBanco.Text = "🔴 Falha na conexão com o banco de dados!";
+                lblStatusBanco.Text = "Falha na conexão com o banco de dados!";
                 lblStatusBanco.ForeColor = Color.Red;
             }
 
@@ -64,6 +64,22 @@ namespace ProjetoExtensionista2026_2
             else
             {
                 btnAlternarTema.Text = " Mudar para Modo Escuro";
+            }
+        }
+
+        private void lnkGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "https://github.com/javorka1/ProjetoExtensionista2026-2",
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Não foi possível abrir o link: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

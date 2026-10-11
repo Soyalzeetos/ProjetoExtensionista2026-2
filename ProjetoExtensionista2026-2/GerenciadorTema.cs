@@ -43,7 +43,13 @@ namespace ProjetoExtensionista2026_2
 
             foreach (Control filho in controle.Controls)
             {
-                if (filho is Label)
+                if (filho is LinkLabel link)
+                {
+                    link.LinkColor = ModoEscuro ? Color.FromArgb(88, 166, 255) : Color.FromArgb(0, 102, 204);
+                    link.ActiveLinkColor = ModoEscuro ? Color.FromArgb(121, 192, 255) : Color.FromArgb(0, 51, 153);
+                    link.VisitedLinkColor = ModoEscuro ? Color.FromArgb(187, 128, 247) : Color.FromArgb(85, 26, 139);
+                }
+                else if (filho is Label)
                 {
                     filho.ForeColor = corTexto;
                 }

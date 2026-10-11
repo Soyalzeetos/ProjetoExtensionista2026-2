@@ -25,6 +25,9 @@ namespace ProjetoExtensionista2026_2
             this.lblTituloBanco = new System.Windows.Forms.Label();
             this.btnTestarBanco = new System.Windows.Forms.Button();
             this.lblStatusBanco = new System.Windows.Forms.Label();
+            this.lblTituloSobre = new System.Windows.Forms.Label();
+            this.lblInfoSobre = new System.Windows.Forms.Label();
+            this.lnkGitHub = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // lblTituloTema
@@ -65,7 +68,7 @@ namespace ProjetoExtensionista2026_2
             this.btnTestarBanco.Name = "btnTestarBanco";
             this.btnTestarBanco.Size = new System.Drawing.Size(240, 45);
             this.btnTestarBanco.TabIndex = 3;
-            this.btnTestarBanco.Text = "⚡ Testar Conexão";
+            this.btnTestarBanco.Text = "Testar Conexão";
             this.btnTestarBanco.UseVisualStyleBackColor = true;
             this.btnTestarBanco.Click += new System.EventHandler(this.btnTestarBanco_Click);
             // 
@@ -79,6 +82,38 @@ namespace ProjetoExtensionista2026_2
             this.lblStatusBanco.TabIndex = 4;
             this.lblStatusBanco.Text = "Status: Não testado";
             // 
+            // lblTituloSobre
+            // 
+            this.lblTituloSobre.AutoSize = true;
+            this.lblTituloSobre.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTituloSobre.Location = new System.Drawing.Point(30, 260);
+            this.lblTituloSobre.Name = "lblTituloSobre";
+            this.lblTituloSobre.Size = new System.Drawing.Size(136, 19);
+            this.lblTituloSobre.TabIndex = 5;
+            this.lblTituloSobre.Text = "Sobre o Sistema";
+            // 
+            // lblInfoSobre
+            // 
+            this.lblInfoSobre.AutoSize = true;
+            this.lblInfoSobre.Font = new System.Drawing.Font("Arial", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblInfoSobre.Location = new System.Drawing.Point(34, 290);
+            this.lblInfoSobre.Name = "lblInfoSobre";
+            this.lblInfoSobre.Size = new System.Drawing.Size(390, 48);
+            this.lblInfoSobre.TabIndex = 6;
+            this.lblInfoSobre.Text = "Projeto Extensionista 2026-2\r\nVersão: 1.0.0 (Beta)\r\nDesenvolvido pela turma de Programação 2";
+            // 
+            // lnkGitHub
+            // 
+            this.lnkGitHub.AutoSize = true;
+            this.lnkGitHub.Font = new System.Drawing.Font("Arial", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lnkGitHub.Location = new System.Drawing.Point(34, 345);
+            this.lnkGitHub.Name = "lnkGitHub";
+            this.lnkGitHub.Size = new System.Drawing.Size(185, 16);
+            this.lnkGitHub.TabIndex = 7;
+            this.lnkGitHub.TabStop = true;
+            this.lnkGitHub.Text = "Ver repositório no GitHub";
+            this.lnkGitHub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkGitHub_LinkClicked);
+            // 
             // FormConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -89,6 +124,9 @@ namespace ProjetoExtensionista2026_2
             this.Controls.Add(this.lblTituloBanco);
             this.Controls.Add(this.btnTestarBanco);
             this.Controls.Add(this.lblStatusBanco);
+            this.Controls.Add(this.lblTituloSobre);
+            this.Controls.Add(this.lblInfoSobre);
+            this.Controls.Add(this.lnkGitHub);
             this.Name = "FormConfig";
             this.Text = "Configurações";
             this.Load += new System.EventHandler(this.formConfig_Load);
@@ -103,5 +141,8 @@ namespace ProjetoExtensionista2026_2
         private System.Windows.Forms.Label lblTituloBanco;
         private System.Windows.Forms.Button btnTestarBanco;
         private System.Windows.Forms.Label lblStatusBanco;
+        private System.Windows.Forms.Label lblTituloSobre;
+        private System.Windows.Forms.Label lblInfoSobre;
+        private System.Windows.Forms.LinkLabel lnkGitHub;
     }
 }
