@@ -31,7 +31,14 @@ namespace ProjetoExtensionista2026_2
                 MessageBox.Show("Falha na conexão com o banco de dados. Verifique sua conexão e tente novamente.", "Erro de Conexão", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
-            return Program.verificarHash2(hash, "Pablo é lindo");   
+            else
+            {
+                MessageBox.Show("Conexão com o banco de dados estabelecida com sucesso.", "Conexão Bem-Sucedida", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return Program.verificarHash2(hash, "Pablo é lindo");
+            }
+
+              
+
         }
 
         private void AlternarCadeado(object sender, EventArgs e)

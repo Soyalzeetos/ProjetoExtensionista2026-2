@@ -1,42 +1,37 @@
-﻿using DotNetEnv;
+using DotNetEnv;
 using Microsoft.IdentityModel.Protocols;
 using Npgsql;
 using System;
+using System.Configuration;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace ProjetoExtensionista2026_2.SQL
 {
     public class Connection
     {
-        // 1. Montando o "formulário de identificação"
-        string connectionString = "Server=localhost;Database=PE20262;Integrated Security=True;TrustServerCertificate=True;";
-
-        // 2. O bloco 'using' é fundamental aqui. 
-        // Ele funciona como uma porta com mola: garante que a conexão será fechada 
-        // automaticamente no final, mesmo que aconteça um erro no meio do caminho.
-        public bool TestConnection()
+        public static bool TestConnection()
         {
-            using (SqlConnection conexao = new SqlConnection(connectionString))
-            {
-                try
-                {
-                    // Tentando abrir a porta do banco
-                    conexao.Open();
-                    return true;
-                    
-                    // Aqui é onde você faria suas consultas (SELECT, INSERT, etc.)
-                    
-                }
-                catch (Exception)
-                {
-                    // Se o porteiro barrar, ele avisa o motivo aqui
-                    return false;
-                }
-            }
+            DotNetEnv.Env.Load();
+            var connString = Environment.GetEnvironmentVariable("SUPABASE_CONNECTION");
+            if (string.IsNullOrWhiteSpace(connString))
+                throw new ArgumentException("SUPABASE_CONNECTION está nula ou vazia.");
+
+
+            connString = Regex.Replace(connString, "Server=", "Host=", RegexOptions.IgnoreCase);
+
+            var builder = new NpgsqlConnectionStringBuilder(connString);
+            if (string.IsNullOrWhiteSpace(builder.Host))
+                throw new ArgumentException("Host can't be null. Defina 'Host' na connection string.");
+
+            var conn = new NpgsqlConnection(builder.ConnectionString);
+            conn.Open();
+            conn.Close();
+            return true;
         }
     }
 }
