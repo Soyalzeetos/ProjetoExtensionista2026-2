@@ -25,16 +25,24 @@ namespace ProjetoExtensionista2026_2
         {
             string senha = pwdTxtBox.Text;
             string hash = senha.GetHashCode().ToString();
-            bool isConnected = ProjetoExtensionista2026_2.SQL.Connection.TestConnection();
-            if (!isConnected)
+            try
             {
-                MessageBox.Show("Falha na conexão com o banco de dados. Verifique sua conexão e tente novamente.", "Erro de Conexão", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-            else
-            {
+                bool isConnected = ProjetoExtensionista2026_2.SQL.Connection.TestConnection();
+                if (!isConnected)
+                {
+                    MessageBox.Show("Falha na conexão com o banco de dados. Verifique sua conexão e tente novamente.", "Erro de Conexão", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+
+                // sucesso
                 MessageBox.Show("Conexão com o banco de dados estabelecida com sucesso.", "Conexão Bem-Sucedida", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return Program.verificarHash2(hash, "Pablo é lindo");
+            }
+            catch (Exception ex)
+            {
+                // Mostrar somente aqui a MessageBox com informação amigável
+                MessageBox.Show($"Erro ao conectar: {ex.Message}", "Erro de Conexão", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
 
               

@@ -35,11 +35,14 @@ namespace ProjetoExtensionista2026_2.SQL
 
             var builder = new NpgsqlConnectionStringBuilder(connString);
             if (string.IsNullOrWhiteSpace(builder.Host))
-                throw new ArgumentException("Host can't be null. Defina 'Host' na connection string.");
+                throw new ArgumentException("Host ausente na SUPABASE_CONNECTION. Verifique .env ou variável de ambiente.");
 
-            var conn = new NpgsqlConnection(builder.ConnectionString);
-            conn.Open();
-            conn.Close();
+            using (var conn = new NpgsqlConnection(builder.ConnectionString))
+            {
+                conn.Open();
+                conn.Close();
+            }
+
             return true;
         }
     }
