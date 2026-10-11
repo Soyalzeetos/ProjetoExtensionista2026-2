@@ -37,6 +37,9 @@ namespace ProjetoExtensionista2026_2
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            
+            // Carrega a preferência salva do usuário antes de abrir a primeira janela
+            GerenciadorTema.ModoEscuro = Properties.Settings.Default.ModoEscuro;
             Application.Run(new formLogin());
         }
     }

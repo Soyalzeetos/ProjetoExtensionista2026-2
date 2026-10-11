@@ -21,6 +21,10 @@ namespace ProjetoExtensionista2026_2
             // 1. Inverte o tema atual
             GerenciadorTema.ModoEscuro = !GerenciadorTema.ModoEscuro;
 
+            //salva as preferencias
+            Properties.Settings.Default.ModoEscuro = GerenciadorTema.ModoEscuro;
+            Properties.Settings.Default.Save();
+
             // 2. Aplica o novo tema nesta tela e em todas as outras telas abertas
             foreach (Form formAberto in Application.OpenForms)
             {
@@ -35,7 +39,7 @@ namespace ProjetoExtensionista2026_2
         {
             if (GerenciadorTema.ModoEscuro)
             {
-                btnAlternarTema.Text = "udar para Modo Claro";
+                btnAlternarTema.Text = "Mudar para Modo Claro";
             }
             else
             {

@@ -15,6 +15,7 @@ namespace ProjetoExtensionista2026_2
         public formPrincipal()
         {
             InitializeComponent();
+            GerenciadorTema.AplicarTema(this);
             listBoxSidebar.Items.Clear();
             listBoxSidebar.Items.Add("Principal");
             listBoxSidebar.Items.Add("Cadastro");
