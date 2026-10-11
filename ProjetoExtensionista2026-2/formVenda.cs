@@ -12,96 +12,54 @@ namespace ProjetoExtensionista2026_2
 {
     public partial class formVenda : Form
     {
-        private DataTable tabelaVisual = new DataTable();
-        private const string TEXTO_PADRAO = "Pesquisar por Código, Nome ou Categoria...";
-
         public formVenda()
         {
             InitializeComponent();
+            this.WindowState = FormWindowState.Maximized;
         }
 
         private void formVenda_Load(object sender, EventArgs e)
         {
-            ConfigurarPlaceholder();
-            ConfigurarEstruturaGrid();
+            
         }
 
-        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        private void splitContainer_menu_SplitterMoved(object sender, SplitterEventArgs e)
         {
+            
+            double percMin = 0.15;
+            double percMax = 0.22;
 
-        }
+            int larguraTotal = splitContainer_menu.Width;
+            int limiteMinimo = (int)(larguraTotal * percMin);
+            int limiteMaximo = (int)(larguraTotal * percMax);
 
-        private void ConfigurarEstruturaGrid()
-        {
-            // Estrutura de colunas apenas para exibição em tela
-            tabelaVisual.Columns.Add("Código", typeof(string));
-            tabelaVisual.Columns.Add("Descrição", typeof(string));
-            tabelaVisual.Columns.Add("Categoria", typeof(string));
-            tabelaVisual.Columns.Add("Preço", typeof(string));
-            tabelaVisual.Columns.Add("Estoque", typeof(string));
-
-            // Itens visuais fictícios para você ver o filtro funcionando
-            tabelaVisual.Rows.Add("001", "Item Exemplo A", "Geral", "R$ 50,00", "10");
-            tabelaVisual.Rows.Add("002", "Item Exemplo B", "Ferramentas", "R$ 120,00", "5");
-            tabelaVisual.Rows.Add("003", "Peça Teste C", "Acessórios", "R$ 35,00", "20");
-
-            dgvProdutos.DataSource = tabelaVisual;
-
-            // Ajustes visuais do DataGridView
-            dgvProdutos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvProdutos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvProdutos.ReadOnly = true;
-            dgvProdutos.AllowUserToAddRows = false;
-        }
-
-        private void txtPesquisa_TextChanged(object sender, EventArgs e)
-        {
-            if (txtPesquisa.Text == TEXTO_PADRAO)
-                return;
-
-            string termo = txtPesquisa.Text.Trim().Replace("'", "''");
-
-            if (string.IsNullOrWhiteSpace(termo))
+            if (splitContainer_menu.SplitterDistance < limiteMinimo)
             {
-                tabelaVisual.DefaultView.RowFilter = string.Empty;
+                splitContainer_menu.SplitterDistance = limiteMinimo;
             }
-            else
+            else if (splitContainer_menu.SplitterDistance > limiteMaximo)
             {
-                // Filtra qualquer uma das colunas que contenha o texto digitado
-                tabelaVisual.DefaultView.RowFilter = $"[Código] LIKE '%{termo}%' OR [Descrição] LIKE '%{termo}%' OR [Categoria] LIKE '%{termo}%'";
+                splitContainer_menu.SplitterDistance = limiteMaximo;
             }
         }
 
-        #region Placeholder Visual (Texto Fantasma)
-
-        private void ConfigurarPlaceholder()
+        private void splitContainer_catalogo_SplitterMoved(object sender, SplitterEventArgs e)
         {
-            txtPesquisa.Text = TEXTO_PADRAO;
-            txtPesquisa.ForeColor = Color.Gray;
+            double percMin = 0.60;
+            double percMax = 0.70;
 
-            txtPesquisa.Enter += TxtPesquisa_Enter;
-            txtPesquisa.Leave += TxtPesquisa_Leave;
-        }
+            int larguraTotal = splitContainer_catalogo.Width;
+            int limiteMinimo = (int)(larguraTotal * percMin);
+            int limiteMaximo = (int)(larguraTotal * percMax);
 
-        private void TxtPesquisa_Enter(object sender, EventArgs e)
-        {
-            if (txtPesquisa.Text == TEXTO_PADRAO)
+            if (splitContainer_catalogo.SplitterDistance < limiteMinimo)
             {
-                txtPesquisa.Text = "";
-                txtPesquisa.ForeColor = Color.Black;
+                splitContainer_catalogo.SplitterDistance = limiteMinimo;
+            }
+            else if (splitContainer_catalogo.SplitterDistance > limiteMaximo)
+            {
+                splitContainer_catalogo.SplitterDistance = limiteMaximo;
             }
         }
-
-        private void TxtPesquisa_Leave(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtPesquisa.Text))
-            {
-                txtPesquisa.Text = TEXTO_PADRAO;
-                txtPesquisa.ForeColor = Color.Gray;
-                tabelaVisual.DefaultView.RowFilter = string.Empty;
-            }
-        }
-
-        #endregion
     }
 }
