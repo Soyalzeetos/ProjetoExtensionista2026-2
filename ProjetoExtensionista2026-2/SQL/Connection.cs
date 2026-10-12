@@ -9,6 +9,7 @@ namespace ProjetoExtensionista2026_2.SQL
     public class Connection : IDisposable
     {
         private NpgsqlConnection _conexao;
+        public NpgsqlConnection Conexao => _conexao;
         public static bool TestConnection()
         {
             try

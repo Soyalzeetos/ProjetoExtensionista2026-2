@@ -96,6 +96,7 @@ namespace ProjetoExtensionista2026_2
                                 "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            
 
             // Limpa os cards da pesquisa anterior
             flowLayoutPanelProdutos.Controls.Clear();
