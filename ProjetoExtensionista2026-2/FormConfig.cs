@@ -22,13 +22,16 @@ namespace ProjetoExtensionista2026_2
             // 1. Inverte o tema atual
             GerenciadorTema.ModoEscuro = !GerenciadorTema.ModoEscuro;
 
-            // 2. Aplica o novo tema nesta tela e em todas as outras telas abertas
+            // 2. Salva a preferência
+            GerenciadorTema.SalvarTemaAtual();
+
+            // 3. Aplica o novo tema nesta tela e em todas as outras telas abertas
             foreach (Form formAberto in Application.OpenForms)
             {
                 GerenciadorTema.AplicarTema(formAberto);
             }
 
-            // 3. Atualiza o texto do botão
+            // 4. Atualiza o texto do botão
             AtualizarTextoBotao();
         }
 
@@ -43,16 +46,24 @@ namespace ProjetoExtensionista2026_2
 
             if (conectado)
             {
-                lblStatusBanco.Text = "Conexão estabelecida com sucesso!";
+                lblStatusBanco.Text = "Status: Conectado com sucesso!";
                 lblStatusBanco.ForeColor = Color.ForestGreen;
             }
             else
             {
-                lblStatusBanco.Text = "Falha na conexão com o banco de dados!";
+                lblStatusBanco.Text = "Status: Falha na conexão com o banco!";
                 lblStatusBanco.ForeColor = Color.Red;
             }
 
             btnTestarBanco.Enabled = true;
+        }
+
+        private void btnAlterarSenha_Click(object sender, EventArgs e)
+        {
+            using (FormAlterarSenha formSenha = new FormAlterarSenha())
+            {
+                formSenha.ShowDialog(this);
+            }
         }
 
         private void AtualizarTextoBotao()
@@ -63,7 +74,7 @@ namespace ProjetoExtensionista2026_2
             }
             else
             {
-                btnAlternarTema.Text = " Mudar para Modo Escuro";
+                btnAlternarTema.Text = "Mudar para Modo Escuro";
             }
         }
 

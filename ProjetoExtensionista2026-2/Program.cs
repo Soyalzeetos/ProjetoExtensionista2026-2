@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,13 +12,28 @@ namespace ProjetoExtensionista2026_2
         /// Ponto de entrada principal para o aplicativo.
         /// </summary>
         private static string token2 = "Pablo é lindo";
-        private static string senhaOriginal = "123456";
+        public static string SenhaAtual { get; set; } = "123456";
+
+        public static bool VerificarSenha(string senhaDigitada)
+        {
+            return senhaDigitada == SenhaAtual;
+        }
+
+        public static bool AlterarSenha(string senhaAtualDigitada, string novaSenha)
+        {
+            if (senhaAtualDigitada != SenhaAtual)
+            {
+                return false;
+            }
+            SenhaAtual = novaSenha;
+            return true;
+        }
 
         public static bool verificarHash2(string hashSended, string token)
         {
             if (token == token2) 
             {
-                if (hashSended == senhaOriginal.GetHashCode().ToString())
+                if (hashSended == SenhaAtual.GetHashCode().ToString())
                 {
                     MessageBox.Show("Hash correta!");
                     return true;
@@ -37,6 +52,10 @@ namespace ProjetoExtensionista2026_2
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            // Carrega o tema salvo do usuário
+            GerenciadorTema.CarregarTemaSalvo();
+
             Application.Run(new formLogin());
         }
     }

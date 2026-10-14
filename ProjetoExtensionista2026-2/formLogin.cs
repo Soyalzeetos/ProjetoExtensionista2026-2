@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -59,39 +59,41 @@ namespace ProjetoExtensionista2026_2
 
         private void ConfigurarPlaceholder()
         {
-            userTxtBox.Text = "Insira seu usuário";
+            userTxtBox.Text = "Insira seu nome de usuário";
             pwdTxtBox.Text = "Insira sua senha";
             userTxtBox.ForeColor = Color.Gray;
             pwdTxtBox.ForeColor = Color.Gray;
             pwdTxtBox.UseSystemPasswordChar = false;
-            userTxtBox.Enter += TextBox_Enter;
-            pwdTxtBox.Enter += TextBox_Enter;
-            userTxtBox.Leave += TxtSenha_Leave;
-            pwdTxtBox.Leave += TxtSenha_Leave;
         }
 
         private void TextBox_Enter(object sender, EventArgs e)
         {
-            if (sender is TextBox textBox && (textBox.Text == "Insira seu usuário" || textBox.Text == "Insira sua senha"))
+            if (sender == userTxtBox && userTxtBox.Text == "Insira seu nome de usuário")
             {
-                textBox.Text = "";
-                textBox.ForeColor = Color.Black;
-                if (textBox == pwdTxtBox)
-                {
-                    textBox.UseSystemPasswordChar = true;
-                }
+                userTxtBox.Text = "";
+                userTxtBox.ForeColor = Color.Black;
+            }
+            else if (sender == pwdTxtBox && pwdTxtBox.Text == "Insira sua senha")
+            {
+                pwdTxtBox.Text = "";
+                pwdTxtBox.ForeColor = Color.Black;
+                pwdTxtBox.UseSystemPasswordChar = true;
             }
         }
 
         private void TxtSenha_Leave(object sender, EventArgs e)
         {
-            if (sender is TextBox textBox && string.IsNullOrWhiteSpace(textBox.Text))
+            if (sender == userTxtBox && string.IsNullOrWhiteSpace(userTxtBox.Text))
             {
-                textBox.Text = "Insira seu usuário";
-                textBox.ForeColor = Color.Gray;
-                textBox.UseSystemPasswordChar = false;
+                userTxtBox.Text = "Insira seu nome de usuário";
+                userTxtBox.ForeColor = Color.Gray;
             }
-
+            else if (sender == pwdTxtBox && string.IsNullOrWhiteSpace(pwdTxtBox.Text))
+            {
+                pwdTxtBox.Text = "Insira sua senha";
+                pwdTxtBox.ForeColor = Color.Gray;
+                pwdTxtBox.UseSystemPasswordChar = false;
+            }
         }
     }
 }

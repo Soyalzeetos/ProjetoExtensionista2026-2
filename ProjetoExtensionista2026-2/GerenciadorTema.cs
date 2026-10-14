@@ -7,7 +7,31 @@ namespace ProjetoExtensionista2026_2
 {
     public class GerenciadorTema
     {
-        public static bool ModoEscuro { get; set;} = false;
+        private static readonly string CaminhoArquivoConfig = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config_tema.txt");
+
+        public static bool ModoEscuro { get; set; } = false;
+
+        public static void CarregarTemaSalvo()
+        {
+            try
+            {
+                if (System.IO.File.Exists(CaminhoArquivoConfig))
+                {
+                    string conteudo = System.IO.File.ReadAllText(CaminhoArquivoConfig).Trim();
+                    ModoEscuro = bool.TryParse(conteudo, out bool escuro) && escuro;
+                }
+            }
+            catch { }
+        }
+
+        public static void SalvarTemaAtual()
+        {
+            try
+            {
+                System.IO.File.WriteAllText(CaminhoArquivoConfig, ModoEscuro.ToString());
+            }
+            catch { }
+        }
 
         //paleta escura
         public static readonly Color FundoEscuro = Color.FromArgb(32,32,32);//fundo
@@ -34,7 +58,7 @@ namespace ProjetoExtensionista2026_2
             Color corBotao = ModoEscuro ? FundoControleEscuro : FundoControleClaro;
 
             // aplica no controle ou form
-            if (controle is Form || controle is Panel || controle is UserControl)
+            if (controle is Form || controle is Panel || controle is UserControl || controle is GroupBox)
             {
                 controle.BackColor = corFundo;
                 controle.ForeColor = corTexto;

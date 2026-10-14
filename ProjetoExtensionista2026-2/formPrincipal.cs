@@ -21,6 +21,8 @@ namespace ProjetoExtensionista2026_2
             listBoxSidebar.Items.Add("Vendas");
             listBoxSidebar.Items.Add("Configurações");
             listBoxSidebar.Items.Add("Sair");
+
+            GerenciadorTema.AplicarTema(this);
         }
         private void AbrirFormNoWorkspace(object formFilho)
         {
