@@ -10,16 +10,14 @@ namespace ProjetoExtensionista2026_2
         public int ProdutoId { get; private set; }
         public decimal PrecoVenda { get; private set; }
         public decimal PrecoCompra { get; private set; }
+        public event Action<int, decimal, int> AoAdicionarProduto;
 
         public UcCardProduto()
         {
             InitializeComponent();
-
-            // Faz o clique em qualquer elemento interno (labels, foto) propagar para o card
-            foreach (Control ctrl in Controls)
-            {
-                ctrl.Click += (s, e) => this.InvokeOnClick(this, e);
-            }
+            UpDownProduto.Minimum = 1;
+            UpDownProduto.Maximum = 999;
+            UpDownProduto.Value = 1;
         }
 
         public void CarregarDados(int id, string nome, string descricao, decimal precoVenda, decimal precoCompra, string fotoOrigem)
@@ -32,6 +30,8 @@ namespace ProjetoExtensionista2026_2
             lblDescricao.Text = string.IsNullOrWhiteSpace(descricao) ? "Sem descrição disponível." : descricao;
             lblPrecoVenda.Text = precoVenda.ToString("C2");
             lblPrecoCompra.Text = $"Custo: {precoCompra:C2}";
+
+            UpDownProduto.Value = 1;
 
             CarregarImagem(fotoOrigem);
         }
@@ -68,6 +68,13 @@ namespace ProjetoExtensionista2026_2
             {
                 picFoto.Image = null;
             }
+        }
+
+        private void btnAdicionar_Click(object sender, EventArgs e)
+        {
+            int quantidade = (int)UpDownProduto.Value;
+            AoAdicionarProduto?.Invoke(ProdutoId, PrecoVenda, quantidade);
+            UpDownProduto.Value = 1;
         }
     }
 }

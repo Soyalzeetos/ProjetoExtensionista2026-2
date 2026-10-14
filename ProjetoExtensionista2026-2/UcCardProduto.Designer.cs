@@ -31,12 +31,12 @@
             this.picFoto = new System.Windows.Forms.PictureBox();
             this.lblTitulo = new System.Windows.Forms.Label();
             this.lblDescricao = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.btnAdicionar = new System.Windows.Forms.Button();
+            this.UpDownProduto = new System.Windows.Forms.NumericUpDown();
             this.lblPrecoVenda = new System.Windows.Forms.Label();
             this.lblPrecoCompra = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picFoto)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.UpDownProduto)).BeginInit();
             this.SuspendLayout();
             // 
             // picFoto
@@ -70,22 +70,23 @@
             this.lblDescricao.TabIndex = 2;
             this.lblDescricao.Text = "Descricao ...";
             // 
-            // button1
+            // btnAdicionar
             // 
-            this.button1.Location = new System.Drawing.Point(133, 192);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(25, 25);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "➕";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnAdicionar.Location = new System.Drawing.Point(133, 192);
+            this.btnAdicionar.Name = "btnAdicionar";
+            this.btnAdicionar.Size = new System.Drawing.Size(25, 25);
+            this.btnAdicionar.TabIndex = 3;
+            this.btnAdicionar.Text = "➕";
+            this.btnAdicionar.UseVisualStyleBackColor = true;
+            this.btnAdicionar.Click += new System.EventHandler(this.btnAdicionar_Click);
             // 
-            // numericUpDown1
+            // UpDownProduto
             // 
-            this.numericUpDown1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.numericUpDown1.Location = new System.Drawing.Point(164, 195);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(33, 22);
-            this.numericUpDown1.TabIndex = 4;
+            this.UpDownProduto.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UpDownProduto.Location = new System.Drawing.Point(164, 195);
+            this.UpDownProduto.Name = "UpDownProduto";
+            this.UpDownProduto.Size = new System.Drawing.Size(33, 22);
+            this.UpDownProduto.TabIndex = 4;
             // 
             // lblPrecoVenda
             // 
@@ -116,15 +117,15 @@
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this.lblPrecoCompra);
             this.Controls.Add(this.lblPrecoVenda);
-            this.Controls.Add(this.numericUpDown1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.UpDownProduto);
+            this.Controls.Add(this.btnAdicionar);
             this.Controls.Add(this.lblDescricao);
             this.Controls.Add(this.lblTitulo);
             this.Controls.Add(this.picFoto);
             this.Name = "UcCardProduto";
             this.Size = new System.Drawing.Size(198, 218);
             ((System.ComponentModel.ISupportInitialize)(this.picFoto)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.UpDownProduto)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -135,8 +136,8 @@
         private System.Windows.Forms.PictureBox picFoto;
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Label lblDescricao;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.Button btnAdicionar;
+        private System.Windows.Forms.NumericUpDown UpDownProduto;
         private System.Windows.Forms.Label lblPrecoVenda;
         private System.Windows.Forms.Label lblPrecoCompra;
     }

@@ -1,9 +1,8 @@
-﻿using Npgsql; // Necessário para a conexão com o Supabase (PostgreSQL)
+﻿using Npgsql;
+using ProjetoExtensionista2026_2.SQL;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -11,8 +10,6 @@ namespace ProjetoExtensionista2026_2
 {
     public partial class formVenda : Form
     {
-        private readonly string stringConexao = Environment.GetEnvironmentVariable("SUPABASE_CONNECTION");
-
         public formVenda()
         {
             InitializeComponent();
@@ -21,15 +18,22 @@ namespace ProjetoExtensionista2026_2
 
         private void formVenda_Load(object sender, EventArgs e)
         {
+            // Ativa DoubleBuffered para renderização suave dos cards sem cintilação
             if (flowLayoutPanelProdutos != null)
             {
                 typeof(FlowLayoutPanel).InvokeMember("DoubleBuffered",
                     BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
                     null, flowLayoutPanelProdutos, new object[] { true });
+
+                flowLayoutPanelProdutos.Resize += (s, ev) => CentralizarCards();
             }
 
-            // 2. Carrega os produtos iniciais ao abrir a tela de vendas
-            BuscarProdutosNoSupabase("");
+            // ATENÇÃO: Enquanto a tabela 'product' não for criada no Supabase,
+            // chamamos o teste local abaixo para desenhar os cards na tela imediatamente:
+            TestarCardsSemBanco();
+
+            // Quando a tabela estiver criada e populada no Supabase, comente a linha acima e use:
+            // BuscarProdutosNoSupabase("");
         }
 
         private void splitContainer_menu_SplitterMoved(object sender, SplitterEventArgs e)
@@ -85,36 +89,27 @@ namespace ProjetoExtensionista2026_2
         }
 
         /// <summary>
-        /// Realiza a busca no Supabase e preenche o FlowLayoutPanel com os cards
+        /// Consulta a tabela 'product' no Supabase usando a classe Connection e popula o FlowLayoutPanel.
         /// </summary>
         private void BuscarProdutosNoSupabase(string filtroTexto)
         {
-            // Validação de segurança caso a string de conexão não tenha sido carregada do .env
-            if (string.IsNullOrWhiteSpace(stringConexao))
-            {
-                MessageBox.Show("String de conexão com o Supabase não encontrada nas variáveis de ambiente (.env).",
-                                "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            
-
-            // Limpa os cards da pesquisa anterior
             flowLayoutPanelProdutos.Controls.Clear();
 
             string query = @"
-                SELECT id, nome, descricao, preco_venda, preco_compra, foto_url 
-                FROM produtos 
-                WHERE (@filtro = '' OR nome ILIKE @filtro_like OR descricao ILIKE @filtro_like)
-                ORDER BY nome ASC 
+                SELECT id_product, name_product, description_product, price_sell, price_buy, picture_url 
+                FROM product 
+                WHERE active = TRUE 
+                  AND (@filtro = '' OR name_product ILIKE @filtro_like OR description_product ILIKE @filtro_like)
+                ORDER BY name_product ASC 
                 LIMIT 40;";
 
             try
             {
-                using (var conn = new NpgsqlConnection(stringConexao))
+                using (var db = new Connection())
                 {
-                    conn.Open();
+                    db.IniciarConexao();
 
-                    using (var cmd = new NpgsqlCommand(query, conn))
+                    using (var cmd = new NpgsqlCommand(query, db.Conexao))
                     {
                         cmd.Parameters.AddWithValue("@filtro", filtroTexto.Trim());
                         cmd.Parameters.AddWithValue("@filtro_like", $"%{filtroTexto.Trim()}%");
@@ -125,29 +120,27 @@ namespace ProjetoExtensionista2026_2
 
                             while (reader.Read())
                             {
-                                int id = reader.GetInt32(reader.GetOrdinal("id"));
-                                string nome = reader.GetString(reader.GetOrdinal("nome"));
-                                string descricao = reader.IsDBNull(reader.GetOrdinal("descricao")) ? "" : reader.GetString(reader.GetOrdinal("descricao"));
-                                decimal precoVenda = reader.IsDBNull(reader.GetOrdinal("preco_venda")) ? 0m : reader.GetDecimal(reader.GetOrdinal("preco_venda"));
-                                decimal precoCompra = reader.IsDBNull(reader.GetOrdinal("preco_compra")) ? 0m : reader.GetDecimal(reader.GetOrdinal("preco_compra"));
-                                string fotoUrl = reader.IsDBNull(reader.GetOrdinal("foto_url")) ? null : reader.GetString(reader.GetOrdinal("foto_url"));
+                                int id = reader.GetInt32(reader.GetOrdinal("id_product"));
+                                string nome = reader.GetString(reader.GetOrdinal("name_product"));
+                                string descricao = reader.IsDBNull(reader.GetOrdinal("description_product")) ? "" : reader.GetString(reader.GetOrdinal("description_product"));
+                                decimal precoVenda = reader.IsDBNull(reader.GetOrdinal("price_sell")) ? 0m : reader.GetDecimal(reader.GetOrdinal("price_sell"));
+                                decimal precoCompra = reader.IsDBNull(reader.GetOrdinal("price_buy")) ? 0m : reader.GetDecimal(reader.GetOrdinal("price_buy"));
+                                string fotoUrl = reader.IsDBNull(reader.GetOrdinal("picture_url")) ? null : reader.GetString(reader.GetOrdinal("picture_url"));
 
-                                // Instanciação do card customizado
                                 var card = new UcCardProduto();
+                                card.Margin = new Padding(8);
                                 card.CarregarDados(id, nome, descricao, precoVenda, precoCompra, fotoUrl);
-                                card.Margin = new Padding(8); // Espaçamento entre os cartões
 
-                                // Evento disparado ao clicar no produto
-                                card.Click += (s, ev) =>
+                                card.AoAdicionarProduto += (prodId, preco, qtd) =>
                                 {
-                                    AcaoSelecionarProduto(card.ProdutoId, card.PrecoVenda);
+                                    AcaoSelecionarProduto(prodId, preco, qtd);
                                 };
 
                                 flowLayoutPanelProdutos.Controls.Add(card);
                             }
 
-                            // Retoma o desenho do painel com os novos cards inseridos
                             flowLayoutPanelProdutos.ResumeLayout();
+                            CentralizarCards();
                         }
                     }
                 }
@@ -158,21 +151,153 @@ namespace ProjetoExtensionista2026_2
                                 "Erro de Conexão", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void AcaoSelecionarProduto(int idProduto, decimal precoVenda)
+
+        private void AcaoSelecionarProduto(int idProduto, decimal precoVenda, int quantidade)
         {
-            int quantidade = (int)numericUpDown1.Value;
-            MessageBox.Show($"Produto selecionado: ID {idProduto}\nQuantidade: {quantidade}\nValor Unitário: {precoVenda:C2}",
-                            "Item Selecionado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            decimal totalItem = precoVenda * quantidade;
+
+            MessageBox.Show($"Produto ID: {idProduto}\nQuantidade: {quantidade}\nUnitário: {precoVenda:C2}\nTotal: {totalItem:C2}",
+                            "Item Adicionado", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        public class ProdutoMock
+        private void CentralizarCards()
         {
-            public int Id { get; set; }
-            public string Nome { get; set; }
-            public string Descricao { get; set; }
-            public decimal PrecoVenda { get; set; }
-            public decimal PrecoCompra { get; set; }
-            public string FotoUrl { get; set; }
+            if (flowLayoutPanelProdutos == null || flowLayoutPanelProdutos.Controls.Count == 0)
+                return;
+
+            Control primeiroCard = flowLayoutPanelProdutos.Controls[0];
+            int larguraTotalDoCard = primeiroCard.Width + primeiroCard.Margin.Horizontal;
+
+            // ClientSize já desconta a barra de rolagem se ela estiver visível
+            int larguraDisponivel = flowLayoutPanelProdutos.ClientSize.Width;
+
+            int colunas = larguraDisponivel / larguraTotalDoCard;
+            if (colunas < 1)
+                colunas = 1;
+
+            // Se existirem menos cards no total do que o número de colunas da tela inteira, centraliza apenas o grupo existente
+            if (flowLayoutPanelProdutos.Controls.Count < colunas)
+            {
+                colunas = flowLayoutPanelProdutos.Controls.Count;
+            }
+
+            int larguraOcupadaPelosCards = colunas * larguraTotalDoCard;
+            int sobra = (larguraDisponivel - larguraOcupadaPelosCards) / 2;
+
+            if (sobra < 0)
+                sobra = 0;
+
+            flowLayoutPanelProdutos.Padding = new Padding(sobra, flowLayoutPanelProdutos.Padding.Top, 0, flowLayoutPanelProdutos.Padding.Bottom);
+        }
+
+        /// <summary>
+        /// Popula o painel com produtos mockados para testar interface sem depender do banco
+        /// </summary>
+        private void TestarCardsSemBanco()
+        {
+            flowLayoutPanelProdutos.Controls.Clear();
+            flowLayoutPanelProdutos.SuspendLayout();
+
+            var produtosTeste = new[]
+            {
+                new {
+                    Id = 1,
+                    Nome = "Óleo Motor 10W30",
+                    Desc = "Lubrificante semissintético",
+                    Venda = 38.50m,
+                    Compra = 22.00m,
+                    Foto = "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=200"
+                },
+                new {
+                    Id = 2,
+                    Nome = "Vela de Ignição Iridium",
+                    Desc = "Partida rápida, queima limpa e durabilidade estendida",
+                    Venda = 65.00m,
+                    Compra = 40.00m,
+                    Foto = "https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=200"
+                },
+                new {
+                    Id = 3,
+                    Nome = "Pastilha de Freio Dianteira",
+                    Desc = "Composto cerâmico de alto coeficiente de atrito",
+                    Venda = 45.00m,
+                    Compra = 25.00m,
+                    Foto = (string)null
+                },
+                new {
+                    Id = 4,
+                    Nome = "Kit de Transmissão Coroa Pinhão e Corrente com Retentor Reforçado Aço 1045",
+                    Desc = "Conjunto completo linha pesada",
+                    Venda = 189.90m,
+                    Compra = 120.00m,
+                    Foto = (string)null
+                },
+                new {
+                    Id = 5,
+                    Nome = "Filtro de Ar Esportivo",
+                    Desc = "Elemento filtrante de algodão cirúrgico multicamadas de alto fluxo lavável e reutilizável com vedação de poliuretano vulcanizado para evitar passagem de impurezas mesmo em estradas de terra severas",
+                    Venda = 82.00m,
+                    Compra = 50.00m,
+                    Foto = (string)null
+                },
+                new {
+                    Id = 6,
+                    Nome = "Pneu Traseiro Sem Câmara 140/70-17 66H Radial Tubeless para Pista e Uso Urbano Misto",
+                    Desc = "Borracha com duplo composto de sílica para máxima aderência em curvas com piso molhado e carcaça estruturada em lonas diagonais super resistentes a furos",
+                    Venda = 420.00m,
+                    Compra = 295.00m,
+                    Foto = (string)null
+                },
+                new {
+                    Id = 7,
+                    Nome = "Módulo de Injeção Eletrônica ECU",
+                    Desc = "Unidade central de controle e mapeamento",
+                    Venda = 15890.50m,
+                    Compra = 11200.00m,
+                    Foto = (string)null
+                },
+                new {
+                    Id = 8,
+                    Nome = "Brinde / Adesivo Resinador",
+                    Desc = "Item promocional",
+                    Venda = 0.00m,
+                    Compra = 0.00m,
+                    Foto = (string)null
+                },
+                new {
+                    Id = 9,
+                    Nome = "SUPERHIPERMEGADESENGRAXANTEDEALTAPRECISAO",
+                    Desc = "SemEspacosNoTextoParaValidarQuebraDePalavraLongaNoComponenteDeLabel",
+                    Venda = 29.90m,
+                    Compra = 15.00m,
+                    Foto = (string)null
+                },
+                new {
+                    Id = 10,
+                    Nome = "Cabo de Embreagem",
+                    Desc = "Aço flexível com capa lubrificada",
+                    Venda = 22.00m,
+                    Compra = 10.50m,
+                    Foto = (string)null
+                }
+            };
+
+            foreach (var item in produtosTeste)
+            {
+                var card = new UcCardProduto();
+                card.Margin = new Padding(8);
+                card.CarregarDados(item.Id, item.Nome, item.Desc, item.Venda, item.Compra, item.Foto);
+
+                card.AoAdicionarProduto += (id, preco, qtd) =>
+                {
+                    AcaoSelecionarProduto(id, preco, qtd);
+                };
+
+                flowLayoutPanelProdutos.Controls.Add(card);
+            }
+
+            flowLayoutPanelProdutos.ResumeLayout();
+            CentralizarCards();
         }
     }
 }
