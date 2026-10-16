@@ -13,18 +13,27 @@ namespace ProjetoExtensionista2026_2
         public formVenda()
         {
             InitializeComponent();
+
+            this.DoubleBuffered = true;
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer |
+                          ControlStyles.UserPaint |
+                          ControlStyles.AllPaintingInWmPaint, true);
+            this.UpdateStyles();
+
+            this.FormBorderStyle = FormBorderStyle.Sizable;
             this.WindowState = FormWindowState.Maximized;
         }
 
         private void formVenda_Load(object sender, EventArgs e)
         {
-            // Ativa DoubleBuffered para renderização suave dos cards sem cintilação
+
             if (flowLayoutPanelProdutos != null)
             {
                 typeof(FlowLayoutPanel).InvokeMember("DoubleBuffered",
                     BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
                     null, flowLayoutPanelProdutos, new object[] { true });
 
+                flowLayoutPanelProdutos.AutoScroll = true;
                 flowLayoutPanelProdutos.Resize += (s, ev) => CentralizarCards();
             }
 
@@ -95,13 +104,14 @@ namespace ProjetoExtensionista2026_2
         {
             flowLayoutPanelProdutos.Controls.Clear();
 
+            // Adicionado o campo stock_quantity na consulta
             string query = @"
-                SELECT id_product, name_product, description_product, price_sell, price_buy, picture_url 
-                FROM product 
-                WHERE active = TRUE 
-                  AND (@filtro = '' OR name_product ILIKE @filtro_like OR description_product ILIKE @filtro_like)
-                ORDER BY name_product ASC 
-                LIMIT 40;";
+        SELECT id_product, name_product, description_product, price_sell, price_buy, stock_quantity, picture_url 
+        FROM product 
+        WHERE active = TRUE 
+          AND (@filtro = '' OR name_product ILIKE @filtro_like OR description_product ILIKE @filtro_like)
+        ORDER BY name_product ASC 
+        LIMIT 40;";
 
             try
             {
@@ -125,11 +135,17 @@ namespace ProjetoExtensionista2026_2
                                 string descricao = reader.IsDBNull(reader.GetOrdinal("description_product")) ? "" : reader.GetString(reader.GetOrdinal("description_product"));
                                 decimal precoVenda = reader.IsDBNull(reader.GetOrdinal("price_sell")) ? 0m : reader.GetDecimal(reader.GetOrdinal("price_sell"));
                                 decimal precoCompra = reader.IsDBNull(reader.GetOrdinal("price_buy")) ? 0m : reader.GetDecimal(reader.GetOrdinal("price_buy"));
+
+                                // Leitura do estoque do banco
+                                int estoque = reader.IsDBNull(reader.GetOrdinal("stock_quantity")) ? 0 : reader.GetInt32(reader.GetOrdinal("stock_quantity"));
+
                                 string fotoUrl = reader.IsDBNull(reader.GetOrdinal("picture_url")) ? null : reader.GetString(reader.GetOrdinal("picture_url"));
 
                                 var card = new UcCardProduto();
                                 card.Margin = new Padding(8);
-                                card.CarregarDados(id, nome, descricao, precoVenda, precoCompra, fotoUrl);
+
+                                // Passando os parâmetros atualizados, incluindo o estoque
+                                card.CarregarDados(id, nome, descricao, precoVenda, precoCompra, estoque, fotoUrl);
 
                                 card.AoAdicionarProduto += (prodId, preco, qtd) =>
                                 {
@@ -175,7 +191,6 @@ namespace ProjetoExtensionista2026_2
             if (colunas < 1)
                 colunas = 1;
 
-            // Se existirem menos cards no total do que o número de colunas da tela inteira, centraliza apenas o grupo existente
             if (flowLayoutPanelProdutos.Controls.Count < colunas)
             {
                 colunas = flowLayoutPanelProdutos.Controls.Count;
@@ -206,6 +221,7 @@ namespace ProjetoExtensionista2026_2
                     Desc = "Lubrificante semissintético",
                     Venda = 38.50m,
                     Compra = 22.00m,
+                    Estoque = 24,
                     Foto = "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=200"
                 },
                 new {
@@ -214,6 +230,7 @@ namespace ProjetoExtensionista2026_2
                     Desc = "Partida rápida, queima limpa e durabilidade estendida",
                     Venda = 65.00m,
                     Compra = 40.00m,
+                    Estoque = 12,
                     Foto = "https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=200"
                 },
                 new {
@@ -222,6 +239,7 @@ namespace ProjetoExtensionista2026_2
                     Desc = "Composto cerâmico de alto coeficiente de atrito",
                     Venda = 45.00m,
                     Compra = 25.00m,
+                    Estoque = 8,
                     Foto = (string)null
                 },
                 new {
@@ -230,6 +248,7 @@ namespace ProjetoExtensionista2026_2
                     Desc = "Conjunto completo linha pesada",
                     Venda = 189.90m,
                     Compra = 120.00m,
+                    Estoque = 5,
                     Foto = (string)null
                 },
                 new {
@@ -238,6 +257,7 @@ namespace ProjetoExtensionista2026_2
                     Desc = "Elemento filtrante de algodão cirúrgico multicamadas de alto fluxo lavável e reutilizável com vedação de poliuretano vulcanizado para evitar passagem de impurezas mesmo em estradas de terra severas",
                     Venda = 82.00m,
                     Compra = 50.00m,
+                    Estoque = 0, // Teste com estoque esgotado (vai ficar em vermelho)
                     Foto = (string)null
                 },
                 new {
@@ -246,6 +266,7 @@ namespace ProjetoExtensionista2026_2
                     Desc = "Borracha com duplo composto de sílica para máxima aderência em curvas com piso molhado e carcaça estruturada em lonas diagonais super resistentes a furos",
                     Venda = 420.00m,
                     Compra = 295.00m,
+                    Estoque = 3,
                     Foto = (string)null
                 },
                 new {
@@ -254,6 +275,7 @@ namespace ProjetoExtensionista2026_2
                     Desc = "Unidade central de controle e mapeamento",
                     Venda = 15890.50m,
                     Compra = 11200.00m,
+                    Estoque = 1,
                     Foto = (string)null
                 },
                 new {
@@ -262,6 +284,7 @@ namespace ProjetoExtensionista2026_2
                     Desc = "Item promocional",
                     Venda = 0.00m,
                     Compra = 0.00m,
+                    Estoque = 50,
                     Foto = (string)null
                 },
                 new {
@@ -270,6 +293,7 @@ namespace ProjetoExtensionista2026_2
                     Desc = "SemEspacosNoTextoParaValidarQuebraDePalavraLongaNoComponenteDeLabel",
                     Venda = 29.90m,
                     Compra = 15.00m,
+                    Estoque = 18,
                     Foto = (string)null
                 },
                 new {
@@ -278,6 +302,7 @@ namespace ProjetoExtensionista2026_2
                     Desc = "Aço flexível com capa lubrificada",
                     Venda = 22.00m,
                     Compra = 10.50m,
+                    Estoque = 0, // Outro exemplo zerado
                     Foto = (string)null
                 }
             };
@@ -286,7 +311,8 @@ namespace ProjetoExtensionista2026_2
             {
                 var card = new UcCardProduto();
                 card.Margin = new Padding(8);
-                card.CarregarDados(item.Id, item.Nome, item.Desc, item.Venda, item.Compra, item.Foto);
+                // Passando o parâmetro item.Estoque na ordem atualizada do método:
+                card.CarregarDados(item.Id, item.Nome, item.Desc, item.Venda, item.Compra, item.Estoque, item.Foto);
 
                 card.AoAdicionarProduto += (id, preco, qtd) =>
                 {
