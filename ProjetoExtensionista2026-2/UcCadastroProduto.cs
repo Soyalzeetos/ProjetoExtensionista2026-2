@@ -1,15 +1,21 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Drawing;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Npgsql;
-using ProjetoExtensionista2026_2.SQL; // Ajuste se o namespace da sua classe Connection for diferente
+using ProjetoExtensionista2026_2.SQL;
 
 namespace ProjetoExtensionista2026_2
 {
     public partial class UcCadastroProduto : UserControl
     {
+        private static readonly HttpClient _httpClient = CriarHttpClient();
+        private static readonly ConcurrentDictionary<string, byte[]> _imageBytesCache = new ConcurrentDictionary<string, byte[]>();
+
+        private ProdutoDTO _produtoRef; 
         public int? ProdutoIdEmEdicao { get; private set; }
         public event Action AoConcluirOperacao;
 
@@ -17,90 +23,179 @@ namespace ProjetoExtensionista2026_2
         {
             InitializeComponent();
 
-            txtCodigo.ReadOnly = true;
-            txtCodigo.TabStop = false;
+            this.DoubleBuffered = true;
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
 
-            numPrecoCompra.ValueChanged += (s, e) => CalcularMargem();
-            numPrecoVenda.ValueChanged += (s, e) => CalcularMargem();
+            ConfigurarControlesIniciais();
+        }
 
-            if (!this.DesignMode)
-            {
-                _ = LimparCamposAsync(); // Inicialização limpa e assíncrona sem travar a interface
-            }
+        private static HttpClient CriarHttpClient()
+        {
+            var client = new HttpClient { Timeout = TimeSpan.FromSeconds(8) };
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+            return client;
         }
 
         /// <summary>
-        /// Consulta assíncrona para buscar o próximo código sem congelar a tela
+        /// Configura Unidade (UNID/JG), Categoria, TextBoxes e RadioButtons de Status
         /// </summary>
-        private async Task GerarProximoCodigoAsync()
+        private void ConfigurarControlesIniciais()
+        {
+            txtCodigo.ReadOnly = true;
+            txtCodigo.TabStop = false;
+            txtMargem.ReadOnly = true;
+            txtMargem.TabStop = false;
+
+            // 1. Configuração da Unidade (UNID ou JG)
+            cboUnidade.DropDownStyle = ComboBoxStyle.DropDownList;
+            if (cboUnidade.Items.Count == 0)
+            {
+                cboUnidade.Items.AddRange(new object[] { "UNID", "JG" });
+            }
+            cboUnidade.SelectedIndex = 0; // Padrão: UNID
+
+            // 2. Configuração da Categoria (ComboBox)
+            cboCategoria.DropDownStyle = ComboBoxStyle.DropDown;
+            if (cboCategoria.Items.Count == 0)
+            {
+                cboCategoria.Items.AddRange(new object[]
+                {
+                    "Motor",
+                    "Freios",
+                    "Suspensão",
+                    "Elétrica / Ignição",
+                    "Transmissão",
+                    "Lubrificantes e Fluidos",
+                    "Filtros",
+                    "Pneus e Rodas",
+                    "Acessórios",
+                    "Outros"
+                });
+            }
+
+            // 3. Status inicial via RadioButtons
+            DefinirStatusProduto(true);
+
+            // Eventos para cálculo instantâneo da margem
+            numPrecoCompra.ValueChanged += (s, e) => CalcularMargem();
+            numPrecoVenda.ValueChanged += (s, e) => CalcularMargem();
+        }
+
+        /// <summary>
+        /// Define e lê o status Ativo / Inativo através dos RadioButtons
+        /// </summary>
+        public void DefinirStatusProduto(bool ativo)
+        {
+            rbAtivo.Checked = ativo;
+            rbInativo.Checked = !ativo;
+        }
+
+        public bool ObterStatusProduto()
+        {
+            return rbAtivo.Checked;
+        }
+
+        /// <summary>
+        /// Consulta o próximo código em background sem nunca travar a abertura da tela
+        /// </summary>
+        public async Task GerarProximoCodigoAsync()
         {
             try
             {
-                using (var db = new Connection())
+                string codigoGerado = await Task.Run(async () =>
                 {
-                    db.IniciarConexao();
-                    string query = "SELECT COALESCE(MAX(id_product), 0) + 1 FROM product;";
-
-                    using (var cmd = new NpgsqlCommand(query, db.Conexao))
+                    using (var db = new Connection())
                     {
-                        object resultado = await cmd.ExecuteScalarAsync();
-                        if (resultado != null && int.TryParse(resultado.ToString(), out int proximoId))
+                        db.IniciarConexao();
+                        const string query = "SELECT COALESCE(MAX(id_product), 0) + 1 FROM product;";
+                        using (var cmd = new NpgsqlCommand(query, db.Conexao))
                         {
-                            txtCodigo.Text = proximoId.ToString();
-                        }
-                        else
-                        {
-                            txtCodigo.Text = "1";
+                            object resultado = await cmd.ExecuteScalarAsync();
+                            return (resultado != null && int.TryParse(resultado.ToString(), out int prox))
+                                ? prox.ToString()
+                                : "1";
                         }
                     }
+                });
+
+                if (!this.IsDisposed && !ProdutoIdEmEdicao.HasValue)
+                {
+                    txtCodigo.Text = codigoGerado;
                 }
             }
             catch
             {
-                txtCodigo.Text = "1";
+                if (!this.IsDisposed && !ProdutoIdEmEdicao.HasValue)
+                {
+                    txtCodigo.Text = "1";
+                }
             }
         }
 
-        public async void CarregarDadosParaEdicao(ProdutoDTO p)
+        /// <summary>
+        /// Preenche todos os campos instantaneamente ao clicar no Card
+        /// </summary>
+        public void CarregarDadosParaEdicao(ProdutoDTO p)
         {
             if (p == null) return;
 
+            this.SuspendLayout();
+
+            _produtoRef = p;
             ProdutoIdEmEdicao = p.Id;
 
+            // Código e TextBoxes (Nome, Descrição, Localização, Fornecedor)
             txtCodigo.Text = !string.IsNullOrWhiteSpace(p.Codigo) ? p.Codigo : p.Id.ToString();
-            txtNome.Text = p.Nome;
-            txtDescricao.Text = p.Descricao;
-            txtLocalizacao.Text = p.Localizacao;
-            txtFornecedor.Text = p.Fornecedor;
+            txtNome.Text = p.Nome ?? string.Empty;
+            txtDescricao.Text = p.Descricao ?? string.Empty;
+            txtLocalizacao.Text = p.Localizacao ?? string.Empty;
+            txtFornecedor.Text = p.Fornecedor ?? string.Empty;
 
-            numPrecoCompra.Value = p.PrecoCompra;
-            numPrecoVenda.Value = p.PrecoVenda;
-            numEstoque.Value = p.Estoque;
-            numEstoqueMinimo.Value = p.EstoqueMinimo;
+            numPrecoCompra.Value = Math.Max(numPrecoCompra.Minimum, Math.Min(numPrecoCompra.Maximum, p.PrecoCompra));
+            numPrecoVenda.Value = Math.Max(numPrecoVenda.Minimum, Math.Min(numPrecoVenda.Maximum, p.PrecoVenda));
+            numEstoque.Value = Math.Max(numEstoque.Minimum, Math.Min(numEstoque.Maximum, (decimal)p.Estoque));
+            numEstoqueMinimo.Value = Math.Max(numEstoqueMinimo.Minimum, Math.Min(numEstoqueMinimo.Maximum, (decimal)p.EstoqueMinimo));
 
-            if (!string.IsNullOrEmpty(p.Unidade))
-                cboUnidade.Text = p.Unidade;
-
-            if (!string.IsNullOrEmpty(p.Categoria))
-                cboCategoria.Text = p.Categoria;
-
-            rbAtivo.Checked = p.Ativo;
-            rbInativo.Checked = !p.Ativo;
-
-            txtFotoUrl.Text = p.FotoUrl;
-            CalcularMargem();
-
-            if (!string.IsNullOrWhiteSpace(p.FotoUrl))
+            // Unidade (UNID ou JG)
+            string unidade = string.IsNullOrWhiteSpace(p.Unidade) ? "UNID" : p.Unidade.Trim().ToUpper();
+            if (unidade == "UN") unidade = "UNID"; // Compatibilidade caso venha "UN" dos dados de teste
+            if (!cboUnidade.Items.Contains(unidade))
             {
-                await CarregarImagemPorUrlAsync(p.FotoUrl);
+                cboUnidade.Items.Add(unidade);
+            }
+            cboUnidade.SelectedItem = unidade;
+
+            // Categoria (ComboBox)
+            if (!string.IsNullOrWhiteSpace(p.Categoria))
+            {
+                if (!cboCategoria.Items.Contains(p.Categoria))
+                {
+                    cboCategoria.Items.Add(p.Categoria);
+                }
+                cboCategoria.SelectedItem = p.Categoria;
             }
             else
             {
-                picFotoPreview.Image?.Dispose();
-                picFotoPreview.Image = Properties.Resources.produto_ausente;
+                cboCategoria.SelectedIndex = -1;
+                cboCategoria.Text = string.Empty;
             }
 
+            // Status (RadioButtons Ativo / Inativo)
+            DefinirStatusProduto(p.Ativo);
+
+            // Margem e Imagem
+            CalcularMargem();
+            txtFotoUrl.Text = p.FotoUrl ?? string.Empty;
             btnSalvar.Text = "Atualizar";
+
+            DefinirImagemPreview(Properties.Resources.produto_ausente);
+
+            this.ResumeLayout();
+
+            if (!string.IsNullOrWhiteSpace(p.FotoUrl))
+            {
+                _ = CarregarImagemPorUrlAsync(p.FotoUrl, exibirErros: false);
+            }
         }
 
         public async void LimparCampos()
@@ -108,12 +203,14 @@ namespace ProjetoExtensionista2026_2
             await LimparCamposAsync();
         }
 
-        private async Task LimparCamposAsync()
+        public async Task LimparCamposAsync()
         {
+            this.SuspendLayout();
+
+            _produtoRef = null;
             ProdutoIdEmEdicao = null;
 
-            await GerarProximoCodigoAsync();
-
+            txtCodigo.Text = "...";
             txtNome.Clear();
             txtDescricao.Clear();
             txtLocalizacao.Clear();
@@ -124,20 +221,22 @@ namespace ProjetoExtensionista2026_2
             numEstoque.Value = 0;
             numEstoqueMinimo.Value = 0;
 
-            cboUnidade.SelectedIndex = -1;
+            cboUnidade.SelectedItem = "UNID";
             cboCategoria.SelectedIndex = -1;
+            cboCategoria.Text = string.Empty;
 
-            rbAtivo.Checked = true;
-            rbInativo.Checked = false;
+            DefinirStatusProduto(true);
 
             txtFotoUrl.Clear();
-            picFotoPreview.Image?.Dispose();
-            picFotoPreview.Image = Properties.Resources.produto_ausente;
+            DefinirImagemPreview(Properties.Resources.produto_ausente);
 
             txtMargem.Text = "0,00%";
             btnSalvar.Text = "Salvar";
 
+            this.ResumeLayout();
             txtNome.Focus();
+
+            await GerarProximoCodigoAsync();
         }
 
         private void CalcularMargem()
@@ -165,85 +264,122 @@ namespace ProjetoExtensionista2026_2
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(cboUnidade.Text))
+            {
+                MessageBox.Show("Selecione a unidade de medida (UNID ou JG).", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cboUnidade.Focus();
+                return;
+            }
+
+            btnSalvar.Enabled = false;
+            Cursor.Current = Cursors.WaitCursor;
+
+            // Captura os valores dos controles na thread de interface
+            string codigo = txtCodigo.Text.Trim();
+            string nome = txtNome.Text.Trim();
+            string descricao = txtDescricao.Text.Trim();
+            decimal precoCompra = numPrecoCompra.Value;
+            decimal precoVenda = numPrecoVenda.Value;
+            string localizacao = txtLocalizacao.Text.Trim();
+            int estoque = (int)numEstoque.Value;
+            int estoqueMin = (int)numEstoqueMinimo.Value;
+            string unidade = cboUnidade.Text.Trim();
+            string categoria = cboCategoria.Text.Trim();
+            string fornecedor = txtFornecedor.Text.Trim();
+            bool statusAtivo = ObterStatusProduto();
+            string fotoUrl = txtFotoUrl.Text.Trim();
+
+            // Atualiza também a referência em memória (útil para ver a edição funcionando mesmo sem banco)
+            if (_produtoRef != null)
+            {
+                _produtoRef.Codigo = codigo;
+                _produtoRef.Nome = nome;
+                _produtoRef.Descricao = descricao;
+                _produtoRef.PrecoCompra = precoCompra;
+                _produtoRef.PrecoVenda = precoVenda;
+                _produtoRef.Localizacao = localizacao;
+                _produtoRef.Estoque = estoque;
+                _produtoRef.EstoqueMinimo = estoqueMin;
+                _produtoRef.Unidade = unidade;
+                _produtoRef.Categoria = categoria;
+                _produtoRef.Fornecedor = fornecedor;
+                _produtoRef.Ativo = statusAtivo;
+                _produtoRef.FotoUrl = string.IsNullOrWhiteSpace(fotoUrl) ? null : fotoUrl;
+            }
+
             try
             {
-                using (var db = new Connection())
+                await Task.Run(async () =>
                 {
-                    db.IniciarConexao();
+                    using (var db = new Connection())
+                    {
+                        db.IniciarConexao();
 
-                    if (!ProdutoIdEmEdicao.HasValue)
-                    {
-                        await GerarProximoCodigoAsync();
-                    }
-
-                    string query;
-                    if (ProdutoIdEmEdicao.HasValue)
-                    {
-                        query = @"
-                            UPDATE product SET
-                                code_product = @codigo,
-                                name_product = @nome,
-                                description_product = @descricao,
-                                price_buy = @preco_compra,
-                                price_sell = @preco_venda,
-                                location_product = @localizacao,
-                                stock_quantity = @estoque,
-                                min_stock_quantity = @estoque_min,
-                                unit_measure = @unidade,
-                                category_product = @categoria,
-                                supplier_product = @fornecedor,
-                                active = @ativo,
-                                picture_url = @foto_url
-                            WHERE id_product = @id;";
-                    }
-                    else
-                    {
-                        query = @"
-                            INSERT INTO product (
-                                code_product, name_product, description_product, price_buy, price_sell,
-                                location_product, stock_quantity, min_stock_quantity, unit_measure,
-                                category_product, supplier_product, active, picture_url
-                            ) VALUES (
-                                @codigo, @nome, @descricao, @preco_compra, @preco_venda,
-                                @localizacao, @estoque, @estoque_min, @unidade,
-                                @categoria, @fornecedor, @ativo, @foto_url
-                            );";
-                    }
-
-                    using (var cmd = new NpgsqlCommand(query, db.Conexao))
-                    {
-                        if (ProdutoIdEmEdicao.HasValue)
+                        if (!ProdutoIdEmEdicao.HasValue && (string.IsNullOrEmpty(codigo) || codigo == "..."))
                         {
-                            cmd.Parameters.AddWithValue("@id", ProdutoIdEmEdicao.Value);
+                            const string sqlMax = "SELECT COALESCE(MAX(id_product), 0) + 1 FROM product;";
+                            using (var cmdMax = new NpgsqlCommand(sqlMax, db.Conexao))
+                            {
+                                object res = await cmdMax.ExecuteScalarAsync();
+                                codigo = res?.ToString() ?? "1";
+                            }
                         }
 
-                        cmd.Parameters.AddWithValue("@codigo", txtCodigo.Text.Trim());
-                        cmd.Parameters.AddWithValue("@nome", txtNome.Text.Trim());
-                        cmd.Parameters.AddWithValue("@descricao", txtDescricao.Text.Trim());
-                        cmd.Parameters.AddWithValue("@preco_compra", numPrecoCompra.Value);
-                        cmd.Parameters.AddWithValue("@preco_venda", numPrecoVenda.Value);
-                        cmd.Parameters.AddWithValue("@localizacao", txtLocalizacao.Text.Trim());
-                        cmd.Parameters.AddWithValue("@estoque", (int)numEstoque.Value);
-                        cmd.Parameters.AddWithValue("@estoque_min", (int)numEstoqueMinimo.Value);
-                        cmd.Parameters.AddWithValue("@unidade", cboUnidade.Text);
-                        cmd.Parameters.AddWithValue("@categoria", cboCategoria.Text);
-                        cmd.Parameters.AddWithValue("@fornecedor", txtFornecedor.Text.Trim());
-                        cmd.Parameters.AddWithValue("@ativo", rbAtivo.Checked);
+                        string query = ProdutoIdEmEdicao.HasValue
+                            ? @"UPDATE product SET
+                                    code_product = @codigo,
+                                    name_product = @nome,
+                                    description_product = @descricao,
+                                    price_buy = @preco_compra,
+                                    price_sell = @preco_venda,
+                                    location_product = @localizacao,
+                                    stock_quantity = @estoque,
+                                    min_stock_quantity = @estoque_min,
+                                    unit_measure = @unidade,
+                                    category_product = @categoria,
+                                    supplier_product = @fornecedor,
+                                    active = @ativo,
+                                    picture_url = @foto_url
+                                WHERE id_product = @id;"
+                            : @"INSERT INTO product (
+                                    code_product, name_product, description_product, price_buy, price_sell,
+                                    location_product, stock_quantity, min_stock_quantity, unit_measure,
+                                    category_product, supplier_product, active, picture_url
+                                ) VALUES (
+                                    @codigo, @nome, @descricao, @preco_compra, @preco_venda,
+                                    @localizacao, @estoque, @estoque_min, @unidade,
+                                    @categoria, @fornecedor, @ativo, @foto_url
+                                );";
 
-                        object valorFoto = string.IsNullOrWhiteSpace(txtFotoUrl.Text)
-                            ? (object)DBNull.Value
-                            : txtFotoUrl.Text.Trim();
-                        cmd.Parameters.AddWithValue("@foto_url", valorFoto);
+                        using (var cmd = new NpgsqlCommand(query, db.Conexao))
+                        {
+                            if (ProdutoIdEmEdicao.HasValue)
+                                cmd.Parameters.AddWithValue("@id", ProdutoIdEmEdicao.Value);
 
-                        await cmd.ExecuteNonQueryAsync();
+                            cmd.Parameters.AddWithValue("@codigo", codigo);
+                            cmd.Parameters.AddWithValue("@nome", nome);
+                            cmd.Parameters.AddWithValue("@descricao", descricao);
+                            cmd.Parameters.AddWithValue("@preco_compra", precoCompra);
+                            cmd.Parameters.AddWithValue("@preco_venda", precoVenda);
+                            cmd.Parameters.AddWithValue("@localizacao", localizacao);
+                            cmd.Parameters.AddWithValue("@estoque", estoque);
+                            cmd.Parameters.AddWithValue("@estoque_min", estoqueMin);
+                            cmd.Parameters.AddWithValue("@unidade", unidade);
+                            cmd.Parameters.AddWithValue("@categoria", categoria);
+                            cmd.Parameters.AddWithValue("@fornecedor", fornecedor);
+                            cmd.Parameters.AddWithValue("@ativo", statusAtivo);
+                            cmd.Parameters.AddWithValue("@foto_url", string.IsNullOrWhiteSpace(fotoUrl) ? (object)DBNull.Value : fotoUrl);
+
+                            await cmd.ExecuteNonQueryAsync();
+                        }
                     }
-                }
+                });
 
-                string mensagem = ProdutoIdEmEdicao.HasValue
+                string msg = ProdutoIdEmEdicao.HasValue
                     ? "Produto atualizado com sucesso!"
                     : "Produto cadastrado com sucesso!";
 
-                MessageBox.Show(mensagem, "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(msg, "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 if (!ProdutoIdEmEdicao.HasValue)
                 {
@@ -256,11 +392,19 @@ namespace ProjetoExtensionista2026_2
             {
                 MessageBox.Show($"Erro ao salvar no banco de dados:\n{ex.Message}", "Erro de Operação", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            finally
+            {
+                if (!this.IsDisposed)
+                {
+                    btnSalvar.Enabled = true;
+                    Cursor.Current = Cursors.Default;
+                }
+            }
         }
 
-        private void btnLimpar_Click(object sender, EventArgs e)
+        private async void btnLimpar_Click(object sender, EventArgs e)
         {
-            LimparCampos();
+            await LimparCamposAsync();
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -270,8 +414,7 @@ namespace ProjetoExtensionista2026_2
 
         private void btnExcluirFoto_Click(object sender, EventArgs e)
         {
-            picFotoPreview.Image?.Dispose();
-            picFotoPreview.Image = Properties.Resources.produto_ausente;
+            DefinirImagemPreview(Properties.Resources.produto_ausente);
             txtFotoUrl.Clear();
         }
 
@@ -287,10 +430,11 @@ namespace ProjetoExtensionista2026_2
                 {
                     try
                     {
-                        using (var stream = new FileStream(ofd.FileName, FileMode.Open, FileAccess.Read))
+                        byte[] bytes = File.ReadAllBytes(ofd.FileName);
+                        using (var ms = new MemoryStream(bytes))
+                        using (var tempImg = Image.FromStream(ms))
                         {
-                            picFotoPreview.Image?.Dispose();
-                            picFotoPreview.Image = Image.FromStream(stream);
+                            DefinirImagemPreview(new Bitmap(tempImg));
                         }
                         txtFotoUrl.Text = ofd.FileName;
                     }
@@ -304,7 +448,7 @@ namespace ProjetoExtensionista2026_2
 
         private async void btnCarregarFoto_Click(object sender, EventArgs e)
         {
-            await CarregarImagemPorUrlAsync(txtFotoUrl.Text.Trim());
+            await CarregarImagemPorUrlAsync(txtFotoUrl.Text.Trim(), exibirErros: true);
         }
 
         private async void txtFotoUrl_KeyDown(object sender, KeyEventArgs e)
@@ -312,78 +456,82 @@ namespace ProjetoExtensionista2026_2
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
-                await CarregarImagemPorUrlAsync(txtFotoUrl.Text.Trim());
+                await CarregarImagemPorUrlAsync(txtFotoUrl.Text.Trim(), exibirErros: true);
             }
         }
 
-        private async Task CarregarImagemPorUrlAsync(string url)
+        private async Task CarregarImagemPorUrlAsync(string url, bool exibirErros = true)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
-                MessageBox.Show("Por favor, informe a URL da imagem.", "Aviso",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtFotoUrl.Focus();
-                return;
-            }
-
-            if (File.Exists(url))
-            {
-                try
+                if (exibirErros)
                 {
-                    using (var stream = new FileStream(url, FileMode.Open, FileAccess.Read))
-                    {
-                        picFotoPreview.Image?.Dispose();
-                        picFotoPreview.Image = Image.FromStream(stream);
-                    }
-                    return;
+                    MessageBox.Show("Por favor, informe a URL da imagem.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtFotoUrl.Focus();
                 }
-                catch
-                {
-                    picFotoPreview.Image?.Dispose();
-                    picFotoPreview.Image = Properties.Resources.produto_ausente;
-                    return;
-                }
-            }
-
-            if (!Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult) ||
-                (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
-            {
-                MessageBox.Show("Informe uma URL válida iniciada por http:// ou https://", "URL Inválida",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             try
             {
-                Cursor.Current = Cursors.WaitCursor;
+                byte[] dadosImagem = null;
 
-                using (var clienteWeb = new System.Net.WebClient())
+                // 1. Verifica se já está no cache em memória
+                if (!_imageBytesCache.TryGetValue(url, out dadosImagem))
                 {
-                    clienteWeb.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
-                    byte[] dadosImagem = await clienteWeb.DownloadDataTaskAsync(uriResult);
-
-                    using (var ms = new MemoryStream(dadosImagem))
+                    if (File.Exists(url))
                     {
-                        using (var imgOriginal = Image.FromStream(ms))
-                        {
-                            picFotoPreview.Image?.Dispose();
-                            picFotoPreview.Image = new Bitmap(imgOriginal);
-                        }
+                        dadosImagem = await Task.Run(() => File.ReadAllBytes(url));
+                    }
+                    else if (Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult) &&
+                            (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+                    {
+                        dadosImagem = await _httpClient.GetByteArrayAsync(uriResult);
+                    }
+                    else
+                    {
+                        if (exibirErros)
+                            MessageBox.Show("Informe uma URL válida iniciada por http:// ou https://", "URL Inválida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    if (dadosImagem != null && dadosImagem.Length > 0)
+                    {
+                        _imageBytesCache.TryAdd(url, dadosImagem);
+                    }
+                }
+
+                if (dadosImagem != null && !this.IsDisposed)
+                {
+                    using (var ms = new MemoryStream(dadosImagem))
+                    using (var imgOriginal = Image.FromStream(ms))
+                    {
+                        DefinirImagemPreview(new Bitmap(imgOriginal));
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Não foi possível carregar a imagem do link informado.\n\nDetalhes: {ex.Message}",
-                                "Falha ao Carregar Imagem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (!this.IsDisposed)
+                {
+                    DefinirImagemPreview(Properties.Resources.produto_ausente);
+                    if (exibirErros)
+                    {
+                        MessageBox.Show($"Não foi possível carregar a imagem do link informado.\n\nDetalhes: {ex.Message}",
+                                        "Falha ao Carregar Imagem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
 
-                picFotoPreview.Image?.Dispose();
-                picFotoPreview.Image = Properties.Resources.produto_ausente;
-            }
-            finally
+        private void DefinirImagemPreview(Image novaImagem)
+        {
+            if (picFotoPreview.Image != null && !ReferenceEquals(picFotoPreview.Image, Properties.Resources.produto_ausente))
             {
-                Cursor.Current = Cursors.Default;
+                picFotoPreview.Image.Dispose();
             }
+            picFotoPreview.SizeMode = PictureBoxSizeMode.Zoom;
+            picFotoPreview.Image = novaImagem;
         }
     }
 }

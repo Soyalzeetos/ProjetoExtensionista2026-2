@@ -26,7 +26,6 @@ namespace ProjetoExtensionista2026_2
 
         private void formVenda_Load(object sender, EventArgs e)
         {
-
             if (flowLayoutPanelProdutos != null)
             {
                 typeof(FlowLayoutPanel).InvokeMember("DoubleBuffered",
@@ -104,14 +103,17 @@ namespace ProjetoExtensionista2026_2
         {
             flowLayoutPanelProdutos.Controls.Clear();
 
-            // Adicionado o campo stock_quantity na consulta
             string query = @"
-        SELECT id_product, name_product, description_product, price_sell, price_buy, stock_quantity, picture_url 
-        FROM product 
-        WHERE active = TRUE 
-          AND (@filtro = '' OR name_product ILIKE @filtro_like OR description_product ILIKE @filtro_like)
-        ORDER BY name_product ASC 
-        LIMIT 40;";
+            SELECT 
+                id_product, code_product, name_product, description_product, 
+                price_buy, price_sell, location_product, stock_quantity, 
+                min_stock_quantity, unit_measure, category_product, 
+                supplier_product, active, picture_url
+            FROM product 
+            WHERE active = TRUE 
+              AND (@filtro = '' OR name_product ILIKE @filtro_like OR description_product ILIKE @filtro_like)
+            ORDER BY name_product ASC 
+            LIMIT 40;";
 
             try
             {
@@ -130,26 +132,37 @@ namespace ProjetoExtensionista2026_2
 
                             while (reader.Read())
                             {
-                                int id = reader.GetInt32(reader.GetOrdinal("id_product"));
-                                string nome = reader.GetString(reader.GetOrdinal("name_product"));
-                                string descricao = reader.IsDBNull(reader.GetOrdinal("description_product")) ? "" : reader.GetString(reader.GetOrdinal("description_product"));
-                                decimal precoVenda = reader.IsDBNull(reader.GetOrdinal("price_sell")) ? 0m : reader.GetDecimal(reader.GetOrdinal("price_sell"));
-                                decimal precoCompra = reader.IsDBNull(reader.GetOrdinal("price_buy")) ? 0m : reader.GetDecimal(reader.GetOrdinal("price_buy"));
-
-                                // Leitura do estoque do banco
-                                int estoque = reader.IsDBNull(reader.GetOrdinal("stock_quantity")) ? 0 : reader.GetInt32(reader.GetOrdinal("stock_quantity"));
-
-                                string fotoUrl = reader.IsDBNull(reader.GetOrdinal("picture_url")) ? null : reader.GetString(reader.GetOrdinal("picture_url"));
+                                var prod = new ProdutoDTO
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("id_product")),
+                                    Codigo = reader.IsDBNull(reader.GetOrdinal("code_product")) ? "" : reader.GetString(reader.GetOrdinal("code_product")),
+                                    Nome = reader.GetString(reader.GetOrdinal("name_product")),
+                                    Descricao = reader.IsDBNull(reader.GetOrdinal("description_product")) ? "" : reader.GetString(reader.GetOrdinal("description_product")),
+                                    PrecoCompra = reader.IsDBNull(reader.GetOrdinal("price_buy")) ? 0m : reader.GetDecimal(reader.GetOrdinal("price_buy")),
+                                    PrecoVenda = reader.IsDBNull(reader.GetOrdinal("price_sell")) ? 0m : reader.GetDecimal(reader.GetOrdinal("price_sell")),
+                                    Localizacao = reader.IsDBNull(reader.GetOrdinal("location_product")) ? "" : reader.GetString(reader.GetOrdinal("location_product")),
+                                    Estoque = reader.IsDBNull(reader.GetOrdinal("stock_quantity")) ? 0 : reader.GetInt32(reader.GetOrdinal("stock_quantity")),
+                                    EstoqueMinimo = reader.IsDBNull(reader.GetOrdinal("min_stock_quantity")) ? 0 : reader.GetInt32(reader.GetOrdinal("min_stock_quantity")),
+                                    Unidade = reader.IsDBNull(reader.GetOrdinal("unit_measure")) ? "" : reader.GetString(reader.GetOrdinal("unit_measure")),
+                                    Categoria = reader.IsDBNull(reader.GetOrdinal("category_product")) ? "" : reader.GetString(reader.GetOrdinal("category_product")),
+                                    Fornecedor = reader.IsDBNull(reader.GetOrdinal("supplier_product")) ? "" : reader.GetString(reader.GetOrdinal("supplier_product")),
+                                    Ativo = reader.GetBoolean(reader.GetOrdinal("active")),
+                                    FotoUrl = reader.IsDBNull(reader.GetOrdinal("picture_url")) ? null : reader.GetString(reader.GetOrdinal("picture_url"))
+                                };
 
                                 var card = new UcCardProduto();
                                 card.Margin = new Padding(8);
-
-                                // Passando os parâmetros atualizados, incluindo o estoque
-                                card.CarregarDados(id, nome, descricao, precoVenda, precoCompra, estoque, fotoUrl);
+                                card.CarregarDados(prod);
 
                                 card.AoAdicionarProduto += (prodId, preco, qtd) =>
                                 {
                                     AcaoSelecionarProduto(prodId, preco, qtd);
+                                };
+
+                                // Reutiliza o método unificado para Edição
+                                card.AoClicarParaEditar += (produtoClicado) =>
+                                {
+                                    AbrirModalProduto(produtoClicado);
                                 };
 
                                 flowLayoutPanelProdutos.Controls.Add(card);
@@ -165,6 +178,53 @@ namespace ProjetoExtensionista2026_2
             {
                 MessageBox.Show($"Erro ao consultar produtos no Supabase: {ex.Message}",
                                 "Erro de Conexão", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Método unificado: abre o UcCadastroProduto tanto para Cadastrar (produto == null) quanto para Editar
+        /// </summary>
+        private void AbrirModalProduto(ProdutoDTO produto = null)
+        {
+            using (var formModal = new Form())
+            {
+                var ucCadastro = new UcCadastroProduto();
+
+                if (produto != null)
+                {
+                    // Modo Edição: preenche os campos com os dados existentes
+                    ucCadastro.CarregarDadosParaEdicao(produto);
+                    formModal.Text = $"Editar Produto - {produto.Nome}";
+                }
+                else
+                {
+                    // Modo Novo Cadastro: limpa os campos e gera o próximo código automático
+                    ucCadastro.LimparCampos();
+                    formModal.Text = "Cadastrar Novo Produto";
+                }
+
+                ucCadastro.Dock = DockStyle.Fill;
+                formModal.ClientSize = ucCadastro.Size;
+                formModal.StartPosition = FormStartPosition.CenterParent;
+                formModal.FormBorderStyle = FormBorderStyle.FixedDialog;
+                formModal.MaximizeBox = false;
+                formModal.MinimizeBox = false;
+                formModal.Controls.Add(ucCadastro);
+
+                ucCadastro.AoConcluirOperacao += () =>
+                {
+                    formModal.DialogResult = DialogResult.OK;
+                    formModal.Close();
+                };
+
+                if (formModal.ShowDialog(this) == DialogResult.OK)
+                {
+                    // Enquanto estiver testando sem banco:
+                    TestarCardsSemBanco();
+
+                    // Quando conectar ao Supabase:
+                    // BuscarProdutosNoSupabase(txtPesquisa.Text);
+                }
             }
         }
 
@@ -184,7 +244,6 @@ namespace ProjetoExtensionista2026_2
             Control primeiroCard = flowLayoutPanelProdutos.Controls[0];
             int larguraTotalDoCard = primeiroCard.Width + primeiroCard.Margin.Horizontal;
 
-            // ClientSize já desconta a barra de rolagem se ela estiver visível
             int larguraDisponivel = flowLayoutPanelProdutos.ClientSize.Width;
 
             int colunas = larguraDisponivel / larguraTotalDoCard;
@@ -257,7 +316,7 @@ namespace ProjetoExtensionista2026_2
                     Desc = "Elemento filtrante de algodão cirúrgico multicamadas de alto fluxo lavável e reutilizável com vedação de poliuretano vulcanizado para evitar passagem de impurezas mesmo em estradas de terra severas",
                     Venda = 82.00m,
                     Compra = 50.00m,
-                    Estoque = 0, // Teste com estoque esgotado (vai ficar em vermelho)
+                    Estoque = 0,
                     Foto = (string)null
                 },
                 new {
@@ -302,7 +361,7 @@ namespace ProjetoExtensionista2026_2
                     Desc = "Aço flexível com capa lubrificada",
                     Venda = 22.00m,
                     Compra = 10.50m,
-                    Estoque = 0, // Outro exemplo zerado
+                    Estoque = 0,
                     Foto = (string)null
                 }
             };
@@ -311,7 +370,6 @@ namespace ProjetoExtensionista2026_2
             {
                 var card = new UcCardProduto();
                 card.Margin = new Padding(8);
-                // Passando o parâmetro item.Estoque na ordem atualizada do método:
                 card.CarregarDados(item.Id, item.Nome, item.Desc, item.Venda, item.Compra, item.Estoque, item.Foto);
 
                 card.AoAdicionarProduto += (id, preco, qtd) =>
@@ -319,11 +377,23 @@ namespace ProjetoExtensionista2026_2
                     AcaoSelecionarProduto(id, preco, qtd);
                 };
 
+                // Reutiliza o método unificado para Edição
+                card.AoClicarParaEditar += (produtoClicado) =>
+                {
+                    AbrirModalProduto(produtoClicado);
+                };
+
                 flowLayoutPanelProdutos.Controls.Add(card);
             }
 
             flowLayoutPanelProdutos.ResumeLayout();
             CentralizarCards();
+        }
+
+        private void btnCadastrarProduto_Click(object sender, EventArgs e)
+        {
+            // Abre o mesmo modal, porém vazio para novo registro
+            AbrirModalProduto();
         }
     }
 }

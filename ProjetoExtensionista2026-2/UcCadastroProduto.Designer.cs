@@ -223,6 +223,9 @@
             // 
             this.cboUnidade.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cboUnidade.FormattingEnabled = true;
+            this.cboUnidade.Items.AddRange(new object[] {
+            "UNID",
+            "JG"});
             this.cboUnidade.Location = new System.Drawing.Point(281, 370);
             this.cboUnidade.Name = "cboUnidade";
             this.cboUnidade.Size = new System.Drawing.Size(72, 24);
@@ -402,21 +405,41 @@
             // 
             // numPrecoVenda
             // 
+            this.numPrecoVenda.DecimalPlaces = 2;
             this.numPrecoVenda.Location = new System.Drawing.Point(155, 265);
+            this.numPrecoVenda.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
             this.numPrecoVenda.Name = "numPrecoVenda";
             this.numPrecoVenda.Size = new System.Drawing.Size(120, 20);
             this.numPrecoVenda.TabIndex = 35;
+            this.numPrecoVenda.ThousandsSeparator = true;
             // 
             // numPrecoCompra
             // 
+            this.numPrecoCompra.DecimalPlaces = 2;
             this.numPrecoCompra.Location = new System.Drawing.Point(25, 265);
+            this.numPrecoCompra.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
             this.numPrecoCompra.Name = "numPrecoCompra";
             this.numPrecoCompra.Size = new System.Drawing.Size(120, 20);
             this.numPrecoCompra.TabIndex = 36;
+            this.numPrecoCompra.ThousandsSeparator = true;
             // 
             // numEstoque
             // 
+            this.numEstoque.DecimalPlaces = 2;
             this.numEstoque.Location = new System.Drawing.Point(25, 373);
+            this.numEstoque.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
             this.numEstoque.Name = "numEstoque";
             this.numEstoque.Size = new System.Drawing.Size(120, 20);
             this.numEstoque.TabIndex = 37;
