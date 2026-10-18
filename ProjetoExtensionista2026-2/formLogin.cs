@@ -95,5 +95,13 @@ namespace ProjetoExtensionista2026_2
                 pwdTxtBox.UseSystemPasswordChar = false;
             }
         }
+
+        private void labelSignIn_Click(object sender, EventArgs e)
+        {
+            Form signInForm = new miniFormSignIn();
+            signInForm.FormBorderStyle = FormBorderStyle.FixedSingle;
+            signInForm.MaximizeBox = false;
+            signInForm.ShowDialog();
+        }
     }
 }

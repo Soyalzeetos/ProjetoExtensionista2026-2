@@ -31,11 +31,12 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(formLogin));
             this.userTxtBox = new System.Windows.Forms.TextBox();
             this.pwdTxtBox = new System.Windows.Forms.TextBox();
-            this.lockIcon = new System.Windows.Forms.PictureBox();
             this.loginButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            ((System.ComponentModel.ISupportInitialize)(this.lockIcon)).BeginInit();
+            this.labelSignIn = new System.Windows.Forms.Label();
+            this.lockIcon = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.lockIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // userTxtBox
@@ -44,7 +45,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.userTxtBox.ForeColor = System.Drawing.SystemColors.WindowFrame;
-            this.userTxtBox.Location = new System.Drawing.Point(404, 282);
+            this.userTxtBox.Location = new System.Drawing.Point(412, 282);
             this.userTxtBox.Name = "userTxtBox";
             this.userTxtBox.Size = new System.Drawing.Size(200, 20);
             this.userTxtBox.TabIndex = 1;
@@ -58,7 +59,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pwdTxtBox.ForeColor = System.Drawing.SystemColors.WindowFrame;
-            this.pwdTxtBox.Location = new System.Drawing.Point(404, 311);
+            this.pwdTxtBox.Location = new System.Drawing.Point(412, 311);
             this.pwdTxtBox.Name = "pwdTxtBox";
             this.pwdTxtBox.Size = new System.Drawing.Size(200, 20);
             this.pwdTxtBox.TabIndex = 1;
@@ -66,21 +67,10 @@
             this.pwdTxtBox.Enter += new System.EventHandler(this.TextBox_Enter);
             this.pwdTxtBox.Leave += new System.EventHandler(this.TxtSenha_Leave);
             // 
-            // lockIcon
-            // 
-            this.lockIcon.ImageLocation = "";
-            this.lockIcon.InitialImage = ((System.Drawing.Image)(resources.GetObject("lockIcon.InitialImage")));
-            this.lockIcon.Location = new System.Drawing.Point(439, 130);
-            this.lockIcon.Name = "lockIcon";
-            this.lockIcon.Size = new System.Drawing.Size(130, 130);
-            this.lockIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.lockIcon.TabIndex = 2;
-            this.lockIcon.TabStop = false;
-            // 
             // loginButton
             // 
             this.loginButton.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.loginButton.Location = new System.Drawing.Point(404, 346);
+            this.loginButton.Location = new System.Drawing.Point(412, 346);
             this.loginButton.Name = "loginButton";
             this.loginButton.Size = new System.Drawing.Size(200, 27);
             this.loginButton.TabIndex = 0;
@@ -90,6 +80,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.labelSignIn);
             this.panel1.Controls.Add(this.loginButton);
             this.panel1.Controls.Add(this.lockIcon);
             this.panel1.Controls.Add(this.pwdTxtBox);
@@ -100,6 +91,28 @@
             this.panel1.Size = new System.Drawing.Size(1008, 551);
             this.panel1.TabIndex = 3;
             // 
+            // labelSignIn
+            // 
+            this.labelSignIn.AutoSize = true;
+            this.labelSignIn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelSignIn.Location = new System.Drawing.Point(477, 376);
+            this.labelSignIn.Name = "labelSignIn";
+            this.labelSignIn.Size = new System.Drawing.Size(69, 15);
+            this.labelSignIn.TabIndex = 3;
+            this.labelSignIn.Text = "Cadastrar";
+            this.labelSignIn.Click += new System.EventHandler(this.labelSignIn_Click);
+            // 
+            // lockIcon
+            // 
+            this.lockIcon.ImageLocation = "";
+            this.lockIcon.InitialImage = ((System.Drawing.Image)(resources.GetObject("lockIcon.InitialImage")));
+            this.lockIcon.Location = new System.Drawing.Point(447, 130);
+            this.lockIcon.Name = "lockIcon";
+            this.lockIcon.Size = new System.Drawing.Size(130, 130);
+            this.lockIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.lockIcon.TabIndex = 2;
+            this.lockIcon.TabStop = false;
+            // 
             // formLogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -109,9 +122,9 @@
             this.Name = "formLogin";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Login";
-            ((System.ComponentModel.ISupportInitialize)(this.lockIcon)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.lockIcon)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -123,6 +136,7 @@
         private System.Windows.Forms.PictureBox lockIcon;
         private System.Windows.Forms.Button loginButton;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label labelSignIn;
     }
 }
 
