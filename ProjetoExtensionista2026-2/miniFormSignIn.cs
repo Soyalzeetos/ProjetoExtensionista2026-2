@@ -1,10 +1,16 @@
 ﻿using ProjetoExtensionista2026_2.SQL.SQL_functions;
 using ProjetoExtensionista2026_2.SQL;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ProjetoExtensionista2026_2
 {
@@ -13,53 +19,55 @@ namespace ProjetoExtensionista2026_2
         public miniFormSignIn()
         {
             InitializeComponent();
+            ConfigurarPlaceholder();
+        }
+        private void ConfigurarPlaceholder()
+        {
+            nameTextBox.Text = "Insira seu nome de usuário";
+            pwdTextBox.Text = "Insira sua senha";
+            nameTextBox.ForeColor = Color.Gray;
+            pwdTextBox.ForeColor = Color.Gray;
+            pwdTextBox.UseSystemPasswordChar = false;
+        }
+        private void TextBox_Enter(object sender, EventArgs e)
+        {
+            if (sender == nameTextBox && nameTextBox.Text == "Insira seu nome de usuário")
+            {
+                nameTextBox.Text = "";
+                nameTextBox.ForeColor = Color.Black;
+            }
+            else if (sender == pwdTextBox && pwdTextBox.Text == "Insira sua senha")
+            {
+                pwdTextBox.Text = "";
+                pwdTextBox.ForeColor = Color.Black;
+                pwdTextBox.UseSystemPasswordChar = true;
+            }
         }
 
-        // Versão simplificada: valida campos, calcula hash e registra em background.
+        private void TxtSenha_Leave(object sender, EventArgs e)
+        {
+            if (sender == nameTextBox && string.IsNullOrWhiteSpace(nameTextBox.Text))
+            {
+                nameTextBox.Text = "Insira seu nome de usuário";
+                nameTextBox.ForeColor = Color.Gray;
+            }
+            else if (sender == pwdTextBox && string.IsNullOrWhiteSpace(pwdTextBox.Text))
+            {
+                pwdTextBox.Text = "Insira sua senha";
+                pwdTextBox.ForeColor = Color.Gray;
+                pwdTextBox.UseSystemPasswordChar = false;
+            }
+        }
+
         private async void RegisterBtn_Click(object sender, EventArgs e)
         {
-            string username = nameTextBox.Text?.Trim();
-            string password = pwdTextBox.Text ?? string.Empty;
-
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-            {
-                MessageBox.Show("Preencha usuário e senha.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            this.Enabled = false;
-            try
-            {
-                int result = await Task.Run(() =>
-                {
-                    if (!Connection.TestConnection())
-                        return -2; // código para erro de conexão
-
-                    using (var sha = SHA256.Create())
-                    {
-                        var hash = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password))).Replace("-", "").ToLowerInvariant();
-                        var sql = new LoginSQL();
-                        return sql.RegisterUser(username, hash);
-                    }
-                });
-
-                if (result == -2)
-                {
-                    MessageBox.Show("Erro de conexão com o banco.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else if (result > 0)
-                {
-                    MessageBox.Show("Registrado com sucesso.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    this.Close();
-                }
-                else
-                {
-                    MessageBox.Show("Falha ao registrar usuário.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            finally
-            {
-                this.Enabled = true;
+            LoginSQL loginSQL = new LoginSQL();
+            string username = nameTextBox.Text;
+            string password = pwdTextBox.Text;
+            string hash = loginSQL.HashificarSenha(password, out _);
+            int result = loginSQL.RegistrarUsuario(username, hash);
+            if (result == 1){
+                this.Close();
             }
         }
     }

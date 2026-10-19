@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjetoExtensionista2026_2.SQL;
+using ProjetoExtensionista2026_2.SQL.SQL_functions;
 
 namespace ProjetoExtensionista2026_2
 {
@@ -21,39 +22,33 @@ namespace ProjetoExtensionista2026_2
             lockIcon.Image = Properties.Resources.cadeado;
         }
 
-        private bool verificarHash()
-        {
-            string senha = pwdTxtBox.Text;
-            string hash = senha.GetHashCode().ToString();
-            bool isConnected = ProjetoExtensionista2026_2.SQL.Connection.TestConnection();
-            if (!isConnected)
-            {
-                MessageBox.Show("Falha na conexão com o banco de dados. Verifique sua conexão e tente novamente.", "Erro de Conexão", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-            else
-            {
-                MessageBox.Show("Conexão com o banco de dados estabelecida com sucesso.", "Conexão Estabelecida", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return Program.verificarHash2(hash, "Pablo é lindo");
-            }
-              
-        }
+        
 
         private void AlternarCadeado(object sender, EventArgs e)
         {
-            if (verificarHash())
+            using (LoginSQL loginSQL = new LoginSQL())
             {
-                lockIcon.Image = Properties.Resources.cadeado_aberto; // Altere para o ícone de cadeado aberto
+                string username = userTxtBox.Text;
+                string password = pwdTxtBox.Text;
+                string hash = loginSQL.HashificarSenha(password, out _);
+                int count = loginSQL.VerificarUsuario(username, hash);
+                bool ver = count == 1;
 
-                formPrincipal principal = new formPrincipal();
-                principal.FormClosed += (s, args) => this.Close();
+                if (ver)
+                {
+                    lockIcon.Image = Properties.Resources.cadeado_aberto; // Altere para o ícone de cadeado aberto
 
-                principal.Show();
-                this.Hide();
-            }
-            else
-            {
-                lockIcon.Image = Properties.Resources.cadeado; // Altere para o ícone de cadeado fechado
+                    formPrincipal principal = new formPrincipal();
+                    principal.FormClosed += (s, args) => this.Close();
+
+                    principal.Show();
+                    this.Hide();
+                }
+                else
+                {
+                    lockIcon.Image = Properties.Resources.cadeado;// Altere para o ícone de cadeado fechado
+                    MessageBox.Show("Nome de usuário ou senha inválidos.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
         }
 

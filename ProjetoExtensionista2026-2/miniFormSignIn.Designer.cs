@@ -70,6 +70,7 @@
             this.Controls.Add(this.pwdTextBox);
             this.Controls.Add(this.nameTextBox);
             this.Name = "miniFormSignIn";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "miniFormSignIn";
             this.ResumeLayout(false);
             this.PerformLayout();

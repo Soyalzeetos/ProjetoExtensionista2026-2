@@ -5,73 +5,98 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
+using ProjetoExtensionista2026_2.SQL;
 
 namespace ProjetoExtensionista2026_2.SQL.SQL_functions
 {
-    internal class LoginSQL
+    internal class LoginSQL : IDisposable
     {
-        public int RegisterUser(string username, string passwordHash, string tableName = "\"Users\"")
+        public string HashificarSenha(string password, out string passwordHash)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(passwordHash))
-                return -1;
-
-            using (var conn = new ProjetoExtensionista2026_2.SQL.Connection())
+            using (var sha256 = System.Security.Cryptography.SHA256.Create())
             {
-                conn.IniciarConexao();
-                try
-                {
-                    using (var cmd = conn.Conexao.CreateCommand())
-                    {
-                        // Inserção direta do hash calculado
-                        cmd.CommandText = $"INSERT INTO {tableName} (username, hash) VALUES (@u, @p) RETURNING id;";
-                        cmd.Parameters.AddWithValue("u", username);
-                        cmd.Parameters.AddWithValue("p", passwordHash);
+                var bytes = Encoding.UTF8.GetBytes(password);
+                var hash = sha256.ComputeHash(bytes);
+                return passwordHash = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+            }
+        }
 
-                        var result = cmd.ExecuteScalar();
-                        if (result != null)
+        public int VerificarUsuario(string username, string passwordHash)
+        {
+            if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(passwordHash))
+            {
+                using (var conn = new Connection())
+                {
+                    conn.IniciarConexao();
+                    try
+                    {
+                        using (var cmd = conn.Conexao.CreateCommand())
                         {
-                            try
-                            {
-                                // Tenta converter diretamente (suporta Int64 -> Int32 também)
-                                return Convert.ToInt32(result);
-                            }
-                            catch (Exception convEx)
-                            {
-                                // Registro de conversão falhou; tenta parsear como fallback
-                                Log(convEx);
-                                MessageBox.Show(convEx.Message, "Erro de Conversão", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                if (int.TryParse(result.ToString(), out int id))
-                                    return id;
-                            }
+                            cmd.CommandText = "SELECT count(*) FROM \"Users\" WHERE username = @u AND hash = @p;";
+                            cmd.Parameters.AddWithValue("u", username);
+                            cmd.Parameters.AddWithValue("p", passwordHash);
+                            int count = Convert.ToInt32(cmd.ExecuteScalar());
+                            return count;
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Log(ex);
-                    return -1;
-                }
-                finally
-                {
-                    conn.FecharConexao();
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Erro ao verificar usuário", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return -1;
+                    }
+                    finally
+                    {
+                        conn.FecharConexao();
+                    }
                 }
             }
-
-            return -1;
+            else
+            {
+                MessageBox.Show("Nome de usuário ou senha inválidos.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return 0;
+            }
         }
 
-        private void Log(Exception ex)
+        public int RegistrarUsuario(string username, string passwordHash)
         {
-            try
+            if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(passwordHash))
             {
-                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "login_sql.log");
-                var text = $"[{DateTime.UtcNow:o}] {ex.GetType().FullName}: {ex.Message}\r\n{ex.StackTrace}\r\n";
-                File.AppendAllText(path, text, Encoding.UTF8);
+                using (var conn = new Connection())
+                {
+                    conn.IniciarConexao();
+                    try
+                    {
+                        using (var cmd = conn.Conexao.CreateCommand())
+                        {
+                            cmd.CommandText = "INSERT INTO \"Users\" (username, hash) VALUES (@u, @p);";
+                            cmd.Parameters.AddWithValue("u", username);
+                            cmd.Parameters.AddWithValue("p", passwordHash);
+                            cmd.ExecuteNonQuery();
+                            return 1; // Sucesso
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Erro ao registrar usuário", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return -1;
+                    }
+                    finally
+                    {
+                        conn.FecharConexao();
+                    }
+                }
             }
-            catch
+            else
             {
-                // Não interrompe a execução se o log falhar
+                MessageBox.Show("Nome de usuário ou senha inválidos.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return 0;
             }
         }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+        }
+
     }
 }
