@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.panelSidebar = new System.Windows.Forms.Panel();
-            this.panelWorkspace = new System.Windows.Forms.Panel();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.listBoxSidebar = new System.Windows.Forms.ListBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panelWorkspace = new System.Windows.Forms.Panel();
             this.panelSidebar.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -45,22 +45,6 @@
             this.panelSidebar.Size = new System.Drawing.Size(261, 681);
             this.panelSidebar.TabIndex = 0;
             // 
-            // panelWorkspace
-            // 
-            this.panelWorkspace.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelWorkspace.Location = new System.Drawing.Point(261, 0);
-            this.panelWorkspace.Name = "panelWorkspace";
-            this.panelWorkspace.Size = new System.Drawing.Size(803, 681);
-            this.panelWorkspace.TabIndex = 1;
-            // 
-            // panel1
-            // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 622);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(261, 59);
-            this.panel1.TabIndex = 1;
-            // 
             // listBoxSidebar
             // 
             this.listBoxSidebar.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -73,11 +57,27 @@
             this.listBoxSidebar.TabIndex = 3;
             this.listBoxSidebar.Click += new System.EventHandler(this.IdentificarSidebarListBox);
             // 
+            // panel1
+            // 
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 622);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(261, 59);
+            this.panel1.TabIndex = 1;
+            // 
+            // panelWorkspace
+            // 
+            this.panelWorkspace.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelWorkspace.Location = new System.Drawing.Point(261, 0);
+            this.panelWorkspace.Name = "panelWorkspace";
+            this.panelWorkspace.Size = new System.Drawing.Size(1003, 681);
+            this.panelWorkspace.TabIndex = 1;
+            // 
             // formPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1064, 681);
+            this.ClientSize = new System.Drawing.Size(1264, 681);
             this.Controls.Add(this.panelWorkspace);
             this.Controls.Add(this.panelSidebar);
             this.Name = "formPrincipal";

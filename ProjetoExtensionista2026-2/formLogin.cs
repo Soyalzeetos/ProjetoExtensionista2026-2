@@ -36,7 +36,7 @@ namespace ProjetoExtensionista2026_2
 
                 if (ver)
                 {
-                    lockIcon.Image = Properties.Resources.cadeado_aberto; // Altere para o ícone de cadeado aberto
+                    lockIcon.Image = Properties.Resources.cadeado_aberto;
 
                     formPrincipal principal = new formPrincipal();
                     principal.FormClosed += (s, args) => this.Close();
