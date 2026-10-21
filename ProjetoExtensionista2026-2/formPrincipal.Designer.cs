@@ -83,6 +83,7 @@
             this.Name = "formPrincipal";
             this.Text = "formPrincipal";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.Load += new System.EventHandler(this.formPrincipal_Load);
             this.panelSidebar.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -93,6 +94,6 @@
         private System.Windows.Forms.Panel panelSidebar;
         private System.Windows.Forms.Panel panelWorkspace;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ListBox listBoxSidebar;
+        public System.Windows.Forms.ListBox listBoxSidebar;
     }
 }

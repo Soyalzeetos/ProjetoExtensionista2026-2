@@ -16,13 +16,13 @@ namespace ProjetoExtensionista2026_2
         {
             InitializeComponent();
         }
-        public void Preencher(Produto produto)
-        {
-            lblName.Text = produto.Nome;
-            lblValor.Text = produto.Preco.ToString("C");
+        //public void Preencher(produto)
+        //{
+        //    lblName.Text = produto.Nome;
+        //    lblValor.Text = produto.Preco.ToString("C");
+        //    if (produto.Imagem != null)
+        //        imgProduct.Image = produto.Imagem;
+        //}
 
-            if (produto.Imagem != null)
-                imgProduct.Image = produto.Imagem;
-        }
     }
 }

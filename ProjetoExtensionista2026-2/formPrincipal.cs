@@ -15,14 +15,27 @@ namespace ProjetoExtensionista2026_2
         public formPrincipal()
         {
             InitializeComponent();
-            listBoxSidebar.Items.Clear();
-            listBoxSidebar.Items.Add("Principal");
-            listBoxSidebar.Items.Add("Cadastro");
-            listBoxSidebar.Items.Add("Vendas");
-            listBoxSidebar.Items.Add("Configurações");
-            listBoxSidebar.Items.Add("Sair");
+            
 
             GerenciadorTema.AplicarTema(this);
+        }
+        private void formPrincipal_Load(object sender, EventArgs e)
+        {
+            using (var sql = new SQL.SQL_functions.LoginSQL())
+            {
+                string role = sql.RolePicker(SQL.SQL_functions.LoginSQL.SessaoUsuario.Nome);
+                if (!string.IsNullOrEmpty(role))
+                {
+                    SQL.SQL_functions.LoginSQL.SessaoUsuario.Role = role;
+                    var rolesManager = new rolesClass();
+                    rolesManager.RoleSidebar(this, role, SQL.SQL_functions.LoginSQL.SessaoUsuario.Nome, SQL.SQL_functions.LoginSQL.SessaoUsuario.Hash);
+                }
+                else
+                {
+                    MessageBox.Show("Não foi possível determinar o papel do usuário. O aplicativo será encerrado.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Application.Exit();
+                }
+            }
         }
         private void AbrirFormNoWorkspace(object formFilho)
         {
@@ -69,5 +82,7 @@ namespace ProjetoExtensionista2026_2
                     break;
             }
         }
+
+        
     }
 }

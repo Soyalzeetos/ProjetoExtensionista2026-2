@@ -11,6 +11,21 @@ namespace ProjetoExtensionista2026_2.SQL.SQL_functions
 {
     internal class LoginSQL : IDisposable
     {
+        public static class SessaoUsuario
+        {
+            public static string Role { get; set; } = string.Empty;
+            public static string Nome { get; set; } = string.Empty;
+            public static string Hash { get; set; } = string.Empty;
+
+            public static void EncerrarSessao()
+            {
+                Role = string.Empty;
+                Nome = string.Empty;
+                Hash = string.Empty;
+            }
+
+            public static bool EstaAutenticado => !string.IsNullOrEmpty(Nome);
+        }
         public string HashificarSenha(string password, out string passwordHash)
         {
             using (var sha256 = System.Security.Cryptography.SHA256.Create())
@@ -20,6 +35,42 @@ namespace ProjetoExtensionista2026_2.SQL.SQL_functions
                 return passwordHash = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
             }
         }
+        
+        public string RolePicker(string username)
+        {
+            if (!string.IsNullOrWhiteSpace(username))
+            {
+                using (var conn = new Connection())
+                {
+                    conn.IniciarConexao();
+                    try
+                    {
+                        using (var cmd = conn.Conexao.CreateCommand())
+                        {
+                            cmd.CommandText = "SELECT role FROM \"Users\" WHERE username = @u;";
+                            cmd.Parameters.AddWithValue("u", username);
+                            var role = cmd.ExecuteScalar()?.ToString();
+                            return role;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Erro ao buscar papel do usuário", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return null;
+                    }
+                    finally
+                    {
+                        conn.FecharConexao();
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Nome de usuário inválido.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return null;
+            }
+        }
+        
 
         public int VerificarUsuario(string username, string passwordHash)
         {

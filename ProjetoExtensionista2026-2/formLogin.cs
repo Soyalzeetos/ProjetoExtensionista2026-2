@@ -38,6 +38,9 @@ namespace ProjetoExtensionista2026_2
                 {
                     lockIcon.Image = Properties.Resources.cadeado_aberto;
 
+                    LoginSQL.SessaoUsuario.Nome = username;
+                    LoginSQL.SessaoUsuario.Hash = hash;
+
                     formPrincipal principal = new formPrincipal();
                     principal.FormClosed += (s, args) => this.Close();
 
