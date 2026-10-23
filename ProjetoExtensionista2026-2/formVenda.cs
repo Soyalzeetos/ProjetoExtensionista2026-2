@@ -36,12 +36,7 @@ namespace ProjetoExtensionista2026_2
                 flowLayoutPanelProdutos.Resize += (s, ev) => CentralizarCards();
             }
 
-            // ATENÇÃO: Enquanto a tabela 'product' não for criada no Supabase,
-            // chamamos o teste local abaixo para desenhar os cards na tela imediatamente:
-            TestarCardsSemBanco();
-
-            // Quando a tabela estiver criada e populada no Supabase, comente a linha acima e use:
-            // BuscarProdutosNoSupabase("");
+            BuscarProdutosNoSupabase("");
         }
 
         private void splitContainer_menu_SplitterMoved(object sender, SplitterEventArgs e)
@@ -104,16 +99,31 @@ namespace ProjetoExtensionista2026_2
             flowLayoutPanelProdutos.Controls.Clear();
 
             string query = @"
-            SELECT 
-                id_product, code_product, name_product, description_product, 
-                price_buy, price_sell, location_product, stock_quantity, 
-                min_stock_quantity, unit_measure, category_product, 
-                supplier_product, active, picture_url
-            FROM product 
-            WHERE active = TRUE 
-              AND (@filtro = '' OR name_product ILIKE @filtro_like OR description_product ILIKE @filtro_like)
-            ORDER BY name_product ASC 
-            LIMIT 40;";
+        SELECT 
+            p.id_product,
+            p.name AS name_product,
+            p.description AS description_product,
+            p.purchase_price AS price_buy,
+            p.sale_price AS price_sell,
+            p.location AS location_product,
+            p.stock_quantity,
+            p.min_stock AS min_stock_quantity,
+            p.unit AS unit_measure,
+            c.name_category AS category_product,
+            s.name AS supplier_product,
+            p.is_active AS active,
+            p.image_url AS picture_url
+        FROM public.product p
+        LEFT JOIN public.category c ON c.id_category = p.id_category
+        LEFT JOIN public.supplier s ON s.id_supplier = p.id_supplier
+        WHERE p.is_active = TRUE
+          AND (
+              @filtro = '' 
+              OR p.name ILIKE @filtro_like 
+              OR p.description ILIKE @filtro_like
+          )
+        ORDER BY p.id_product ASC
+        LIMIT 40;";
 
             try
             {
@@ -123,8 +133,9 @@ namespace ProjetoExtensionista2026_2
 
                     using (var cmd = new NpgsqlCommand(query, db.Conexao))
                     {
-                        cmd.Parameters.AddWithValue("@filtro", filtroTexto.Trim());
-                        cmd.Parameters.AddWithValue("@filtro_like", $"%{filtroTexto.Trim()}%");
+                        string filtro = filtroTexto?.Trim() ?? "";
+                        cmd.Parameters.AddWithValue("@filtro", filtro);
+                        cmd.Parameters.AddWithValue("@filtro_like", $"%{filtro}%");
 
                         using (var reader = cmd.ExecuteReader())
                         {
@@ -134,14 +145,13 @@ namespace ProjetoExtensionista2026_2
                             {
                                 var prod = new ProdutoDTO
                                 {
-                                    Id = reader.GetInt32(reader.GetOrdinal("id_product")),
-                                    Codigo = reader.IsDBNull(reader.GetOrdinal("code_product")) ? "" : reader.GetString(reader.GetOrdinal("code_product")),
-                                    Nome = reader.GetString(reader.GetOrdinal("name_product")),
+                                    Id = Convert.ToInt32(reader["id_product"]),
+                                    Nome = reader.IsDBNull(reader.GetOrdinal("name_product")) ? "" : reader.GetString(reader.GetOrdinal("name_product")),
                                     Descricao = reader.IsDBNull(reader.GetOrdinal("description_product")) ? "" : reader.GetString(reader.GetOrdinal("description_product")),
                                     PrecoCompra = reader.IsDBNull(reader.GetOrdinal("price_buy")) ? 0m : reader.GetDecimal(reader.GetOrdinal("price_buy")),
                                     PrecoVenda = reader.IsDBNull(reader.GetOrdinal("price_sell")) ? 0m : reader.GetDecimal(reader.GetOrdinal("price_sell")),
                                     Localizacao = reader.IsDBNull(reader.GetOrdinal("location_product")) ? "" : reader.GetString(reader.GetOrdinal("location_product")),
-                                    Estoque = reader.IsDBNull(reader.GetOrdinal("stock_quantity")) ? 0 : reader.GetInt32(reader.GetOrdinal("stock_quantity")),
+                                    Estoque = reader.IsDBNull(reader.GetOrdinal("stock_quantity")) ? 0 : Convert.ToInt32(reader.GetDecimal(reader.GetOrdinal("stock_quantity"))),
                                     EstoqueMinimo = reader.IsDBNull(reader.GetOrdinal("min_stock_quantity")) ? 0 : reader.GetInt32(reader.GetOrdinal("min_stock_quantity")),
                                     Unidade = reader.IsDBNull(reader.GetOrdinal("unit_measure")) ? "" : reader.GetString(reader.GetOrdinal("unit_measure")),
                                     Categoria = reader.IsDBNull(reader.GetOrdinal("category_product")) ? "" : reader.GetString(reader.GetOrdinal("category_product")),
@@ -159,7 +169,6 @@ namespace ProjetoExtensionista2026_2
                                     AcaoSelecionarProduto(prodId, preco, qtd);
                                 };
 
-                                // Reutiliza o método unificado para Edição
                                 card.AoClicarParaEditar += (produtoClicado) =>
                                 {
                                     AbrirModalProduto(produtoClicado);
@@ -219,11 +228,7 @@ namespace ProjetoExtensionista2026_2
 
                 if (formModal.ShowDialog(this) == DialogResult.OK)
                 {
-                    // Enquanto estiver testando sem banco:
-                    TestarCardsSemBanco();
-
-                    // Quando conectar ao Supabase:
-                    // BuscarProdutosNoSupabase(txtPesquisa.Text);
+                    BuscarProdutosNoSupabase(txtPesquisa.Text);
                 }
             }
         }
@@ -262,132 +267,6 @@ namespace ProjetoExtensionista2026_2
                 sobra = 0;
 
             flowLayoutPanelProdutos.Padding = new Padding(sobra, flowLayoutPanelProdutos.Padding.Top, 0, flowLayoutPanelProdutos.Padding.Bottom);
-        }
-
-        /// <summary>
-        /// Popula o painel com produtos mockados para testar interface sem depender do banco
-        /// </summary>
-        private void TestarCardsSemBanco()
-        {
-            flowLayoutPanelProdutos.Controls.Clear();
-            flowLayoutPanelProdutos.SuspendLayout();
-
-            var produtosTeste = new[]
-            {
-                new {
-                    Id = 1,
-                    Nome = "Óleo Motor 10W30",
-                    Desc = "Lubrificante semissintético",
-                    Venda = 38.50m,
-                    Compra = 22.00m,
-                    Estoque = 24,
-                    Foto = "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=200"
-                },
-                new {
-                    Id = 2,
-                    Nome = "Vela de Ignição Iridium",
-                    Desc = "Partida rápida, queima limpa e durabilidade estendida",
-                    Venda = 65.00m,
-                    Compra = 40.00m,
-                    Estoque = 12,
-                    Foto = "https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=200"
-                },
-                new {
-                    Id = 3,
-                    Nome = "Pastilha de Freio Dianteira",
-                    Desc = "Composto cerâmico de alto coeficiente de atrito",
-                    Venda = 45.00m,
-                    Compra = 25.00m,
-                    Estoque = 8,
-                    Foto = (string)null
-                },
-                new {
-                    Id = 4,
-                    Nome = "Kit de Transmissão Coroa Pinhão e Corrente com Retentor Reforçado Aço 1045",
-                    Desc = "Conjunto completo linha pesada",
-                    Venda = 189.90m,
-                    Compra = 120.00m,
-                    Estoque = 5,
-                    Foto = (string)null
-                },
-                new {
-                    Id = 5,
-                    Nome = "Filtro de Ar Esportivo",
-                    Desc = "Elemento filtrante de algodão cirúrgico multicamadas de alto fluxo lavável e reutilizável com vedação de poliuretano vulcanizado para evitar passagem de impurezas mesmo em estradas de terra severas",
-                    Venda = 82.00m,
-                    Compra = 50.00m,
-                    Estoque = 0,
-                    Foto = (string)null
-                },
-                new {
-                    Id = 6,
-                    Nome = "Pneu Traseiro Sem Câmara 140/70-17 66H Radial Tubeless para Pista e Uso Urbano Misto",
-                    Desc = "Borracha com duplo composto de sílica para máxima aderência em curvas com piso molhado e carcaça estruturada em lonas diagonais super resistentes a furos",
-                    Venda = 420.00m,
-                    Compra = 295.00m,
-                    Estoque = 3,
-                    Foto = (string)null
-                },
-                new {
-                    Id = 7,
-                    Nome = "Módulo de Injeção Eletrônica ECU",
-                    Desc = "Unidade central de controle e mapeamento",
-                    Venda = 15890.50m,
-                    Compra = 11200.00m,
-                    Estoque = 1,
-                    Foto = (string)null
-                },
-                new {
-                    Id = 8,
-                    Nome = "Brinde / Adesivo Resinador",
-                    Desc = "Item promocional",
-                    Venda = 0.00m,
-                    Compra = 0.00m,
-                    Estoque = 50,
-                    Foto = (string)null
-                },
-                new {
-                    Id = 9,
-                    Nome = "SUPERHIPERMEGADESENGRAXANTEDEALTAPRECISAO",
-                    Desc = "SemEspacosNoTextoParaValidarQuebraDePalavraLongaNoComponenteDeLabel",
-                    Venda = 29.90m,
-                    Compra = 15.00m,
-                    Estoque = 18,
-                    Foto = (string)null
-                },
-                new {
-                    Id = 10,
-                    Nome = "Cabo de Embreagem",
-                    Desc = "Aço flexível com capa lubrificada",
-                    Venda = 22.00m,
-                    Compra = 10.50m,
-                    Estoque = 0,
-                    Foto = (string)null
-                }
-            };
-
-            foreach (var item in produtosTeste)
-            {
-                var card = new UcCardProduto();
-                card.Margin = new Padding(8);
-                card.CarregarDados(item.Id, item.Nome, item.Desc, item.Venda, item.Compra, item.Estoque, item.Foto);
-
-                card.AoAdicionarProduto += (id, preco, qtd) =>
-                {
-                    AcaoSelecionarProduto(id, preco, qtd);
-                };
-
-                // Reutiliza o método unificado para Edição
-                card.AoClicarParaEditar += (produtoClicado) =>
-                {
-                    AbrirModalProduto(produtoClicado);
-                };
-
-                flowLayoutPanelProdutos.Controls.Add(card);
-            }
-
-            flowLayoutPanelProdutos.ResumeLayout();
-            CentralizarCards();
         }
 
         private void btnCadastrarProduto_Click(object sender, EventArgs e)

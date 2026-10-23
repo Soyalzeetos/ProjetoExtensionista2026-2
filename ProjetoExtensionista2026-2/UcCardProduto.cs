@@ -107,7 +107,6 @@ namespace ProjetoExtensionista2026_2
             var dto = new ProdutoDTO
             {
                 Id = id,
-                Codigo = id.ToString(),
                 Nome = nome,
                 Descricao = descricao,
                 PrecoVenda = precoVenda,

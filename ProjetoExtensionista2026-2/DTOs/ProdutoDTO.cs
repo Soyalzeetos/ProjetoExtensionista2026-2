@@ -9,7 +9,6 @@ namespace ProjetoExtensionista2026_2
     public class ProdutoDTO
     {
         public int Id { get; set; }
-        public string Codigo { get; set; }
         public string Nome { get; set; }
         public string Descricao { get; set; }
         public decimal PrecoCompra { get; set; }

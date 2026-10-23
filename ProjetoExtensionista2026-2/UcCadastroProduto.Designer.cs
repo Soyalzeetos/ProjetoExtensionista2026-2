@@ -52,7 +52,6 @@
             this.btnCancelar = new System.Windows.Forms.Button();
             this.btnLimpar = new System.Windows.Forms.Button();
             this.btnSalvar = new System.Windows.Forms.Button();
-            this.txtFornecedor = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.txtLocalizacao = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
@@ -65,6 +64,9 @@
             this.numPrecoCompra = new System.Windows.Forms.NumericUpDown();
             this.numEstoque = new System.Windows.Forms.NumericUpDown();
             this.numEstoqueMinimo = new System.Windows.Forms.NumericUpDown();
+            this.cboFornecedor = new System.Windows.Forms.ComboBox();
+            this.btnAdicionarCategoria = new System.Windows.Forms.Button();
+            this.btnAdicionarFornecedor = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picFotoPreview)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numPrecoVenda)).BeginInit();
@@ -108,7 +110,7 @@
             this.cboCategoria.FormattingEnabled = true;
             this.cboCategoria.Location = new System.Drawing.Point(565, 167);
             this.cboCategoria.Name = "cboCategoria";
-            this.cboCategoria.Size = new System.Drawing.Size(314, 24);
+            this.cboCategoria.Size = new System.Drawing.Size(277, 24);
             this.cboCategoria.TabIndex = 3;
             // 
             // txtDescricao
@@ -319,15 +321,6 @@
             this.btnSalvar.Text = "Salvar";
             this.btnSalvar.UseVisualStyleBackColor = true;
             // 
-            // txtFornecedor
-            // 
-            this.txtFornecedor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFornecedor.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtFornecedor.Location = new System.Drawing.Point(565, 213);
-            this.txtFornecedor.Name = "txtFornecedor";
-            this.txtFornecedor.Size = new System.Drawing.Size(314, 22);
-            this.txtFornecedor.TabIndex = 27;
-            // 
             // label12
             // 
             this.label12.AutoSize = true;
@@ -451,10 +444,40 @@
             this.numEstoqueMinimo.Size = new System.Drawing.Size(120, 20);
             this.numEstoqueMinimo.TabIndex = 38;
             // 
+            // cboFornecedor
+            // 
+            this.cboFornecedor.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cboFornecedor.FormattingEnabled = true;
+            this.cboFornecedor.Location = new System.Drawing.Point(565, 213);
+            this.cboFornecedor.Name = "cboFornecedor";
+            this.cboFornecedor.Size = new System.Drawing.Size(277, 24);
+            this.cboFornecedor.TabIndex = 39;
+            // 
+            // btnAdicionarCategoria
+            // 
+            this.btnAdicionarCategoria.Location = new System.Drawing.Point(848, 166);
+            this.btnAdicionarCategoria.Name = "btnAdicionarCategoria";
+            this.btnAdicionarCategoria.Size = new System.Drawing.Size(25, 25);
+            this.btnAdicionarCategoria.TabIndex = 40;
+            this.btnAdicionarCategoria.Text = "➕";
+            this.btnAdicionarCategoria.UseVisualStyleBackColor = true;
+            // 
+            // btnAdicionarFornecedor
+            // 
+            this.btnAdicionarFornecedor.Location = new System.Drawing.Point(848, 213);
+            this.btnAdicionarFornecedor.Name = "btnAdicionarFornecedor";
+            this.btnAdicionarFornecedor.Size = new System.Drawing.Size(25, 25);
+            this.btnAdicionarFornecedor.TabIndex = 41;
+            this.btnAdicionarFornecedor.Text = "➕";
+            this.btnAdicionarFornecedor.UseVisualStyleBackColor = true;
+            // 
             // UcCadastroProduto
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnAdicionarFornecedor);
+            this.Controls.Add(this.btnAdicionarCategoria);
+            this.Controls.Add(this.cboFornecedor);
             this.Controls.Add(this.numEstoqueMinimo);
             this.Controls.Add(this.numEstoque);
             this.Controls.Add(this.numPrecoCompra);
@@ -466,7 +489,6 @@
             this.Controls.Add(this.picFotoPreview);
             this.Controls.Add(this.txtLocalizacao);
             this.Controls.Add(this.label13);
-            this.Controls.Add(this.txtFornecedor);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.btnSalvar);
             this.Controls.Add(this.btnLimpar);
@@ -529,7 +551,6 @@
         private System.Windows.Forms.Button btnCancelar;
         private System.Windows.Forms.Button btnLimpar;
         private System.Windows.Forms.Button btnSalvar;
-        private System.Windows.Forms.TextBox txtFornecedor;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox txtLocalizacao;
         private System.Windows.Forms.Label label13;
@@ -542,5 +563,8 @@
         private System.Windows.Forms.NumericUpDown numPrecoCompra;
         private System.Windows.Forms.NumericUpDown numEstoque;
         private System.Windows.Forms.NumericUpDown numEstoqueMinimo;
+        private System.Windows.Forms.ComboBox cboFornecedor;
+        private System.Windows.Forms.Button btnAdicionarCategoria;
+        private System.Windows.Forms.Button btnAdicionarFornecedor;
     }
 }

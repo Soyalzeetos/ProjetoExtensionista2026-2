@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Net.Http;
@@ -15,7 +16,7 @@ namespace ProjetoExtensionista2026_2
         private static readonly HttpClient _httpClient = CriarHttpClient();
         private static readonly ConcurrentDictionary<string, byte[]> _imageBytesCache = new ConcurrentDictionary<string, byte[]>();
 
-        private ProdutoDTO _produtoRef; 
+        private ProdutoDTO _produtoRef;
         public int? ProdutoIdEmEdicao { get; private set; }
         public event Action AoConcluirOperacao;
 
@@ -36,9 +37,6 @@ namespace ProjetoExtensionista2026_2
             return client;
         }
 
-        /// <summary>
-        /// Configura Unidade (UNID/JG), Categoria, TextBoxes e RadioButtons de Status
-        /// </summary>
         private void ConfigurarControlesIniciais()
         {
             txtCodigo.ReadOnly = true;
@@ -46,44 +44,215 @@ namespace ProjetoExtensionista2026_2
             txtMargem.ReadOnly = true;
             txtMargem.TabStop = false;
 
-            // 1. Configuração da Unidade (UNID ou JG)
+            // 1. Unidade (UNID ou JG)
             cboUnidade.DropDownStyle = ComboBoxStyle.DropDownList;
             if (cboUnidade.Items.Count == 0)
             {
                 cboUnidade.Items.AddRange(new object[] { "UNID", "JG" });
             }
-            cboUnidade.SelectedIndex = 0; // Padrão: UNID
+            cboUnidade.SelectedIndex = 0;
 
-            // 2. Configuração da Categoria (ComboBox)
-            cboCategoria.DropDownStyle = ComboBoxStyle.DropDown;
-            if (cboCategoria.Items.Count == 0)
-            {
-                cboCategoria.Items.AddRange(new object[]
-                {
-                    "Motor",
-                    "Freios",
-                    "Suspensão",
-                    "Elétrica / Ignição",
-                    "Transmissão",
-                    "Lubrificantes e Fluidos",
-                    "Filtros",
-                    "Pneus e Rodas",
-                    "Acessórios",
-                    "Outros"
-                });
-            }
+            // 2. ComboBoxes de Categoria e Fornecedor
+            cboCategoria.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboFornecedor.DropDownStyle = ComboBoxStyle.DropDownList;
 
-            // 3. Status inicial via RadioButtons
+            // 3. Status inicial
             DefinirStatusProduto(true);
 
-            // Eventos para cálculo instantâneo da margem
             numPrecoCompra.ValueChanged += (s, e) => CalcularMargem();
             numPrecoVenda.ValueChanged += (s, e) => CalcularMargem();
+
+            // Carrega listas do banco de dados na inicialização
+            this.Load += async (s, e) =>
+            {
+                await CarregarCategoriasBancoAsync();
+                await CarregarFornecedoresBancoAsync();
+                await GerarProximoCodigoAsync();
+            };
         }
 
-        /// <summary>
-        /// Define e lê o status Ativo / Inativo através dos RadioButtons
-        /// </summary>
+        public class ItemCombo
+        {
+            public long Id { get; set; } 
+            public string Nome { get; set; }
+
+            public ItemCombo(long id, string nome)
+            {
+                Id = id;
+                Nome = nome;
+            }
+
+            public override string ToString() => Nome;
+        }
+
+        public async Task CarregarCategoriasBancoAsync(long? idParaSelecionar = null)
+        {
+            try
+            {
+                var lista = await Task.Run(() =>
+                {
+                    var itens = new List<ItemCombo>();
+                    using (var db = new Connection())
+                    {
+                        db.IniciarConexao();
+                        const string sql = "SELECT id_category, name_category FROM public.category ORDER BY name_category ASC;";
+                        using (var cmd = new NpgsqlCommand(sql, db.Conexao))
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                itens.Add(new ItemCombo(
+                                    reader.GetInt64(reader.GetOrdinal("id_category")),
+                                    reader.GetString(reader.GetOrdinal("name_category"))
+                                ));
+                            }
+                        }
+                    }
+                    return itens;
+                });
+
+                cboCategoria.DataSource = null;
+                cboCategoria.DisplayMember = "Nome";
+                cboCategoria.ValueMember = "Id";
+                cboCategoria.DataSource = lista;
+
+                if (idParaSelecionar.HasValue)
+                {
+                    cboCategoria.SelectedValue = idParaSelecionar.Value;
+                }
+                else
+                {
+                    cboCategoria.SelectedIndex = -1;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao carregar categorias do banco: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        public async Task CarregarFornecedoresBancoAsync(long? idParaSelecionar = null)
+        {
+            try
+            {
+                var lista = await Task.Run(() =>
+                {
+                    var itens = new List<ItemCombo>();
+                    using (var db = new Connection())
+                    {
+                        db.IniciarConexao();
+                        const string sql = "SELECT id_supplier, name FROM public.supplier WHERE is_active = TRUE ORDER BY name ASC;";
+                        using (var cmd = new NpgsqlCommand(sql, db.Conexao))
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                itens.Add(new ItemCombo(
+                                    reader.GetInt64(reader.GetOrdinal("id_supplier")),
+                                    reader.GetString(reader.GetOrdinal("name"))
+                                ));
+                            }
+                        }
+                    }
+                    return itens;
+                });
+
+                cboFornecedor.DataSource = null;
+                cboFornecedor.DisplayMember = "Nome";
+                cboFornecedor.ValueMember = "Id";
+                cboFornecedor.DataSource = lista;
+
+                if (idParaSelecionar.HasValue)
+                {
+                    cboFornecedor.SelectedValue = idParaSelecionar.Value;
+                }
+                else
+                {
+                    cboFornecedor.SelectedIndex = -1;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao carregar fornecedores do banco: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private async void btnAdicionarCategoria_Click(object sender, EventArgs e)
+        {
+            string novaCategoria = PromptDialog.Mostrar("Digite o nome da nova categoria:", "Nova Categoria");
+            if (string.IsNullOrWhiteSpace(novaCategoria)) return;
+
+            novaCategoria = novaCategoria.Trim();
+
+            try
+            {
+                long idCriado = await Task.Run(() =>
+                {
+                    using (var db = new Connection())
+                    {
+                        db.IniciarConexao();
+                        const string sql = @"
+                            INSERT INTO public.category (name_category)
+                            VALUES (@cat)
+                            ON CONFLICT (name_category) DO NOTHING;
+
+                            SELECT id_category FROM public.category WHERE name_category = @cat LIMIT 1;";
+
+                        using (var cmd = new NpgsqlCommand(sql, db.Conexao))
+                        {
+                            cmd.Parameters.AddWithValue("@cat", novaCategoria);
+                            object resultado = cmd.ExecuteScalar();
+                            return Convert.ToInt64(resultado);
+                        }
+                    }
+                });
+
+                await CarregarCategoriasBancoAsync(idCriado);
+                MessageBox.Show("Categoria adicionada com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao adicionar categoria: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void btnAdicionarFornecedor_Click(object sender, EventArgs e)
+        {
+            string novoFornecedor = PromptDialog.Mostrar("Digite o nome do novo fornecedor:", "Novo Fornecedor");
+            if (string.IsNullOrWhiteSpace(novoFornecedor)) return;
+
+            novoFornecedor = novoFornecedor.Trim();
+
+            try
+            {
+                long idCriado = await Task.Run(() =>
+                {
+                    using (var db = new Connection())
+                    {
+                        db.IniciarConexao();
+                        const string sql = @"
+                            INSERT INTO public.supplier (name, is_active)
+                            VALUES (@nome, TRUE)
+                            RETURNING id_supplier;";
+
+                        using (var cmd = new NpgsqlCommand(sql, db.Conexao))
+                        {
+                            cmd.Parameters.AddWithValue("@nome", novoFornecedor);
+                            object resultado = cmd.ExecuteScalar();
+                            return Convert.ToInt64(resultado);
+                        }
+                    }
+                });
+
+                await CarregarFornecedoresBancoAsync(idCriado);
+                MessageBox.Show("Fornecedor adicionado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao adicionar fornecedor: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         public void DefinirStatusProduto(bool ativo)
         {
             rbAtivo.Checked = ativo;
@@ -95,9 +264,6 @@ namespace ProjetoExtensionista2026_2
             return rbAtivo.Checked;
         }
 
-        /// <summary>
-        /// Consulta o próximo código em background sem nunca travar a abertura da tela
-        /// </summary>
         public async Task GerarProximoCodigoAsync()
         {
             try
@@ -107,7 +273,7 @@ namespace ProjetoExtensionista2026_2
                     using (var db = new Connection())
                     {
                         db.IniciarConexao();
-                        const string query = "SELECT COALESCE(MAX(id_product), 0) + 1 FROM product;";
+                        const string query = "SELECT COALESCE(MAX(id_product), 0) + 1 FROM public.product;";
                         using (var cmd = new NpgsqlCommand(query, db.Conexao))
                         {
                             object resultado = await cmd.ExecuteScalarAsync();
@@ -132,10 +298,7 @@ namespace ProjetoExtensionista2026_2
             }
         }
 
-        /// <summary>
-        /// Preenche todos os campos instantaneamente ao clicar no Card
-        /// </summary>
-        public void CarregarDadosParaEdicao(ProdutoDTO p)
+        public async void CarregarDadosParaEdicao(ProdutoDTO p)
         {
             if (p == null) return;
 
@@ -144,46 +307,25 @@ namespace ProjetoExtensionista2026_2
             _produtoRef = p;
             ProdutoIdEmEdicao = p.Id;
 
-            // Código e TextBoxes (Nome, Descrição, Localização, Fornecedor)
-            txtCodigo.Text = !string.IsNullOrWhiteSpace(p.Codigo) ? p.Codigo : p.Id.ToString();
+            txtCodigo.Text = p.Id.ToString();
             txtNome.Text = p.Nome ?? string.Empty;
             txtDescricao.Text = p.Descricao ?? string.Empty;
             txtLocalizacao.Text = p.Localizacao ?? string.Empty;
-            txtFornecedor.Text = p.Fornecedor ?? string.Empty;
 
             numPrecoCompra.Value = Math.Max(numPrecoCompra.Minimum, Math.Min(numPrecoCompra.Maximum, p.PrecoCompra));
             numPrecoVenda.Value = Math.Max(numPrecoVenda.Minimum, Math.Min(numPrecoVenda.Maximum, p.PrecoVenda));
             numEstoque.Value = Math.Max(numEstoque.Minimum, Math.Min(numEstoque.Maximum, (decimal)p.Estoque));
             numEstoqueMinimo.Value = Math.Max(numEstoqueMinimo.Minimum, Math.Min(numEstoqueMinimo.Maximum, (decimal)p.EstoqueMinimo));
 
-            // Unidade (UNID ou JG)
             string unidade = string.IsNullOrWhiteSpace(p.Unidade) ? "UNID" : p.Unidade.Trim().ToUpper();
-            if (unidade == "UN") unidade = "UNID"; // Compatibilidade caso venha "UN" dos dados de teste
+            if (unidade == "UN") unidade = "UNID";
             if (!cboUnidade.Items.Contains(unidade))
             {
                 cboUnidade.Items.Add(unidade);
             }
             cboUnidade.SelectedItem = unidade;
 
-            // Categoria (ComboBox)
-            if (!string.IsNullOrWhiteSpace(p.Categoria))
-            {
-                if (!cboCategoria.Items.Contains(p.Categoria))
-                {
-                    cboCategoria.Items.Add(p.Categoria);
-                }
-                cboCategoria.SelectedItem = p.Categoria;
-            }
-            else
-            {
-                cboCategoria.SelectedIndex = -1;
-                cboCategoria.Text = string.Empty;
-            }
-
-            // Status (RadioButtons Ativo / Inativo)
             DefinirStatusProduto(p.Ativo);
-
-            // Margem e Imagem
             CalcularMargem();
             txtFotoUrl.Text = p.FotoUrl ?? string.Empty;
             btnSalvar.Text = "Atualizar";
@@ -191,6 +333,54 @@ namespace ProjetoExtensionista2026_2
             DefinirImagemPreview(Properties.Resources.produto_ausente);
 
             this.ResumeLayout();
+
+            if (cboCategoria.Items.Count == 0)
+            {
+                await CarregarCategoriasBancoAsync();
+            }
+
+            if (cboFornecedor.Items.Count == 0)
+            {
+                await CarregarFornecedoresBancoAsync();
+            }
+
+            if (!string.IsNullOrWhiteSpace(p.Categoria))
+            {
+                int indexCat = -1;
+                for (int i = 0; i < cboCategoria.Items.Count; i++)
+                {
+                    if (cboCategoria.Items[i] is ItemCombo item &&
+                        string.Equals(item.Nome?.Trim(), p.Categoria.Trim(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        indexCat = i;
+                        break;
+                    }
+                }
+                cboCategoria.SelectedIndex = indexCat;
+            }
+            else
+            {
+                cboCategoria.SelectedIndex = -1;
+            }
+
+            if (!string.IsNullOrWhiteSpace(p.Fornecedor))
+            {
+                int indexSup = -1;
+                for (int i = 0; i < cboFornecedor.Items.Count; i++)
+                {
+                    if (cboFornecedor.Items[i] is ItemCombo item &&
+                        string.Equals(item.Nome?.Trim(), p.Fornecedor.Trim(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        indexSup = i;
+                        break;
+                    }
+                }
+                cboFornecedor.SelectedIndex = indexSup;
+            }
+            else
+            {
+                cboFornecedor.SelectedIndex = -1;
+            }
 
             if (!string.IsNullOrWhiteSpace(p.FotoUrl))
             {
@@ -214,7 +404,6 @@ namespace ProjetoExtensionista2026_2
             txtNome.Clear();
             txtDescricao.Clear();
             txtLocalizacao.Clear();
-            txtFornecedor.Clear();
 
             numPrecoCompra.Value = 0;
             numPrecoVenda.Value = 0;
@@ -223,7 +412,7 @@ namespace ProjetoExtensionista2026_2
 
             cboUnidade.SelectedItem = "UNID";
             cboCategoria.SelectedIndex = -1;
-            cboCategoria.Text = string.Empty;
+            cboFornecedor.SelectedIndex = -1;
 
             DefinirStatusProduto(true);
 
@@ -274,106 +463,104 @@ namespace ProjetoExtensionista2026_2
             btnSalvar.Enabled = false;
             Cursor.Current = Cursors.WaitCursor;
 
-            // Captura os valores dos controles na thread de interface
-            string codigo = txtCodigo.Text.Trim();
             string nome = txtNome.Text.Trim();
             string descricao = txtDescricao.Text.Trim();
             decimal precoCompra = numPrecoCompra.Value;
             decimal precoVenda = numPrecoVenda.Value;
             string localizacao = txtLocalizacao.Text.Trim();
-            int estoque = (int)numEstoque.Value;
+            decimal estoque = numEstoque.Value;
             int estoqueMin = (int)numEstoqueMinimo.Value;
             string unidade = cboUnidade.Text.Trim();
-            string categoria = cboCategoria.Text.Trim();
-            string fornecedor = txtFornecedor.Text.Trim();
             bool statusAtivo = ObterStatusProduto();
             string fotoUrl = txtFotoUrl.Text.Trim();
+            long? idCategoria = cboCategoria.SelectedValue is long catId ? catId : (long?)null;
+            long? idFornecedor = cboFornecedor.SelectedValue is long supId ? supId : (long?)null;
 
-            // Atualiza também a referência em memória (útil para ver a edição funcionando mesmo sem banco)
-            if (_produtoRef != null)
-            {
-                _produtoRef.Codigo = codigo;
-                _produtoRef.Nome = nome;
-                _produtoRef.Descricao = descricao;
-                _produtoRef.PrecoCompra = precoCompra;
-                _produtoRef.PrecoVenda = precoVenda;
-                _produtoRef.Localizacao = localizacao;
-                _produtoRef.Estoque = estoque;
-                _produtoRef.EstoqueMinimo = estoqueMin;
-                _produtoRef.Unidade = unidade;
-                _produtoRef.Categoria = categoria;
-                _produtoRef.Fornecedor = fornecedor;
-                _produtoRef.Ativo = statusAtivo;
-                _produtoRef.FotoUrl = string.IsNullOrWhiteSpace(fotoUrl) ? null : fotoUrl;
-            }
+            string textoCategoria = cboCategoria.Text;
+            string textoFornecedor = cboFornecedor.Text;
 
             try
             {
-                await Task.Run(async () =>
+                int idFinal = await Task.Run(async () =>
                 {
                     using (var db = new Connection())
                     {
                         db.IniciarConexao();
 
-                        if (!ProdutoIdEmEdicao.HasValue && (string.IsNullOrEmpty(codigo) || codigo == "..."))
-                        {
-                            const string sqlMax = "SELECT COALESCE(MAX(id_product), 0) + 1 FROM product;";
-                            using (var cmdMax = new NpgsqlCommand(sqlMax, db.Conexao))
-                            {
-                                object res = await cmdMax.ExecuteScalarAsync();
-                                codigo = res?.ToString() ?? "1";
-                            }
-                        }
-
                         string query = ProdutoIdEmEdicao.HasValue
-                            ? @"UPDATE product SET
-                                    code_product = @codigo,
-                                    name_product = @nome,
-                                    description_product = @descricao,
-                                    price_buy = @preco_compra,
-                                    price_sell = @preco_venda,
-                                    location_product = @localizacao,
+                            ? @"UPDATE public.product SET
+                                    name = @nome,
+                                    description = @descricao,
+                                    purchase_price = @preco_compra,
+                                    sale_price = @preco_venda,
+                                    location = @localizacao,
                                     stock_quantity = @estoque,
-                                    min_stock_quantity = @estoque_min,
-                                    unit_measure = @unidade,
-                                    category_product = @categoria,
-                                    supplier_product = @fornecedor,
-                                    active = @ativo,
-                                    picture_url = @foto_url
+                                    min_stock = @estoque_min,
+                                    unit = @unidade,
+                                    id_category = @id_categoria,
+                                    id_supplier = @id_fornecedor,
+                                    is_active = @ativo,
+                                    image_url = @foto_url,
+                                    updated_at = NOW()
                                 WHERE id_product = @id;"
-                            : @"INSERT INTO product (
-                                    code_product, name_product, description_product, price_buy, price_sell,
-                                    location_product, stock_quantity, min_stock_quantity, unit_measure,
-                                    category_product, supplier_product, active, picture_url
+                            : @"INSERT INTO public.product (
+                                    name, description, purchase_price, sale_price,
+                                    location, stock_quantity, min_stock, unit,
+                                    id_category, id_supplier, is_active, image_url
                                 ) VALUES (
-                                    @codigo, @nome, @descricao, @preco_compra, @preco_venda,
+                                    @nome, @descricao, @preco_compra, @preco_venda,
                                     @localizacao, @estoque, @estoque_min, @unidade,
-                                    @categoria, @fornecedor, @ativo, @foto_url
-                                );";
+                                    @id_categoria, @id_fornecedor, @ativo, @foto_url
+                                ) RETURNING id_product;";
 
                         using (var cmd = new NpgsqlCommand(query, db.Conexao))
                         {
                             if (ProdutoIdEmEdicao.HasValue)
-                                cmd.Parameters.AddWithValue("@id", ProdutoIdEmEdicao.Value);
+                                cmd.Parameters.AddWithValue("@id", (long)ProdutoIdEmEdicao.Value);
 
-                            cmd.Parameters.AddWithValue("@codigo", codigo);
                             cmd.Parameters.AddWithValue("@nome", nome);
-                            cmd.Parameters.AddWithValue("@descricao", descricao);
+                            cmd.Parameters.AddWithValue("@descricao", string.IsNullOrWhiteSpace(descricao) ? (object)DBNull.Value : descricao);
                             cmd.Parameters.AddWithValue("@preco_compra", precoCompra);
                             cmd.Parameters.AddWithValue("@preco_venda", precoVenda);
-                            cmd.Parameters.AddWithValue("@localizacao", localizacao);
+                            cmd.Parameters.AddWithValue("@localizacao", string.IsNullOrWhiteSpace(localizacao) ? (object)DBNull.Value : localizacao);
                             cmd.Parameters.AddWithValue("@estoque", estoque);
                             cmd.Parameters.AddWithValue("@estoque_min", estoqueMin);
                             cmd.Parameters.AddWithValue("@unidade", unidade);
-                            cmd.Parameters.AddWithValue("@categoria", categoria);
-                            cmd.Parameters.AddWithValue("@fornecedor", fornecedor);
+                            cmd.Parameters.AddWithValue("@id_categoria", (object)idCategoria ?? DBNull.Value);
+                            cmd.Parameters.AddWithValue("@id_fornecedor", (object)idFornecedor ?? DBNull.Value);
                             cmd.Parameters.AddWithValue("@ativo", statusAtivo);
                             cmd.Parameters.AddWithValue("@foto_url", string.IsNullOrWhiteSpace(fotoUrl) ? (object)DBNull.Value : fotoUrl);
 
-                            await cmd.ExecuteNonQueryAsync();
+                            if (ProdutoIdEmEdicao.HasValue)
+                            {
+                                await cmd.ExecuteNonQueryAsync();
+                                return ProdutoIdEmEdicao.Value;
+                            }
+                            else
+                            {
+                                object resId = await cmd.ExecuteScalarAsync();
+                                return Convert.ToInt32(resId);
+                            }
                         }
                     }
                 });
+
+                if (_produtoRef != null)
+                {
+                    _produtoRef.Id = idFinal;
+                    _produtoRef.Nome = nome;
+                    _produtoRef.Descricao = descricao;
+                    _produtoRef.PrecoCompra = precoCompra;
+                    _produtoRef.PrecoVenda = precoVenda;
+                    _produtoRef.Localizacao = localizacao;
+                    _produtoRef.Estoque = (int)estoque;
+                    _produtoRef.EstoqueMinimo = estoqueMin;
+                    _produtoRef.Unidade = unidade;
+                    _produtoRef.Categoria = textoCategoria;
+                    _produtoRef.Fornecedor = textoFornecedor;
+                    _produtoRef.Ativo = statusAtivo;
+                    _produtoRef.FotoUrl = string.IsNullOrWhiteSpace(fotoUrl) ? null : fotoUrl;
+                }
 
                 string msg = ProdutoIdEmEdicao.HasValue
                     ? "Produto atualizado com sucesso!"
@@ -476,7 +663,6 @@ namespace ProjetoExtensionista2026_2
             {
                 byte[] dadosImagem = null;
 
-                // 1. Verifica se já está no cache em memória
                 if (!_imageBytesCache.TryGetValue(url, out dadosImagem))
                 {
                     if (File.Exists(url))
@@ -532,6 +718,40 @@ namespace ProjetoExtensionista2026_2
             }
             picFotoPreview.SizeMode = PictureBoxSizeMode.Zoom;
             picFotoPreview.Image = novaImagem;
+        }
+    }
+
+    /// <summary>
+    /// Diálogo simples para capturar o nome digitado sem precisar criar outro Form no Visual Studio
+    /// </summary>
+    public static class PromptDialog
+    {
+        public static string Mostrar(string texto, string titulo)
+        {
+            Form formPrompt = new Form()
+            {
+                Width = 380,
+                Height = 160,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = titulo,
+                StartPosition = FormStartPosition.CenterParent,
+                MaximizeBox = false,
+                MinimizeBox = false
+            };
+
+            Label lblTexto = new Label() { Left = 16, Top = 16, Width = 330, Text = texto };
+            TextBox txtInput = new TextBox() { Left = 16, Top = 40, Width = 330 };
+            Button btnOk = new Button() { Text = "Salvar", Left = 180, Width = 80, Top = 75, DialogResult = DialogResult.OK };
+            Button btnCancel = new Button() { Text = "Cancelar", Left = 266, Width = 80, Top = 75, DialogResult = DialogResult.Cancel };
+
+            formPrompt.Controls.Add(lblTexto);
+            formPrompt.Controls.Add(txtInput);
+            formPrompt.Controls.Add(btnOk);
+            formPrompt.Controls.Add(btnCancel);
+            formPrompt.AcceptButton = btnOk;
+            formPrompt.CancelButton = btnCancel;
+
+            return formPrompt.ShowDialog() == DialogResult.OK ? txtInput.Text : string.Empty;
         }
     }
 }
