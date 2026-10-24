@@ -10,7 +10,6 @@ namespace ProjetoExtensionista2026_2
 {
     public partial class UcCardProduto : UserControl
     {
-        // Cache estático em memória para evitar baixar a mesma imagem da web repetidas vezes
         private static readonly ConcurrentDictionary<string, Image> _imageCache = new ConcurrentDictionary<string, Image>();
 
         public ProdutoDTO DadosProduto { get; private set; }
@@ -22,6 +21,8 @@ namespace ProjetoExtensionista2026_2
         public decimal PrecoCompra { get; private set; }
         public int Estoque { get; private set; }
         public string FotoOrigem { get; private set; }
+
+        private bool _custoVisivel = false;
 
         public event Action<int, decimal, int> AoAdicionarProduto;
         public event Action<ProdutoDTO> AoClicarParaEditar;
@@ -36,13 +37,10 @@ namespace ProjetoExtensionista2026_2
 
             picFoto.SizeMode = PictureBoxSizeMode.Zoom;
 
-            // Vincula o clique recursivamente em todos os controles internos
+            // Vincula o clique recursivamente para abrir edição
             VincularCliquesDeEdicao(this);
         }
 
-        /// <summary>
-        /// Percorre o card e todos os seus painéis/filhos aplicando o clique de edição
-        /// </summary>
         private void VincularCliquesDeEdicao(Control container)
         {
             EventHandler dispararEdicao = (s, e) =>
@@ -55,14 +53,13 @@ namespace ProjetoExtensionista2026_2
 
             foreach (Control ctrl in container.Controls)
             {
-                // Ignora explicitamente o seletor numérico e o botão de adicionar venda
-                if (ctrl == UpDownProduto || ctrl == btnAdicionar || ctrl is NumericUpDown || ctrl is Button)
+                // Ignora explicitamente controles interativos próprios do card
+                if (ctrl == UpDownProduto || ctrl == btnAdicionar || ctrl == btnOculto || ctrl is NumericUpDown || ctrl is Button)
                 {
                     ctrl.Cursor = Cursors.Default;
                     continue;
                 }
 
-                // Aplica o clique e a mãozinha no controle
                 ctrl.Click += dispararEdicao;
                 ctrl.Cursor = Cursors.Hand;
 
@@ -90,16 +87,35 @@ namespace ProjetoExtensionista2026_2
             Estoque = p.Estoque;
             FotoOrigem = p.FotoUrl;
 
-            lblTitulo.Text = $"{p.Id} - {LimitarTexto(p.Nome, 38)}";
+            // Código iniciado com # e Título apenas com o Nome
+            lblCodigo.Text = $"#{p.Id}";
+            lblTitulo.Text = LimitarTexto(p.Nome, 38);
+
             lblDescricao.Text = LimitarTexto(string.IsNullOrWhiteSpace(p.Descricao) ? "Sem descrição disponível." : p.Descricao, 70);
             lblPrecoVenda.Text = p.PrecoVenda.ToString("C2");
-            lblPrecoCompra.Text = $"Custo: {p.PrecoCompra:C2}";
+
+            // Reseta o estado do botão de custo oculto
+            _custoVisivel = false;
+            btnOculto.Text = "👁️‍🗨️ Mostrar Ocultados ...";
+            btnOculto.ForeColor = SystemColors.ControlDarkDark;
 
             lblEstoque.Text = $"Estoque: {p.Estoque}";
-            lblEstoque.ForeColor = p.Estoque <= 0 ? Color.Red : Color.FromArgb(70, 70, 70);
+
+            if (p.Estoque <= 0)
+            {
+                lblEstoque.BackColor = Color.LightCoral;
+            }
+            else if (p.Estoque <= p.EstoqueMinimo)
+            {
+                lblEstoque.BackColor = Color.LightSalmon;
+            }
+            else
+            {
+                lblEstoque.BackColor = Color.PaleGreen;
+            }
 
             UpDownProduto.Value = 1;
-            _ = CarregarImagemAsync(p.FotoUrl); // Executa o carregamento assíncrono otimizado
+            _ = CarregarImagemAsync(p.FotoUrl);
         }
 
         public void CarregarDados(int id, string nome, string descricao, decimal precoVenda, decimal precoCompra, int estoque, string fotoOrigem)
@@ -125,6 +141,22 @@ namespace ProjetoExtensionista2026_2
             return texto.Length <= max ? texto : texto.Substring(0, max).TrimEnd() + "...";
         }
 
+        private void btnOculto_Click(object sender, EventArgs e)
+        {
+            _custoVisivel = !_custoVisivel;
+
+            if (_custoVisivel)
+            {
+                btnOculto.Text = $"Custo: {PrecoCompra:C2}";
+                btnOculto.ForeColor = Color.Red;
+            }
+            else
+            {
+                btnOculto.Text = "👁️‍🗨️ Mostrar Ocultados ...";
+                btnOculto.ForeColor = SystemColors.ControlDarkDark;
+            }
+        }
+
         private void btnAdicionar_Click(object sender, EventArgs e)
         {
             int quantidade = (int)UpDownProduto.Value;
@@ -142,7 +174,6 @@ namespace ProjetoExtensionista2026_2
                     return;
                 }
 
-                // 1. Verifica se já existe em Cache na memória
                 if (_imageCache.TryGetValue(fotoOrigem, out Image imagemCached))
                 {
                     AplicarImagemAjustada(imagemCached);

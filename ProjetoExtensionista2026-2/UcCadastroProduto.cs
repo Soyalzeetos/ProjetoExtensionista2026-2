@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Npgsql;
+using NpgsqlTypes;
 using ProjetoExtensionista2026_2.SQL;
 
 namespace ProjetoExtensionista2026_2
@@ -28,6 +29,9 @@ namespace ProjetoExtensionista2026_2
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
 
             ConfigurarControlesIniciais();
+
+            // Carrega diretamente sem depender exclusivamente do evento Load do UserControl
+            _ = InicializarDadosAsync();
         }
 
         private static HttpClient CriarHttpClient()
@@ -61,19 +65,23 @@ namespace ProjetoExtensionista2026_2
 
             numPrecoCompra.ValueChanged += (s, e) => CalcularMargem();
             numPrecoVenda.ValueChanged += (s, e) => CalcularMargem();
+        }
 
-            // Carrega listas do banco de dados na inicialização
-            this.Load += async (s, e) =>
+        private async Task InicializarDadosAsync()
+        {
+            if (!ProdutoIdEmEdicao.HasValue)
             {
-                await CarregarCategoriasBancoAsync();
-                await CarregarFornecedoresBancoAsync();
-                await GerarProximoCodigoAsync();
-            };
+                await Task.WhenAll(
+                    CarregarCategoriasBancoAsync(),
+                    CarregarFornecedoresBancoAsync(),
+                    GerarProximoCodigoAsync()
+                );
+            }
         }
 
         public class ItemCombo
         {
-            public long Id { get; set; } 
+            public long Id { get; set; }
             public string Nome { get; set; }
 
             public ItemCombo(long id, string nome)
@@ -127,7 +135,7 @@ namespace ProjetoExtensionista2026_2
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao carregar categorias do banco: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"Erro ao carregar categorias: {ex.Message}", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -173,7 +181,7 @@ namespace ProjetoExtensionista2026_2
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao carregar fornecedores do banco: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"Erro ao carregar fornecedores: {ex.Message}", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -300,6 +308,11 @@ namespace ProjetoExtensionista2026_2
 
         public async void CarregarDadosParaEdicao(ProdutoDTO p)
         {
+            await CarregarDadosParaEdicaoAsync(p);
+        }
+
+        public async Task CarregarDadosParaEdicaoAsync(ProdutoDTO p)
+        {
             if (p == null) return;
 
             this.SuspendLayout();
@@ -334,23 +347,23 @@ namespace ProjetoExtensionista2026_2
 
             this.ResumeLayout();
 
-            if (cboCategoria.Items.Count == 0)
-            {
-                await CarregarCategoriasBancoAsync();
-            }
+            var tasks = new List<Task>();
+            if (cboCategoria.Items.Count == 0) tasks.Add(CarregarCategoriasBancoAsync());
+            if (cboFornecedor.Items.Count == 0) tasks.Add(CarregarFornecedoresBancoAsync());
 
-            if (cboFornecedor.Items.Count == 0)
+            if (tasks.Count > 0)
             {
-                await CarregarFornecedoresBancoAsync();
+                await Task.WhenAll(tasks);
             }
 
             if (!string.IsNullOrWhiteSpace(p.Categoria))
             {
                 int indexCat = -1;
+                string catAlvo = p.Categoria.Trim();
                 for (int i = 0; i < cboCategoria.Items.Count; i++)
                 {
                     if (cboCategoria.Items[i] is ItemCombo item &&
-                        string.Equals(item.Nome?.Trim(), p.Categoria.Trim(), StringComparison.OrdinalIgnoreCase))
+                        string.Equals(item.Nome?.Trim(), catAlvo, StringComparison.OrdinalIgnoreCase))
                     {
                         indexCat = i;
                         break;
@@ -366,10 +379,11 @@ namespace ProjetoExtensionista2026_2
             if (!string.IsNullOrWhiteSpace(p.Fornecedor))
             {
                 int indexSup = -1;
+                string supAlvo = p.Fornecedor.Trim();
                 for (int i = 0; i < cboFornecedor.Items.Count; i++)
                 {
                     if (cboFornecedor.Items[i] is ItemCombo item &&
-                        string.Equals(item.Nome?.Trim(), p.Fornecedor.Trim(), StringComparison.OrdinalIgnoreCase))
+                        string.Equals(item.Nome?.Trim(), supAlvo, StringComparison.OrdinalIgnoreCase))
                     {
                         indexSup = i;
                         break;
@@ -388,46 +402,6 @@ namespace ProjetoExtensionista2026_2
             }
         }
 
-        public async void LimparCampos()
-        {
-            await LimparCamposAsync();
-        }
-
-        public async Task LimparCamposAsync()
-        {
-            this.SuspendLayout();
-
-            _produtoRef = null;
-            ProdutoIdEmEdicao = null;
-
-            txtCodigo.Text = "...";
-            txtNome.Clear();
-            txtDescricao.Clear();
-            txtLocalizacao.Clear();
-
-            numPrecoCompra.Value = 0;
-            numPrecoVenda.Value = 0;
-            numEstoque.Value = 0;
-            numEstoqueMinimo.Value = 0;
-
-            cboUnidade.SelectedItem = "UNID";
-            cboCategoria.SelectedIndex = -1;
-            cboFornecedor.SelectedIndex = -1;
-
-            DefinirStatusProduto(true);
-
-            txtFotoUrl.Clear();
-            DefinirImagemPreview(Properties.Resources.produto_ausente);
-
-            txtMargem.Text = "0,00%";
-            btnSalvar.Text = "Salvar";
-
-            this.ResumeLayout();
-            txtNome.Focus();
-
-            await GerarProximoCodigoAsync();
-        }
-
         private void CalcularMargem()
         {
             decimal compra = numPrecoCompra.Value;
@@ -444,6 +418,9 @@ namespace ProjetoExtensionista2026_2
             }
         }
 
+        // ==========================================
+        // BOTÃO SALVAR (INSERT / UPDATE NO BANCO)
+        // ==========================================
         private async void btnSalvar_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtNome.Text))
@@ -464,17 +441,27 @@ namespace ProjetoExtensionista2026_2
             Cursor.Current = Cursors.WaitCursor;
 
             string nome = txtNome.Text.Trim();
-            string descricao = txtDescricao.Text.Trim();
+            string descricao = string.IsNullOrWhiteSpace(txtDescricao.Text) ? null : txtDescricao.Text.Trim();
             decimal precoCompra = numPrecoCompra.Value;
             decimal precoVenda = numPrecoVenda.Value;
-            string localizacao = txtLocalizacao.Text.Trim();
+            string localizacao = string.IsNullOrWhiteSpace(txtLocalizacao.Text) ? null : txtLocalizacao.Text.Trim();
             decimal estoque = numEstoque.Value;
             int estoqueMin = (int)numEstoqueMinimo.Value;
             string unidade = cboUnidade.Text.Trim();
             bool statusAtivo = ObterStatusProduto();
-            string fotoUrl = txtFotoUrl.Text.Trim();
-            long? idCategoria = cboCategoria.SelectedValue is long catId ? catId : (long?)null;
-            long? idFornecedor = cboFornecedor.SelectedValue is long supId ? supId : (long?)null;
+            string fotoUrl = string.IsNullOrWhiteSpace(txtFotoUrl.Text) ? null : txtFotoUrl.Text.Trim();
+
+            long? idCategoria = null;
+            if (cboCategoria.SelectedItem is ItemCombo itemCat)
+                idCategoria = itemCat.Id;
+            else if (cboCategoria.SelectedValue != null && long.TryParse(cboCategoria.SelectedValue.ToString(), out long catParsed))
+                idCategoria = catParsed;
+
+            long? idFornecedor = null;
+            if (cboFornecedor.SelectedItem is ItemCombo itemSup)
+                idFornecedor = itemSup.Id;
+            else if (cboFornecedor.SelectedValue != null && long.TryParse(cboFornecedor.SelectedValue.ToString(), out long supParsed))
+                idFornecedor = supParsed;
 
             string textoCategoria = cboCategoria.Text;
             string textoFornecedor = cboFornecedor.Text;
@@ -516,20 +503,20 @@ namespace ProjetoExtensionista2026_2
                         using (var cmd = new NpgsqlCommand(query, db.Conexao))
                         {
                             if (ProdutoIdEmEdicao.HasValue)
-                                cmd.Parameters.AddWithValue("@id", (long)ProdutoIdEmEdicao.Value);
+                                cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Bigint, (long)ProdutoIdEmEdicao.Value);
 
-                            cmd.Parameters.AddWithValue("@nome", nome);
-                            cmd.Parameters.AddWithValue("@descricao", string.IsNullOrWhiteSpace(descricao) ? (object)DBNull.Value : descricao);
-                            cmd.Parameters.AddWithValue("@preco_compra", precoCompra);
-                            cmd.Parameters.AddWithValue("@preco_venda", precoVenda);
-                            cmd.Parameters.AddWithValue("@localizacao", string.IsNullOrWhiteSpace(localizacao) ? (object)DBNull.Value : localizacao);
-                            cmd.Parameters.AddWithValue("@estoque", estoque);
-                            cmd.Parameters.AddWithValue("@estoque_min", estoqueMin);
-                            cmd.Parameters.AddWithValue("@unidade", unidade);
-                            cmd.Parameters.AddWithValue("@id_categoria", (object)idCategoria ?? DBNull.Value);
-                            cmd.Parameters.AddWithValue("@id_fornecedor", (object)idFornecedor ?? DBNull.Value);
-                            cmd.Parameters.AddWithValue("@ativo", statusAtivo);
-                            cmd.Parameters.AddWithValue("@foto_url", string.IsNullOrWhiteSpace(fotoUrl) ? (object)DBNull.Value : fotoUrl);
+                            cmd.Parameters.AddWithValue("@nome", NpgsqlDbType.Varchar, nome);
+                            cmd.Parameters.AddWithValue("@descricao", NpgsqlDbType.Text, (object)descricao ?? DBNull.Value);
+                            cmd.Parameters.AddWithValue("@preco_compra", NpgsqlDbType.Numeric, precoCompra);
+                            cmd.Parameters.AddWithValue("@preco_venda", NpgsqlDbType.Numeric, precoVenda);
+                            cmd.Parameters.AddWithValue("@localizacao", NpgsqlDbType.Varchar, (object)localizacao ?? DBNull.Value);
+                            cmd.Parameters.AddWithValue("@estoque", NpgsqlDbType.Numeric, estoque);
+                            cmd.Parameters.AddWithValue("@estoque_min", NpgsqlDbType.Integer, estoqueMin);
+                            cmd.Parameters.AddWithValue("@unidade", NpgsqlDbType.Varchar, unidade);
+                            cmd.Parameters.AddWithValue("@id_categoria", NpgsqlDbType.Bigint, (object)idCategoria ?? DBNull.Value);
+                            cmd.Parameters.AddWithValue("@id_fornecedor", NpgsqlDbType.Bigint, (object)idFornecedor ?? DBNull.Value);
+                            cmd.Parameters.AddWithValue("@ativo", NpgsqlDbType.Boolean, statusAtivo);
+                            cmd.Parameters.AddWithValue("@foto_url", NpgsqlDbType.Text, (object)fotoUrl ?? DBNull.Value);
 
                             if (ProdutoIdEmEdicao.HasValue)
                             {
@@ -549,22 +536,22 @@ namespace ProjetoExtensionista2026_2
                 {
                     _produtoRef.Id = idFinal;
                     _produtoRef.Nome = nome;
-                    _produtoRef.Descricao = descricao;
+                    _produtoRef.Descricao = descricao ?? "";
                     _produtoRef.PrecoCompra = precoCompra;
                     _produtoRef.PrecoVenda = precoVenda;
-                    _produtoRef.Localizacao = localizacao;
+                    _produtoRef.Localizacao = localizacao ?? "";
                     _produtoRef.Estoque = (int)estoque;
                     _produtoRef.EstoqueMinimo = estoqueMin;
                     _produtoRef.Unidade = unidade;
                     _produtoRef.Categoria = textoCategoria;
                     _produtoRef.Fornecedor = textoFornecedor;
                     _produtoRef.Ativo = statusAtivo;
-                    _produtoRef.FotoUrl = string.IsNullOrWhiteSpace(fotoUrl) ? null : fotoUrl;
+                    _produtoRef.FotoUrl = fotoUrl;
                 }
 
                 string msg = ProdutoIdEmEdicao.HasValue
                     ? "Produto atualizado com sucesso!"
-                    : "Produto cadastrado com sucesso!";
+                    : $"Produto cadastrado com sucesso! (Código: {idFinal})";
 
                 MessageBox.Show(msg, "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -589,13 +576,62 @@ namespace ProjetoExtensionista2026_2
             }
         }
 
+        // ==========================================
+        // BOTÃO LIMPAR (RESETA TODOS OS CAMPOS)
+        // ==========================================
         private async void btnLimpar_Click(object sender, EventArgs e)
         {
             await LimparCamposAsync();
         }
 
+        public async void LimparCampos()
+        {
+            await LimparCamposAsync();
+        }
+
+        public async Task LimparCamposAsync()
+        {
+            this.SuspendLayout();
+
+            _produtoRef = null;
+            ProdutoIdEmEdicao = null;
+
+            txtCodigo.Text = "...";
+            txtNome.Clear();
+            txtDescricao.Clear();
+            txtLocalizacao.Clear();
+            txtFotoUrl.Clear();
+            txtMargem.Text = "0,00%";
+
+            numPrecoCompra.Value = 0;
+            numPrecoVenda.Value = 0;
+            numEstoque.Value = 0;
+            numEstoqueMinimo.Value = 0;
+
+            cboUnidade.SelectedIndex = 0;
+            cboCategoria.SelectedIndex = -1;
+            cboFornecedor.SelectedIndex = -1;
+
+            DefinirStatusProduto(true);
+            DefinirImagemPreview(Properties.Resources.produto_ausente);
+            btnSalvar.Text = "Salvar";
+
+            this.ResumeLayout();
+            txtNome.Focus();
+
+            await GerarProximoCodigoAsync();
+        }
+
+        // ==========================================
+        // BOTÃO CANCELAR (FECHA O MODAL OU NOTIFICA)
+        // ==========================================
         private void btnCancelar_Click(object sender, EventArgs e)
         {
+            Form formPai = this.FindForm();
+            if (formPai != null)
+            {
+                formPai.Close();
+            }
             AoConcluirOperacao?.Invoke();
         }
 
@@ -721,9 +757,6 @@ namespace ProjetoExtensionista2026_2
         }
     }
 
-    /// <summary>
-    /// Diálogo simples para capturar o nome digitado sem precisar criar outro Form no Visual Studio
-    /// </summary>
     public static class PromptDialog
     {
         public static string Mostrar(string texto, string titulo)

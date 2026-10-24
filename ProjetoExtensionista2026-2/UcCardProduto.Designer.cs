@@ -33,104 +33,131 @@
             this.btnAdicionar = new System.Windows.Forms.Button();
             this.UpDownProduto = new System.Windows.Forms.NumericUpDown();
             this.lblPrecoVenda = new System.Windows.Forms.Label();
-            this.lblPrecoCompra = new System.Windows.Forms.Label();
             this.picFoto = new System.Windows.Forms.PictureBox();
             this.lblEstoque = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.lblCodigo = new System.Windows.Forms.Label();
+            this.btnOculto = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.UpDownProduto)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFoto)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblTitulo
             // 
             this.lblTitulo.AutoEllipsis = true;
-            this.lblTitulo.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTitulo.Location = new System.Drawing.Point(-1, 140);
-            this.lblTitulo.MaximumSize = new System.Drawing.Size(220, 50);
+            this.lblTitulo.Font = new System.Drawing.Font("Arial Black", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitulo.Location = new System.Drawing.Point(125, 27);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Padding = new System.Windows.Forms.Padding(2);
-            this.lblTitulo.Size = new System.Drawing.Size(220, 40);
+            this.lblTitulo.Size = new System.Drawing.Size(152, 78);
             this.lblTitulo.TabIndex = 1;
-            this.lblTitulo.Text = "[00] Produto ...";
+            this.lblTitulo.Text = "Produto ...";
             // 
             // lblDescricao
             // 
             this.lblDescricao.AutoEllipsis = true;
-            this.lblDescricao.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDescricao.Location = new System.Drawing.Point(-1, 189);
-            this.lblDescricao.MaximumSize = new System.Drawing.Size(220, 60);
+            this.lblDescricao.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDescricao.Location = new System.Drawing.Point(3, 150);
             this.lblDescricao.Name = "lblDescricao";
             this.lblDescricao.Padding = new System.Windows.Forms.Padding(2);
-            this.lblDescricao.Size = new System.Drawing.Size(220, 38);
+            this.lblDescricao.Size = new System.Drawing.Size(274, 62);
             this.lblDescricao.TabIndex = 2;
             this.lblDescricao.Text = "Descricao ...";
             // 
             // btnAdicionar
             // 
-            this.btnAdicionar.Location = new System.Drawing.Point(189, 251);
+            this.btnAdicionar.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.btnAdicionar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAdicionar.Location = new System.Drawing.Point(6, 215);
             this.btnAdicionar.Name = "btnAdicionar";
-            this.btnAdicionar.Size = new System.Drawing.Size(25, 25);
+            this.btnAdicionar.Size = new System.Drawing.Size(190, 32);
             this.btnAdicionar.TabIndex = 3;
-            this.btnAdicionar.Text = "➕";
-            this.btnAdicionar.UseVisualStyleBackColor = true;
+            this.btnAdicionar.Text = "Adicionar ➕";
+            this.btnAdicionar.UseVisualStyleBackColor = false;
             this.btnAdicionar.Click += new System.EventHandler(this.btnAdicionar_Click);
             // 
             // UpDownProduto
             // 
-            this.UpDownProduto.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UpDownProduto.Location = new System.Drawing.Point(150, 252);
+            this.UpDownProduto.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.UpDownProduto.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UpDownProduto.Location = new System.Drawing.Point(202, 219);
             this.UpDownProduto.Name = "UpDownProduto";
-            this.UpDownProduto.Size = new System.Drawing.Size(33, 22);
+            this.UpDownProduto.Size = new System.Drawing.Size(75, 24);
             this.UpDownProduto.TabIndex = 4;
             // 
             // lblPrecoVenda
             // 
-            this.lblPrecoVenda.AutoSize = true;
-            this.lblPrecoVenda.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPrecoVenda.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPrecoVenda.ForeColor = System.Drawing.Color.LimeGreen;
-            this.lblPrecoVenda.Location = new System.Drawing.Point(7, 242);
+            this.lblPrecoVenda.Location = new System.Drawing.Point(129, 105);
             this.lblPrecoVenda.Name = "lblPrecoVenda";
-            this.lblPrecoVenda.Size = new System.Drawing.Size(67, 18);
+            this.lblPrecoVenda.Size = new System.Drawing.Size(148, 18);
             this.lblPrecoVenda.TabIndex = 5;
             this.lblPrecoVenda.Text = "R$ 00,00";
             // 
-            // lblPrecoCompra
-            // 
-            this.lblPrecoCompra.AutoSize = true;
-            this.lblPrecoCompra.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPrecoCompra.ForeColor = System.Drawing.Color.Red;
-            this.lblPrecoCompra.Location = new System.Drawing.Point(7, 260);
-            this.lblPrecoCompra.Name = "lblPrecoCompra";
-            this.lblPrecoCompra.Size = new System.Drawing.Size(84, 14);
-            this.lblPrecoCompra.TabIndex = 6;
-            this.lblPrecoCompra.Text = "Custo: R$ 00,00";
-            // 
             // picFoto
             // 
-            this.picFoto.Dock = System.Windows.Forms.DockStyle.Top;
             this.picFoto.ErrorImage = null;
-            this.picFoto.Location = new System.Drawing.Point(0, 0);
+            this.picFoto.Location = new System.Drawing.Point(3, 27);
             this.picFoto.Name = "picFoto";
-            this.picFoto.Size = new System.Drawing.Size(220, 140);
+            this.picFoto.Size = new System.Drawing.Size(120, 120);
             this.picFoto.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.picFoto.TabIndex = 0;
             this.picFoto.TabStop = false;
             // 
             // lblEstoque
             // 
-            this.lblEstoque.AutoSize = true;
-            this.lblEstoque.Location = new System.Drawing.Point(116, 239);
+            this.lblEstoque.BackColor = System.Drawing.Color.PaleGreen;
+            this.lblEstoque.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblEstoque.Location = new System.Drawing.Point(168, 0);
             this.lblEstoque.Name = "lblEstoque";
-            this.lblEstoque.Size = new System.Drawing.Size(52, 13);
+            this.lblEstoque.Size = new System.Drawing.Size(113, 24);
             this.lblEstoque.TabIndex = 7;
             this.lblEstoque.Text = "Estoque: ";
+            this.lblEstoque.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.panel1.Controls.Add(this.lblCodigo);
+            this.panel1.Controls.Add(this.lblEstoque);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(280, 24);
+            this.panel1.TabIndex = 8;
+            // 
+            // lblCodigo
+            // 
+            this.lblCodigo.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.lblCodigo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCodigo.Location = new System.Drawing.Point(-1, 0);
+            this.lblCodigo.Name = "lblCodigo";
+            this.lblCodigo.Size = new System.Drawing.Size(155, 24);
+            this.lblCodigo.TabIndex = 8;
+            this.lblCodigo.Text = "Código";
+            this.lblCodigo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // btnOculto
+            // 
+            this.btnOculto.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.btnOculto.Location = new System.Drawing.Point(129, 124);
+            this.btnOculto.Name = "btnOculto";
+            this.btnOculto.Size = new System.Drawing.Size(148, 23);
+            this.btnOculto.TabIndex = 9;
+            this.btnOculto.Text = "👁️‍🗨️ Mostrar Ocultos ...";
+            this.btnOculto.UseVisualStyleBackColor = true;
+            this.btnOculto.Click += new System.EventHandler(this.btnOculto_Click);
             // 
             // UcCardProduto
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Controls.Add(this.lblEstoque);
-            this.Controls.Add(this.lblPrecoCompra);
+            this.Controls.Add(this.btnOculto);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.lblPrecoVenda);
             this.Controls.Add(this.UpDownProduto);
             this.Controls.Add(this.btnAdicionar);
@@ -138,9 +165,10 @@
             this.Controls.Add(this.lblTitulo);
             this.Controls.Add(this.picFoto);
             this.Name = "UcCardProduto";
-            this.Size = new System.Drawing.Size(220, 280);
+            this.Size = new System.Drawing.Size(280, 250);
             ((System.ComponentModel.ISupportInitialize)(this.UpDownProduto)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFoto)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -152,8 +180,10 @@
         private System.Windows.Forms.Button btnAdicionar;
         private System.Windows.Forms.NumericUpDown UpDownProduto;
         private System.Windows.Forms.Label lblPrecoVenda;
-        private System.Windows.Forms.Label lblPrecoCompra;
         private System.Windows.Forms.PictureBox picFoto;
         private System.Windows.Forms.Label lblEstoque;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label lblCodigo;
+        private System.Windows.Forms.Button btnOculto;
     }
 }

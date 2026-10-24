@@ -73,12 +73,13 @@
             // splitContainer_menu.Panel1
             // 
             this.splitContainer_menu.Panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.splitContainer_menu.Panel1Collapsed = true;
             // 
             // splitContainer_menu.Panel2
             // 
             this.splitContainer_menu.Panel2.Controls.Add(this.splitContainer_catalogo);
             this.splitContainer_menu.Size = new System.Drawing.Size(1904, 991);
-            this.splitContainer_menu.SplitterDistance = 294;
+            this.splitContainer_menu.SplitterDistance = 247;
             this.splitContainer_menu.SplitterWidth = 1;
             this.splitContainer_menu.TabIndex = 2;
             this.splitContainer_menu.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer_menu_SplitterMoved);
@@ -98,8 +99,8 @@
             // 
             this.splitContainer_catalogo.Panel2.BackColor = System.Drawing.SystemColors.Control;
             this.splitContainer_catalogo.Panel2.Controls.Add(this.flowLayoutPanel1);
-            this.splitContainer_catalogo.Size = new System.Drawing.Size(1609, 991);
-            this.splitContainer_catalogo.SplitterDistance = 860;
+            this.splitContainer_catalogo.Size = new System.Drawing.Size(1904, 991);
+            this.splitContainer_catalogo.SplitterDistance = 1017;
             this.splitContainer_catalogo.SplitterWidth = 1;
             this.splitContainer_catalogo.TabIndex = 2;
             this.splitContainer_catalogo.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer_catalogo_SplitterMoved);
@@ -120,7 +121,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 80F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(860, 991);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1017, 991);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // panel2
@@ -135,7 +136,7 @@
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
             this.panel2.Padding = new System.Windows.Forms.Padding(10);
-            this.panel2.Size = new System.Drawing.Size(854, 93);
+            this.panel2.Size = new System.Drawing.Size(1011, 93);
             this.panel2.TabIndex = 0;
             // 
             // button2
@@ -144,7 +145,7 @@
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.Color.Red;
-            this.button2.Location = new System.Drawing.Point(525, 45);
+            this.button2.Location = new System.Drawing.Point(682, 45);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(155, 35);
             this.button2.TabIndex = 7;
@@ -180,7 +181,7 @@
             this.btnPesquisar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPesquisar.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPesquisar.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.btnPesquisar.Location = new System.Drawing.Point(689, 45);
+            this.btnPesquisar.Location = new System.Drawing.Point(846, 45);
             this.btnPesquisar.Name = "btnPesquisar";
             this.btnPesquisar.Size = new System.Drawing.Size(155, 35);
             this.btnPesquisar.TabIndex = 3;
@@ -197,7 +198,7 @@
             this.txtPesquisa.Location = new System.Drawing.Point(233, 11);
             this.txtPesquisa.Margin = new System.Windows.Forms.Padding(0);
             this.txtPesquisa.Name = "txtPesquisa";
-            this.txtPesquisa.Size = new System.Drawing.Size(611, 29);
+            this.txtPesquisa.Size = new System.Drawing.Size(768, 29);
             this.txtPesquisa.TabIndex = 0;
             this.txtPesquisa.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPesquisa_KeyDown);
             // 
@@ -208,7 +209,7 @@
             this.flowLayoutPanelProdutos.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanelProdutos.Location = new System.Drawing.Point(3, 102);
             this.flowLayoutPanelProdutos.Name = "flowLayoutPanelProdutos";
-            this.flowLayoutPanelProdutos.Size = new System.Drawing.Size(854, 786);
+            this.flowLayoutPanelProdutos.Size = new System.Drawing.Size(1011, 786);
             this.flowLayoutPanelProdutos.TabIndex = 1;
             // 
             // panel3
@@ -220,14 +221,14 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(3, 894);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(854, 94);
+            this.panel3.Size = new System.Drawing.Size(1011, 94);
             this.panel3.TabIndex = 2;
             // 
             // btnAtualizarProdutos
             // 
             this.btnAtualizarProdutos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAtualizarProdutos.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAtualizarProdutos.Location = new System.Drawing.Point(534, 16);
+            this.btnAtualizarProdutos.Location = new System.Drawing.Point(691, 16);
             this.btnAtualizarProdutos.Name = "btnAtualizarProdutos";
             this.btnAtualizarProdutos.Size = new System.Drawing.Size(144, 61);
             this.btnAtualizarProdutos.TabIndex = 1;
@@ -238,7 +239,7 @@
             // 
             this.btnCadastrarProduto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCadastrarProduto.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCadastrarProduto.Location = new System.Drawing.Point(698, 16);
+            this.btnCadastrarProduto.Location = new System.Drawing.Point(855, 16);
             this.btnCadastrarProduto.Name = "btnCadastrarProduto";
             this.btnCadastrarProduto.Size = new System.Drawing.Size(144, 61);
             this.btnCadastrarProduto.TabIndex = 0;
@@ -251,7 +252,7 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(748, 991);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(886, 991);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // formVenda
