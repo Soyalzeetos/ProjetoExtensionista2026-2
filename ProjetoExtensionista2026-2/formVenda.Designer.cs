@@ -28,14 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.panel1 = new System.Windows.Forms.Panel();
             this.splitContainer_menu = new System.Windows.Forms.SplitContainer();
             this.splitContainer_catalogo = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.button2 = new System.Windows.Forms.Button();
-            this.cmbPesquisa = new System.Windows.Forms.ComboBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
             this.btnPesquisar = new System.Windows.Forms.Button();
             this.txtPesquisa = new System.Windows.Forms.TextBox();
             this.flowLayoutPanelProdutos = new System.Windows.Forms.FlowLayoutPanel();
@@ -43,6 +44,10 @@
             this.btnAtualizarProdutos = new System.Windows.Forms.Button();
             this.btnCadastrarProduto = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer_menu)).BeginInit();
             this.splitContainer_menu.Panel2.SuspendLayout();
             this.splitContainer_menu.SuspendLayout();
@@ -52,22 +57,16 @@
             this.splitContainer_catalogo.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // panel1
-            // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1904, 50);
-            this.panel1.TabIndex = 0;
             // 
             // splitContainer_menu
             // 
             this.splitContainer_menu.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.splitContainer_menu.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer_menu.Location = new System.Drawing.Point(0, 50);
+            this.splitContainer_menu.Location = new System.Drawing.Point(0, 0);
             this.splitContainer_menu.Name = "splitContainer_menu";
             // 
             // splitContainer_menu.Panel1
@@ -78,7 +77,7 @@
             // splitContainer_menu.Panel2
             // 
             this.splitContainer_menu.Panel2.Controls.Add(this.splitContainer_catalogo);
-            this.splitContainer_menu.Size = new System.Drawing.Size(1904, 991);
+            this.splitContainer_menu.Size = new System.Drawing.Size(1904, 1041);
             this.splitContainer_menu.SplitterDistance = 247;
             this.splitContainer_menu.SplitterWidth = 1;
             this.splitContainer_menu.TabIndex = 2;
@@ -99,7 +98,7 @@
             // 
             this.splitContainer_catalogo.Panel2.BackColor = System.Drawing.SystemColors.Control;
             this.splitContainer_catalogo.Panel2.Controls.Add(this.flowLayoutPanel1);
-            this.splitContainer_catalogo.Size = new System.Drawing.Size(1904, 991);
+            this.splitContainer_catalogo.Size = new System.Drawing.Size(1904, 1041);
             this.splitContainer_catalogo.SplitterDistance = 1017;
             this.splitContainer_catalogo.SplitterWidth = 1;
             this.splitContainer_catalogo.TabIndex = 2;
@@ -118,26 +117,77 @@
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 81F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 80F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1017, 991);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1017, 1041);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.SystemColors.Control;
+            this.panel2.Controls.Add(this.groupBox2);
+            this.panel2.Controls.Add(this.groupBox1);
             this.panel2.Controls.Add(this.button2);
-            this.panel2.Controls.Add(this.cmbPesquisa);
-            this.panel2.Controls.Add(this.label2);
             this.panel2.Controls.Add(this.btnPesquisar);
             this.panel2.Controls.Add(this.txtPesquisa);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
             this.panel2.Padding = new System.Windows.Forms.Padding(10);
-            this.panel2.Size = new System.Drawing.Size(1011, 93);
+            this.panel2.Size = new System.Drawing.Size(1011, 87);
             this.panel2.TabIndex = 0;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.radioButton2);
+            this.groupBox2.Controls.Add(this.radioButton1);
+            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox2.Location = new System.Drawing.Point(515, 44);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(322, 37);
+            this.groupBox2.TabIndex = 9;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Layout:";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox1.Location = new System.Drawing.Point(10, 44);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(488, 37);
+            this.groupBox1.TabIndex = 8;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Filtros de Pesquisa:";
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.label2.Location = new System.Drawing.Point(213, 7);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(81, 27);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Código";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.label1.Location = new System.Drawing.Point(135, 7);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(81, 27);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Todos";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // button2
             // 
@@ -145,35 +195,12 @@
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.Color.Red;
-            this.button2.Location = new System.Drawing.Point(682, 45);
+            this.button2.Location = new System.Drawing.Point(843, 51);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(155, 35);
+            this.button2.Size = new System.Drawing.Size(155, 30);
             this.button2.TabIndex = 7;
             this.button2.Text = "❌ Limpar [Esc]";
             this.button2.UseVisualStyleBackColor = true;
-            // 
-            // cmbPesquisa
-            // 
-            this.cmbPesquisa.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cmbPesquisa.FormattingEnabled = true;
-            this.cmbPesquisa.Items.AddRange(new object[] {
-            "Todos",
-            "Código",
-            "Nome"});
-            this.cmbPesquisa.Location = new System.Drawing.Point(120, 11);
-            this.cmbPesquisa.Name = "cmbPesquisa";
-            this.cmbPesquisa.Size = new System.Drawing.Size(101, 28);
-            this.cmbPesquisa.TabIndex = 6;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(13, 15);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(110, 20);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Pesquisar por:";
             // 
             // btnPesquisar
             // 
@@ -181,9 +208,9 @@
             this.btnPesquisar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPesquisar.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPesquisar.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.btnPesquisar.Location = new System.Drawing.Point(846, 45);
+            this.btnPesquisar.Location = new System.Drawing.Point(843, 10);
             this.btnPesquisar.Name = "btnPesquisar";
-            this.btnPesquisar.Size = new System.Drawing.Size(155, 35);
+            this.btnPesquisar.Size = new System.Drawing.Size(155, 30);
             this.btnPesquisar.TabIndex = 3;
             this.btnPesquisar.Text = "🔍 Pesquisar [Enter]";
             this.btnPesquisar.UseVisualStyleBackColor = true;
@@ -195,10 +222,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPesquisa.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtPesquisa.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPesquisa.Location = new System.Drawing.Point(233, 11);
+            this.txtPesquisa.Location = new System.Drawing.Point(10, 10);
             this.txtPesquisa.Margin = new System.Windows.Forms.Padding(0);
             this.txtPesquisa.Name = "txtPesquisa";
-            this.txtPesquisa.Size = new System.Drawing.Size(768, 29);
+            this.txtPesquisa.Size = new System.Drawing.Size(827, 29);
             this.txtPesquisa.TabIndex = 0;
             this.txtPesquisa.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPesquisa_KeyDown);
             // 
@@ -207,9 +234,10 @@
             this.flowLayoutPanelProdutos.AutoScroll = true;
             this.flowLayoutPanelProdutos.BackColor = System.Drawing.SystemColors.Control;
             this.flowLayoutPanelProdutos.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanelProdutos.Location = new System.Drawing.Point(3, 102);
+            this.flowLayoutPanelProdutos.Location = new System.Drawing.Point(3, 96);
             this.flowLayoutPanelProdutos.Name = "flowLayoutPanelProdutos";
-            this.flowLayoutPanelProdutos.Size = new System.Drawing.Size(1011, 786);
+            this.flowLayoutPanelProdutos.Padding = new System.Windows.Forms.Padding(20);
+            this.flowLayoutPanelProdutos.Size = new System.Drawing.Size(1011, 837);
             this.flowLayoutPanelProdutos.TabIndex = 1;
             // 
             // panel3
@@ -219,9 +247,9 @@
             this.panel3.Controls.Add(this.btnAtualizarProdutos);
             this.panel3.Controls.Add(this.btnCadastrarProduto);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(3, 894);
+            this.panel3.Location = new System.Drawing.Point(3, 939);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1011, 94);
+            this.panel3.Size = new System.Drawing.Size(1011, 99);
             this.panel3.TabIndex = 2;
             // 
             // btnAtualizarProdutos
@@ -252,8 +280,52 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(886, 991);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(886, 1041);
             this.flowLayoutPanel1.TabIndex = 0;
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.label3.Location = new System.Drawing.Point(290, 7);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(81, 27);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Nome/Desc";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label4
+            // 
+            this.label4.BackColor = System.Drawing.Color.Transparent;
+            this.label4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.label4.Location = new System.Drawing.Point(367, 7);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(81, 27);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "Inativos";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(66, 14);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(63, 20);
+            this.radioButton1.TabIndex = 0;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "Grade";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(153, 14);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(57, 20);
+            this.radioButton2.TabIndex = 1;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Linha";
+            this.radioButton2.UseVisualStyleBackColor = true;
             // 
             // formVenda
             // 
@@ -261,7 +333,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1904, 1041);
             this.Controls.Add(this.splitContainer_menu);
-            this.Controls.Add(this.panel1);
             this.Name = "formVenda";
             this.Text = "formVenda";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
@@ -276,27 +347,34 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.SplitContainer splitContainer_menu;
         private System.Windows.Forms.SplitContainer splitContainer_catalogo;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.TextBox txtPesquisa;
         private System.Windows.Forms.Button btnPesquisar;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox cmbPesquisa;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelProdutos;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Button btnAtualizarProdutos;
         private System.Windows.Forms.Button btnCadastrarProduto;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton radioButton2;
     }
 }

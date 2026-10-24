@@ -54,7 +54,7 @@ namespace ProjetoExtensionista2026_2
             foreach (Control ctrl in container.Controls)
             {
                 // Ignora explicitamente controles interativos próprios do card
-                if (ctrl == UpDownProduto || ctrl == btnAdicionar || ctrl == btnOculto || ctrl is NumericUpDown || ctrl is Button)
+                if (ctrl == UpDownProduto || ctrl == btnAdicionar || ctrl == lblOculto || ctrl is NumericUpDown || ctrl is Button)
                 {
                     ctrl.Cursor = Cursors.Default;
                     continue;
@@ -96,8 +96,8 @@ namespace ProjetoExtensionista2026_2
 
             // Reseta o estado do botão de custo oculto
             _custoVisivel = false;
-            btnOculto.Text = "👁️‍🗨️ Mostrar Ocultados ...";
-            btnOculto.ForeColor = SystemColors.ControlDarkDark;
+            lblOculto.Text = "👁️‍🗨️ Mostrar Ocultados ...";
+            lblOculto.ForeColor = SystemColors.ControlDarkDark;
 
             lblEstoque.Text = $"Estoque: {p.Estoque}";
 
@@ -147,13 +147,13 @@ namespace ProjetoExtensionista2026_2
 
             if (_custoVisivel)
             {
-                btnOculto.Text = $"Custo: {PrecoCompra:C2}";
-                btnOculto.ForeColor = Color.Red;
+                lblOculto.Text = $"Custo: {PrecoCompra:C2}";
+                lblOculto.ForeColor = Color.Red;
             }
             else
             {
-                btnOculto.Text = "👁️‍🗨️ Mostrar Ocultados ...";
-                btnOculto.ForeColor = SystemColors.ControlDarkDark;
+                lblOculto.Text = "👁️‍🗨️ Mostrar Ocultados ...";
+                lblOculto.ForeColor = SystemColors.ControlDarkDark;
             }
         }
 

@@ -37,7 +37,7 @@
             this.lblEstoque = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblCodigo = new System.Windows.Forms.Label();
-            this.btnOculto = new System.Windows.Forms.Button();
+            this.lblOculto = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.UpDownProduto)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFoto)).BeginInit();
             this.panel1.SuspendLayout();
@@ -68,6 +68,7 @@
             // btnAdicionar
             // 
             this.btnAdicionar.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.btnAdicionar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnAdicionar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAdicionar.Location = new System.Drawing.Point(6, 215);
             this.btnAdicionar.Name = "btnAdicionar";
@@ -83,8 +84,9 @@
             this.UpDownProduto.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.UpDownProduto.Location = new System.Drawing.Point(202, 219);
             this.UpDownProduto.Name = "UpDownProduto";
-            this.UpDownProduto.Size = new System.Drawing.Size(75, 24);
+            this.UpDownProduto.Size = new System.Drawing.Size(72, 24);
             this.UpDownProduto.TabIndex = 4;
+            this.UpDownProduto.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lblPrecoVenda
             // 
@@ -95,6 +97,7 @@
             this.lblPrecoVenda.Size = new System.Drawing.Size(148, 18);
             this.lblPrecoVenda.TabIndex = 5;
             this.lblPrecoVenda.Text = "R$ 00,00";
+            this.lblPrecoVenda.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // picFoto
             // 
@@ -139,16 +142,18 @@
             this.lblCodigo.Text = "Código";
             this.lblCodigo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // btnOculto
+            // lblOculto
             // 
-            this.btnOculto.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.btnOculto.Location = new System.Drawing.Point(129, 124);
-            this.btnOculto.Name = "btnOculto";
-            this.btnOculto.Size = new System.Drawing.Size(148, 23);
-            this.btnOculto.TabIndex = 9;
-            this.btnOculto.Text = "👁️‍🗨️ Mostrar Ocultos ...";
-            this.btnOculto.UseVisualStyleBackColor = true;
-            this.btnOculto.Click += new System.EventHandler(this.btnOculto_Click);
+            this.lblOculto.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblOculto.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOculto.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.lblOculto.Location = new System.Drawing.Point(133, 127);
+            this.lblOculto.Name = "lblOculto";
+            this.lblOculto.Size = new System.Drawing.Size(141, 20);
+            this.lblOculto.TabIndex = 9;
+            this.lblOculto.Text = "👁️‍🗨 Mostrar ocultos...";
+            this.lblOculto.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblOculto.Click += new System.EventHandler(this.btnOculto_Click);
             // 
             // UcCardProduto
             // 
@@ -156,7 +161,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Controls.Add(this.btnOculto);
+            this.Controls.Add(this.lblOculto);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.lblPrecoVenda);
             this.Controls.Add(this.UpDownProduto);
@@ -184,6 +189,6 @@
         private System.Windows.Forms.Label lblEstoque;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label lblCodigo;
-        private System.Windows.Forms.Button btnOculto;
+        private System.Windows.Forms.Label lblOculto;
     }
 }

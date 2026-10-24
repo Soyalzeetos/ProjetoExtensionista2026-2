@@ -245,33 +245,58 @@ namespace ProjetoExtensionista2026_2
         {
             if (flowLayoutPanelProdutos == null || flowLayoutPanelProdutos.Controls.Count == 0)
                 return;
+            flowLayoutPanelProdutos.SuspendLayout();
 
-            Control primeiroCard = flowLayoutPanelProdutos.Controls[0];
-            int larguraTotalDoCard = primeiroCard.Width + primeiroCard.Margin.Horizontal;
-
-            int larguraDisponivel = flowLayoutPanelProdutos.ClientSize.Width;
-
-            int colunas = larguraDisponivel / larguraTotalDoCard;
-            if (colunas < 1)
-                colunas = 1;
-
-            if (flowLayoutPanelProdutos.Controls.Count < colunas)
+            try
             {
-                colunas = flowLayoutPanelProdutos.Controls.Count;
+                Control primeiroCard = flowLayoutPanelProdutos.Controls[0];
+                int larguraCard = primeiroCard.Width;
+                int margemPadrao = 15;
+                int larguraDisponivel = flowLayoutPanelProdutos.ClientSize.Width - flowLayoutPanelProdutos.Padding.Horizontal - 2;
+                int colunas = (larguraDisponivel + margemPadrao) / (larguraCard + margemPadrao);
+                if (colunas < 1) colunas = 1;
+
+                int totalCards = flowLayoutPanelProdutos.Controls.Count;
+
+                if (totalCards == 1)
+                {
+                    primeiroCard.Margin = new Padding(0, primeiroCard.Margin.Top, 0, primeiroCard.Margin.Bottom);
+                    return;
+                }
+
+                if (totalCards < colunas)
+                {
+                    for (int i = 0; i < totalCards; i++)
+                    {
+                        Control card = flowLayoutPanelProdutos.Controls[i];
+                        int marginDir = (i == totalCards - 1) ? 0 : margemPadrao;
+                        card.Margin = new Padding(0, card.Margin.Top, marginDir, card.Margin.Bottom);
+                    }
+                    return;
+                }
+
+                int sobra = larguraDisponivel - (colunas * larguraCard);
+                int gap = (colunas > 1) ? (sobra / (colunas - 1)) : 0;
+
+                for (int i = 0; i < totalCards; i++)
+                {
+                    Control card = flowLayoutPanelProdutos.Controls[i];
+                    int colunaAtual = i % colunas;
+
+                    bool ehUltimoDaLinha = (colunaAtual == colunas - 1);
+                    int marginDir = ehUltimoDaLinha ? 0 : gap;
+
+                    card.Margin = new Padding(0, card.Margin.Top, marginDir, card.Margin.Bottom);
+                }
             }
-
-            int larguraOcupadaPelosCards = colunas * larguraTotalDoCard;
-            int sobra = (larguraDisponivel - larguraOcupadaPelosCards) / 2;
-
-            if (sobra < 0)
-                sobra = 0;
-
-            flowLayoutPanelProdutos.Padding = new Padding(sobra, flowLayoutPanelProdutos.Padding.Top, 0, flowLayoutPanelProdutos.Padding.Bottom);
+            finally
+            {
+                flowLayoutPanelProdutos.ResumeLayout();
+            }
         }
 
         private void btnCadastrarProduto_Click(object sender, EventArgs e)
         {
-            // Abre o mesmo modal, porém vazio para novo registro
             AbrirModalProduto();
         }
     }
