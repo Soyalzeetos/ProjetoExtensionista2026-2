@@ -67,20 +67,6 @@ namespace ProjetoExtensionista2026_2
                 splitContainer_catalogo.SplitterDistance = limiteMaximo;
         }
 
-        private void btnPesquisar_Click(object sender, EventArgs e)
-        {
-            _ucEstoque?.BuscarProdutosNoSupabase(txtPesquisa.Text);
-        }
-
-        private void txtPesquisa_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                e.SuppressKeyPress = true;
-                _ucEstoque?.BuscarProdutosNoSupabase(txtPesquisa.Text);
-            }
-        }
-
         private void AcaoSelecionarProduto(int idProduto, decimal precoVenda, int quantidade)
         {
             decimal totalItem = precoVenda * quantidade;

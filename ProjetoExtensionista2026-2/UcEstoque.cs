@@ -28,11 +28,17 @@ namespace ProjetoExtensionista2026_2
 
         /// <summary>
         /// Define as permissões de acesso com base no perfil.
-        /// Se for vendedor/caixa, oculta os preços de custo e desativa a edição.
+        /// Se for vendedor/caixa, oculta os preços de custo, o painel de ferramentas e desativa a edição.
         /// </summary>
         public void ConfigurarPerfilVendedor(bool ehVendedor)
         {
             _podeVerOcultos = !ehVendedor;
+
+            // Oculta o tableLayoutPanel2 (barra superior/ações de estoque) no formVenda
+            if (panel2 != null)
+            {
+                panel2.Visible = !ehVendedor;
+            }
 
             // Se existir botão de custo no próprio UserControl, ajusta a visibilidade
             if (this.Controls.ContainsKey("btnOculto"))
@@ -40,7 +46,7 @@ namespace ProjetoExtensionista2026_2
                 this.Controls["btnOculto"].Visible = _podeVerOcultos;
             }
 
-            // Atualiza os cards que já se encontram carregados no ecrã
+            // Atualiza os cards que já se encontram carregados na tela
             foreach (Control controle in flowLayoutPanelProdutos.Controls)
             {
                 if (controle is UcCardProduto card)
@@ -56,6 +62,40 @@ namespace ProjetoExtensionista2026_2
         private void AplicarPermissoesAoCard(UcCardProduto card)
         {
             card.ConfigurarPermissoes(podeVerCusto: _podeVerOcultos, podeEditar: _podeVerOcultos);
+        }
+
+        /// <summary>
+        /// Ação de pesquisa acionada pelo clique do botão
+        /// </summary>
+        private void searchBtn_Click(object sender, EventArgs e)
+        {
+            ExecutarPesquisa();
+        }
+
+        /// <summary>
+        /// Ação de pesquisa acionada ao pressionar Enter na caixa de texto
+        /// </summary>
+        private void searchTxtBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                ExecutarPesquisa();
+            }
+        }
+
+        private void ExecutarPesquisa()
+        {
+            string termo = searchTxtBox != null ? searchTxtBox.Text : "";
+            BuscarProdutosNoSupabase(termo);
+        }
+
+        /// <summary>
+        /// Ação do botão cadastrar produto
+        /// </summary>
+        private void btnCadastrar_Click(object sender, EventArgs e)
+        {
+            AbrirModalProduto();
         }
 
         /// <summary>

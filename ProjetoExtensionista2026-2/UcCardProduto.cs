@@ -39,7 +39,6 @@ namespace ProjetoExtensionista2026_2
 
             picFoto.SizeMode = PictureBoxSizeMode.Zoom;
 
-            // Vincula o clique recursivamente para abrir edição
             VincularCliquesDeEdicao(this);
         }
 

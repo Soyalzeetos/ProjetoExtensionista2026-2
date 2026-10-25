@@ -32,7 +32,7 @@
             this.searchBarPanel = new System.Windows.Forms.Panel();
             this.filterBtn = new System.Windows.Forms.Button();
             this.searchBtn = new System.Windows.Forms.Button();
-            this.panelConteudo = new System.Windows.Forms.Panel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.searchBarPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -81,19 +81,19 @@
             this.searchBtn.UseVisualStyleBackColor = true;
             this.searchBtn.Click += new System.EventHandler(this.searchBtn_Click);
             // 
-            // panelConteudo
+            // flowLayoutPanel1
             // 
-            this.panelConteudo.Location = new System.Drawing.Point(19, 79);
-            this.panelConteudo.Name = "panelConteudo";
-            this.panelConteudo.Size = new System.Drawing.Size(1507, 590);
-            this.panelConteudo.TabIndex = 2;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(19, 83);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1510, 586);
+            this.flowLayoutPanel1.TabIndex = 2;
             // 
             // formEstoque
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1541, 681);
-            this.Controls.Add(this.panelConteudo);
+            this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.searchBarPanel);
             this.Name = "formEstoque";
             this.Text = "formEstoque";
@@ -110,6 +110,6 @@
         private System.Windows.Forms.Panel searchBarPanel;
         private System.Windows.Forms.Button filterBtn;
         private System.Windows.Forms.Button searchBtn;
-        private System.Windows.Forms.Panel panelConteudo;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }
