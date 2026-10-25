@@ -9,8 +9,8 @@ namespace ProjetoExtensionista2026_2
 {
     public partial class UcEstoque : UserControl
     {
-        // Evento que notifica o formulário hospedeiro quando um item for selecionado/adicionado
-        public event Action<int, decimal, int> AoAdicionarAoCarrinho;
+        // Evento atualizado para 5 parâmetros: ID, Nome, Preço, Quantidade e Foto
+        public event Action<int, string, decimal, int, string> AoAdicionarAoCarrinho;
 
         private bool _podeVerOcultos = true;
         private string _filtroAtual = "";
@@ -34,19 +34,16 @@ namespace ProjetoExtensionista2026_2
         {
             _podeVerOcultos = !ehVendedor;
 
-            // Oculta o tableLayoutPanel2 (barra superior/ações de estoque) no formVenda
             if (panel2 != null)
             {
                 panel2.Visible = !ehVendedor;
             }
 
-            // Se existir botão de custo no próprio UserControl, ajusta a visibilidade
             if (this.Controls.ContainsKey("btnOculto"))
             {
                 this.Controls["btnOculto"].Visible = _podeVerOcultos;
             }
 
-            // Atualiza os cards que já se encontram carregados na tela
             foreach (Control controle in flowLayoutPanelProdutos.Controls)
             {
                 if (controle is UcCardProduto card)
@@ -200,10 +197,10 @@ namespace ProjetoExtensionista2026_2
                                     }
                                 };
 
-                                // Clique de Adicionar ao Carrinho (Repassado para a Venda)
+                                // Clique de Adicionar ao Carrinho: repassa os dados completos para a Venda
                                 card.AoAdicionarProduto += (prodId, preco, qtd) =>
                                 {
-                                    AoAdicionarAoCarrinho?.Invoke(prodId, preco, qtd);
+                                    AoAdicionarAoCarrinho?.Invoke(prod.Id, prod.Nome, prod.PrecoVenda, qtd, prod.FotoUrl);
                                 };
 
                                 flowLayoutPanelProdutos.Controls.Add(card);

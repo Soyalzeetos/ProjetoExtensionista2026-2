@@ -117,7 +117,8 @@
             // 
             // searchTxtBox
             // 
-            this.searchTxtBox.Dock = System.Windows.Forms.DockStyle.Left;
+            this.searchTxtBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.searchTxtBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.searchTxtBox.Location = new System.Drawing.Point(0, 0);
             this.searchTxtBox.Multiline = true;

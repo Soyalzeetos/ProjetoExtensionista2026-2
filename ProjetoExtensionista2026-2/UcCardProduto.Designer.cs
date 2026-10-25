@@ -70,9 +70,9 @@
             this.btnAdicionar.BackColor = System.Drawing.SystemColors.ControlLight;
             this.btnAdicionar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnAdicionar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAdicionar.Location = new System.Drawing.Point(6, 215);
+            this.btnAdicionar.Location = new System.Drawing.Point(84, 212);
             this.btnAdicionar.Name = "btnAdicionar";
-            this.btnAdicionar.Size = new System.Drawing.Size(190, 32);
+            this.btnAdicionar.Size = new System.Drawing.Size(190, 29);
             this.btnAdicionar.TabIndex = 3;
             this.btnAdicionar.Text = "Adicionar ➕";
             this.btnAdicionar.UseVisualStyleBackColor = false;
@@ -81,16 +81,16 @@
             // UpDownProduto
             // 
             this.UpDownProduto.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.UpDownProduto.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UpDownProduto.Location = new System.Drawing.Point(202, 219);
+            this.UpDownProduto.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UpDownProduto.Location = new System.Drawing.Point(6, 212);
             this.UpDownProduto.Name = "UpDownProduto";
-            this.UpDownProduto.Size = new System.Drawing.Size(72, 24);
+            this.UpDownProduto.Size = new System.Drawing.Size(72, 29);
             this.UpDownProduto.TabIndex = 4;
             this.UpDownProduto.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lblPrecoVenda
             // 
-            this.lblPrecoVenda.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPrecoVenda.Font = new System.Drawing.Font("Arial", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPrecoVenda.ForeColor = System.Drawing.Color.LimeGreen;
             this.lblPrecoVenda.Location = new System.Drawing.Point(129, 105);
             this.lblPrecoVenda.Name = "lblPrecoVenda";
@@ -102,9 +102,9 @@
             // picFoto
             // 
             this.picFoto.ErrorImage = null;
-            this.picFoto.Location = new System.Drawing.Point(3, 27);
+            this.picFoto.Location = new System.Drawing.Point(6, 30);
             this.picFoto.Name = "picFoto";
-            this.picFoto.Size = new System.Drawing.Size(120, 120);
+            this.picFoto.Size = new System.Drawing.Size(110, 110);
             this.picFoto.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.picFoto.TabIndex = 0;
             this.picFoto.TabStop = false;
@@ -147,9 +147,9 @@
             this.lblOculto.Cursor = System.Windows.Forms.Cursors.Hand;
             this.lblOculto.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblOculto.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.lblOculto.Location = new System.Drawing.Point(133, 127);
+            this.lblOculto.Location = new System.Drawing.Point(129, 127);
             this.lblOculto.Name = "lblOculto";
-            this.lblOculto.Size = new System.Drawing.Size(141, 20);
+            this.lblOculto.Size = new System.Drawing.Size(148, 20);
             this.lblOculto.TabIndex = 9;
             this.lblOculto.Text = "👁️‍🗨 Mostrar ocultos...";
             this.lblOculto.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;

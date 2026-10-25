@@ -1,0 +1,185 @@
+﻿namespace ProjetoExtensionista2026_2
+{
+    partial class UcCardVenda
+    {
+        /// <summary> 
+        /// Variável de designer necessária.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Limpar os recursos que estão sendo usados.
+        /// </summary>
+        /// <param name="disposing">true se for necessário descartar os recursos gerenciados; caso contrário, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Código gerado pelo Designer de Componentes
+
+        /// <summary> 
+        /// Método necessário para suporte ao Designer - não modifique 
+        /// o conteúdo deste método com o editor de código.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.picFoto = new System.Windows.Forms.PictureBox();
+            this.lblNomeProduto = new System.Windows.Forms.Label();
+            this.lblCodigo = new System.Windows.Forms.Label();
+            this.btnExcluir = new System.Windows.Forms.Button();
+            this.lblPrecoTotal = new System.Windows.Forms.Label();
+            this.lblPrecoUnitario = new System.Windows.Forms.Label();
+            this.btnAumentar = new System.Windows.Forms.Button();
+            this.btnDiminuir = new System.Windows.Forms.Button();
+            this.lblQuantidade = new System.Windows.Forms.Label();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picFoto)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.lblQuantidade);
+            this.panel1.Controls.Add(this.btnDiminuir);
+            this.panel1.Controls.Add(this.btnAumentar);
+            this.panel1.Controls.Add(this.lblPrecoUnitario);
+            this.panel1.Controls.Add(this.lblPrecoTotal);
+            this.panel1.Controls.Add(this.btnExcluir);
+            this.panel1.Controls.Add(this.lblCodigo);
+            this.panel1.Controls.Add(this.lblNomeProduto);
+            this.panel1.Controls.Add(this.picFoto);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Padding = new System.Windows.Forms.Padding(5);
+            this.panel1.Size = new System.Drawing.Size(600, 60);
+            this.panel1.TabIndex = 0;
+            // 
+            // picFoto
+            // 
+            this.picFoto.Dock = System.Windows.Forms.DockStyle.Left;
+            this.picFoto.ErrorImage = null;
+            this.picFoto.Location = new System.Drawing.Point(5, 5);
+            this.picFoto.Name = "picFoto";
+            this.picFoto.Size = new System.Drawing.Size(50, 48);
+            this.picFoto.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.picFoto.TabIndex = 1;
+            this.picFoto.TabStop = false;
+            // 
+            // lblNomeProduto
+            // 
+            this.lblNomeProduto.AutoSize = true;
+            this.lblNomeProduto.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblNomeProduto.Location = new System.Drawing.Point(61, 5);
+            this.lblNomeProduto.Name = "lblNomeProduto";
+            this.lblNomeProduto.Size = new System.Drawing.Size(81, 20);
+            this.lblNomeProduto.TabIndex = 2;
+            this.lblNomeProduto.Text = "Produto ...";
+            // 
+            // lblCodigo
+            // 
+            this.lblCodigo.AutoSize = true;
+            this.lblCodigo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCodigo.Location = new System.Drawing.Point(63, 29);
+            this.lblCodigo.Name = "lblCodigo";
+            this.lblCodigo.Size = new System.Drawing.Size(51, 16);
+            this.lblCodigo.TabIndex = 3;
+            this.lblCodigo.Text = "Código";
+            // 
+            // btnExcluir
+            // 
+            this.btnExcluir.FlatAppearance.BorderSize = 0;
+            this.btnExcluir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExcluir.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExcluir.Location = new System.Drawing.Point(555, 11);
+            this.btnExcluir.Name = "btnExcluir";
+            this.btnExcluir.Size = new System.Drawing.Size(35, 35);
+            this.btnExcluir.TabIndex = 4;
+            this.btnExcluir.Text = "🗑️";
+            this.btnExcluir.UseVisualStyleBackColor = true;
+            this.btnExcluir.Click += new System.EventHandler(this.btnExcluir_Click);
+            // 
+            // lblPrecoTotal
+            // 
+            this.lblPrecoTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPrecoTotal.Location = new System.Drawing.Point(449, 21);
+            this.lblPrecoTotal.Name = "lblPrecoTotal";
+            this.lblPrecoTotal.Size = new System.Drawing.Size(100, 20);
+            this.lblPrecoTotal.TabIndex = 5;
+            this.lblPrecoTotal.Text = "R$ 00,00";
+            this.lblPrecoTotal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblPrecoUnitario
+            // 
+            this.lblPrecoUnitario.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPrecoUnitario.Location = new System.Drawing.Point(240, 21);
+            this.lblPrecoUnitario.Name = "lblPrecoUnitario";
+            this.lblPrecoUnitario.Size = new System.Drawing.Size(100, 20);
+            this.lblPrecoUnitario.TabIndex = 7;
+            this.lblPrecoUnitario.Text = "R$ 00,00";
+            this.lblPrecoUnitario.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnAumentar
+            // 
+            this.btnAumentar.Location = new System.Drawing.Point(423, 21);
+            this.btnAumentar.Name = "btnAumentar";
+            this.btnAumentar.Size = new System.Drawing.Size(20, 20);
+            this.btnAumentar.TabIndex = 8;
+            this.btnAumentar.Text = "➕";
+            this.btnAumentar.UseVisualStyleBackColor = true;
+            this.btnAumentar.Click += new System.EventHandler(this.btnAumentar_Click);
+            // 
+            // btnDiminuir
+            // 
+            this.btnDiminuir.Location = new System.Drawing.Point(346, 21);
+            this.btnDiminuir.Name = "btnDiminuir";
+            this.btnDiminuir.Size = new System.Drawing.Size(20, 20);
+            this.btnDiminuir.TabIndex = 9;
+            this.btnDiminuir.Text = "➖";
+            this.btnDiminuir.UseVisualStyleBackColor = true;
+            this.btnDiminuir.Click += new System.EventHandler(this.btnDiminuir_Click);
+            // 
+            // lblQuantidade
+            // 
+            this.lblQuantidade.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblQuantidade.Location = new System.Drawing.Point(372, 23);
+            this.lblQuantidade.Name = "lblQuantidade";
+            this.lblQuantidade.Size = new System.Drawing.Size(45, 16);
+            this.lblQuantidade.TabIndex = 10;
+            this.lblQuantidade.Text = "123";
+            this.lblQuantidade.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // UcCardVenda
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.panel1);
+            this.Name = "UcCardVenda";
+            this.Size = new System.Drawing.Size(600, 60);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picFoto)).EndInit();
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label lblNomeProduto;
+        private System.Windows.Forms.PictureBox picFoto;
+        private System.Windows.Forms.Label lblCodigo;
+        private System.Windows.Forms.Label lblPrecoTotal;
+        private System.Windows.Forms.Button btnExcluir;
+        private System.Windows.Forms.Label lblPrecoUnitario;
+        private System.Windows.Forms.Button btnDiminuir;
+        private System.Windows.Forms.Button btnAumentar;
+        private System.Windows.Forms.Label lblQuantidade;
+    }
+}
