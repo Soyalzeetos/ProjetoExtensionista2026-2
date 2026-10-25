@@ -76,6 +76,10 @@ namespace ProjetoExtensionista2026_2
                     AbrirFormNoWorkspace(new formEstoque());
                     break;
 
+                case "Financeiro":
+                    AbrirFormNoWorkspace(new FormFinanceiro());
+                    break;
+
                 case "Configurações":
                     AbrirFormNoWorkspace(new FormConfig());
                     break;

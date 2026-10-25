@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -37,16 +37,18 @@ namespace ProjetoExtensionista2026_2
             // 1. Apaga o botão que estava aceso
             if (botaoAtivo != null)
             {
-                botaoAtivo.BackColor = CorPadrao;
+                botaoAtivo.Tag = null;
             }
 
-            // 2. Acende o botão clicado
+            // 2. Acende o botão clicado com a cor de destaque Indigo
             botaoAtivo = botaoClicado;
-            botaoAtivo.BackColor = CorAcesa;
+            botaoAtivo.Tag = "aba_ativa";
+            GerenciadorTema.AplicarTema(this);
 
             // 3. Substitui o conteúdo do panel inferior
             panelConteudo.Controls.Clear();
             telaConteudo.Dock = DockStyle.Fill;
+            GerenciadorTema.AplicarTema(telaConteudo);
             panelConteudo.Controls.Add(telaConteudo);
         }
 

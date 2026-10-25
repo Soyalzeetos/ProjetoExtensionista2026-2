@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ProjetoExtensionista2026_2;
 
 namespace ProjetoExtensionista2026_2
@@ -15,6 +15,7 @@ namespace ProjetoExtensionista2026_2
                 formPrincipal.listBoxSidebar.Items.Add("Cadastro");
                 formPrincipal.listBoxSidebar.Items.Add("Vendas");
                 formPrincipal.listBoxSidebar.Items.Add("Estoque");
+                formPrincipal.listBoxSidebar.Items.Add("Financeiro");
                 formPrincipal.listBoxSidebar.Items.Add("Configurações");
                 formPrincipal.listBoxSidebar.Items.Add("Sair");
             }

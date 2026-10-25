@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -54,6 +54,8 @@ namespace ProjetoExtensionista2026_2
             flowLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.Controls.Clear();
 
+            // TODO: Ajustar card de estoque apos remocao de UcUserControlEstoque
+            /*
             foreach (var produto in listaProdutos)
             {
                 var card = new UcUserControlEstoque();
@@ -61,6 +63,7 @@ namespace ProjetoExtensionista2026_2
 
                 flowLayoutPanel1.Controls.Add(card);
             }
+            */
 
             flowLayoutPanel1.ResumeLayout();
         }

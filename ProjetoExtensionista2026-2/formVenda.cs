@@ -1,4 +1,4 @@
-﻿using Npgsql;
+using Npgsql;
 using ProjetoExtensionista2026_2.SQL;
 using System;
 using System.Data;
@@ -163,6 +163,7 @@ namespace ProjetoExtensionista2026_2
                                 var card = new UcCardProduto();
                                 card.Margin = new Padding(8);
                                 card.CarregarDados(prod);
+                                GerenciadorTema.AplicarTema(card);
 
                                 card.AoAdicionarProduto += (prodId, preco, qtd) =>
                                 {
@@ -219,6 +220,7 @@ namespace ProjetoExtensionista2026_2
                 formModal.MaximizeBox = false;
                 formModal.MinimizeBox = false;
                 formModal.Controls.Add(ucCadastro);
+                GerenciadorTema.AplicarTema(formModal);
 
                 ucCadastro.AoConcluirOperacao += () =>
                 {
