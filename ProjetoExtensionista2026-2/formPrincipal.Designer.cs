@@ -32,7 +32,10 @@
             this.listBoxSidebar = new System.Windows.Forms.ListBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panelWorkspace = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panelSidebar.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // panelSidebar
@@ -53,16 +56,17 @@
             this.listBoxSidebar.ItemHeight = 25;
             this.listBoxSidebar.Location = new System.Drawing.Point(0, 0);
             this.listBoxSidebar.Name = "listBoxSidebar";
-            this.listBoxSidebar.Size = new System.Drawing.Size(261, 622);
+            this.listBoxSidebar.Size = new System.Drawing.Size(261, 621);
             this.listBoxSidebar.TabIndex = 3;
             this.listBoxSidebar.Click += new System.EventHandler(this.IdentificarSidebarListBox);
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 622);
+            this.panel1.Location = new System.Drawing.Point(0, 621);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(261, 59);
+            this.panel1.Size = new System.Drawing.Size(261, 60);
             this.panel1.TabIndex = 1;
             // 
             // panelWorkspace
@@ -72,6 +76,14 @@
             this.panelWorkspace.Name = "panelWorkspace";
             this.panelWorkspace.Size = new System.Drawing.Size(1003, 681);
             this.panelWorkspace.TabIndex = 1;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(5, 5);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(50, 50);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
             // 
             // formPrincipal
             // 
@@ -85,6 +97,8 @@
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.formPrincipal_Load);
             this.panelSidebar.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -95,5 +109,6 @@
         private System.Windows.Forms.Panel panelWorkspace;
         private System.Windows.Forms.Panel panel1;
         public System.Windows.Forms.ListBox listBoxSidebar;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

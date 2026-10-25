@@ -72,6 +72,9 @@ namespace ProjetoExtensionista2026_2
                     // Exemplo de outro form
                     AbrirFormNoWorkspace(new formVenda());
                     break;
+                case "Estoque":
+                    AbrirFormNoWorkspace(new formEstoque());
+                    break;
 
                 case "Configurações":
                     AbrirFormNoWorkspace(new FormConfig());

@@ -33,7 +33,11 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
@@ -44,10 +48,6 @@
             this.btnAtualizarProdutos = new System.Windows.Forms.Button();
             this.btnCadastrarProduto = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer_menu)).BeginInit();
             this.splitContainer_menu.Panel2.SuspendLayout();
             this.splitContainer_menu.SuspendLayout();
@@ -99,7 +99,7 @@
             this.splitContainer_catalogo.Panel2.BackColor = System.Drawing.SystemColors.Control;
             this.splitContainer_catalogo.Panel2.Controls.Add(this.flowLayoutPanel1);
             this.splitContainer_catalogo.Size = new System.Drawing.Size(1904, 1041);
-            this.splitContainer_catalogo.SplitterDistance = 1017;
+            this.splitContainer_catalogo.SplitterDistance = 997;
             this.splitContainer_catalogo.SplitterWidth = 1;
             this.splitContainer_catalogo.TabIndex = 2;
             this.splitContainer_catalogo.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer_catalogo_SplitterMoved);
@@ -120,7 +120,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 81F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1017, 1041);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(997, 1041);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // panel2
@@ -135,7 +135,7 @@
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
             this.panel2.Padding = new System.Windows.Forms.Padding(10);
-            this.panel2.Size = new System.Drawing.Size(1011, 87);
+            this.panel2.Size = new System.Drawing.Size(991, 87);
             this.panel2.TabIndex = 0;
             // 
             // groupBox2
@@ -144,12 +144,34 @@
             this.groupBox2.Controls.Add(this.radioButton2);
             this.groupBox2.Controls.Add(this.radioButton1);
             this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(515, 44);
+            this.groupBox2.Location = new System.Drawing.Point(495, 44);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(322, 37);
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Layout:";
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(153, 14);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(57, 20);
+            this.radioButton2.TabIndex = 1;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Linha";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(66, 14);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(63, 20);
+            this.radioButton1.TabIndex = 0;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "Grade";
+            this.radioButton1.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
@@ -162,10 +184,32 @@
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(10, 44);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(488, 37);
+            this.groupBox1.Size = new System.Drawing.Size(468, 37);
             this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtros de Pesquisa:";
+            // 
+            // label4
+            // 
+            this.label4.BackColor = System.Drawing.Color.Transparent;
+            this.label4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.label4.Location = new System.Drawing.Point(367, 7);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(81, 27);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "Inativos";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.label3.Location = new System.Drawing.Point(290, 7);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(81, 27);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Nome/Desc";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label2
             // 
@@ -195,7 +239,7 @@
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.Color.Red;
-            this.button2.Location = new System.Drawing.Point(843, 51);
+            this.button2.Location = new System.Drawing.Point(823, 51);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(155, 30);
             this.button2.TabIndex = 7;
@@ -208,7 +252,7 @@
             this.btnPesquisar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPesquisar.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPesquisar.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.btnPesquisar.Location = new System.Drawing.Point(843, 10);
+            this.btnPesquisar.Location = new System.Drawing.Point(823, 10);
             this.btnPesquisar.Name = "btnPesquisar";
             this.btnPesquisar.Size = new System.Drawing.Size(155, 30);
             this.btnPesquisar.TabIndex = 3;
@@ -225,7 +269,7 @@
             this.txtPesquisa.Location = new System.Drawing.Point(10, 10);
             this.txtPesquisa.Margin = new System.Windows.Forms.Padding(0);
             this.txtPesquisa.Name = "txtPesquisa";
-            this.txtPesquisa.Size = new System.Drawing.Size(827, 29);
+            this.txtPesquisa.Size = new System.Drawing.Size(807, 29);
             this.txtPesquisa.TabIndex = 0;
             this.txtPesquisa.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPesquisa_KeyDown);
             // 
@@ -237,7 +281,7 @@
             this.flowLayoutPanelProdutos.Location = new System.Drawing.Point(3, 96);
             this.flowLayoutPanelProdutos.Name = "flowLayoutPanelProdutos";
             this.flowLayoutPanelProdutos.Padding = new System.Windows.Forms.Padding(20);
-            this.flowLayoutPanelProdutos.Size = new System.Drawing.Size(1011, 837);
+            this.flowLayoutPanelProdutos.Size = new System.Drawing.Size(991, 837);
             this.flowLayoutPanelProdutos.TabIndex = 1;
             // 
             // panel3
@@ -249,14 +293,14 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(3, 939);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1011, 99);
+            this.panel3.Size = new System.Drawing.Size(991, 99);
             this.panel3.TabIndex = 2;
             // 
             // btnAtualizarProdutos
             // 
             this.btnAtualizarProdutos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAtualizarProdutos.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAtualizarProdutos.Location = new System.Drawing.Point(691, 16);
+            this.btnAtualizarProdutos.Location = new System.Drawing.Point(671, 16);
             this.btnAtualizarProdutos.Name = "btnAtualizarProdutos";
             this.btnAtualizarProdutos.Size = new System.Drawing.Size(144, 61);
             this.btnAtualizarProdutos.TabIndex = 1;
@@ -267,7 +311,7 @@
             // 
             this.btnCadastrarProduto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCadastrarProduto.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCadastrarProduto.Location = new System.Drawing.Point(855, 16);
+            this.btnCadastrarProduto.Location = new System.Drawing.Point(835, 16);
             this.btnCadastrarProduto.Name = "btnCadastrarProduto";
             this.btnCadastrarProduto.Size = new System.Drawing.Size(144, 61);
             this.btnCadastrarProduto.TabIndex = 0;
@@ -280,52 +324,8 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(886, 1041);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(906, 1041);
             this.flowLayoutPanel1.TabIndex = 0;
-            // 
-            // label3
-            // 
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label3.Location = new System.Drawing.Point(290, 7);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(81, 27);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Nome/Desc";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label4
-            // 
-            this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label4.Location = new System.Drawing.Point(367, 7);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(81, 27);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Inativos";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(66, 14);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(63, 20);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Grade";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(153, 14);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(57, 20);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Linha";
-            this.radioButton2.UseVisualStyleBackColor = true;
             // 
             // formVenda
             // 
