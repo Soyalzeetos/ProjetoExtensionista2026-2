@@ -32,7 +32,7 @@
             this.searchBarPanel = new System.Windows.Forms.Panel();
             this.filterBtn = new System.Windows.Forms.Button();
             this.searchBtn = new System.Windows.Forms.Button();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.panelConteudo = new System.Windows.Forms.Panel();
             this.searchBarPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -81,20 +81,19 @@
             this.searchBtn.UseVisualStyleBackColor = true;
             this.searchBtn.Click += new System.EventHandler(this.searchBtn_Click);
             // 
-            // flowLayoutPanel1
+            // panelConteudo
             // 
-            this.flowLayoutPanel1.AutoScroll = true;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(19, 68);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1508, 961);
-            this.flowLayoutPanel1.TabIndex = 3;
+            this.panelConteudo.Location = new System.Drawing.Point(19, 79);
+            this.panelConteudo.Name = "panelConteudo";
+            this.panelConteudo.Size = new System.Drawing.Size(1507, 590);
+            this.panelConteudo.TabIndex = 2;
             // 
             // formEstoque
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1541, 681);
-            this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.panelConteudo);
             this.Controls.Add(this.searchBarPanel);
             this.Name = "formEstoque";
             this.Text = "formEstoque";
@@ -111,6 +110,6 @@
         private System.Windows.Forms.Panel searchBarPanel;
         private System.Windows.Forms.Button filterBtn;
         private System.Windows.Forms.Button searchBtn;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Panel panelConteudo;
     }
 }

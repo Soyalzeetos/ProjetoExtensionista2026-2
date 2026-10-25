@@ -43,10 +43,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.btnPesquisar = new System.Windows.Forms.Button();
             this.txtPesquisa = new System.Windows.Forms.TextBox();
-            this.flowLayoutPanelProdutos = new System.Windows.Forms.FlowLayoutPanel();
-            this.panel3 = new System.Windows.Forms.Panel();
-            this.btnAtualizarProdutos = new System.Windows.Forms.Button();
-            this.btnCadastrarProduto = new System.Windows.Forms.Button();
+            this.panelConteudo = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer_menu)).BeginInit();
             this.splitContainer_menu.Panel2.SuspendLayout();
@@ -59,7 +56,6 @@
             this.panel2.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer_menu
@@ -110,16 +106,15 @@
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.panel2, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanelProdutos, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.panel3, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.panelConteudo, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.ForeColor = System.Drawing.SystemColors.WindowText;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 81F));
+            this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(997, 1041);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -134,8 +129,8 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Padding = new System.Windows.Forms.Padding(10);
-            this.panel2.Size = new System.Drawing.Size(991, 87);
+            this.panel2.Padding = new System.Windows.Forms.Padding(25, 10, 25, 10);
+            this.panel2.Size = new System.Drawing.Size(991, 98);
             this.panel2.TabIndex = 0;
             // 
             // groupBox2
@@ -144,7 +139,7 @@
             this.groupBox2.Controls.Add(this.radioButton2);
             this.groupBox2.Controls.Add(this.radioButton1);
             this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(495, 44);
+            this.groupBox2.Location = new System.Drawing.Point(480, 44);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(322, 37);
             this.groupBox2.TabIndex = 9;
@@ -182,9 +177,9 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(10, 44);
+            this.groupBox1.Location = new System.Drawing.Point(25, 44);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(468, 37);
+            this.groupBox1.Size = new System.Drawing.Size(438, 37);
             this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtros de Pesquisa:";
@@ -239,7 +234,7 @@
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.Color.Red;
-            this.button2.Location = new System.Drawing.Point(823, 51);
+            this.button2.Location = new System.Drawing.Point(808, 51);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(155, 30);
             this.button2.TabIndex = 7;
@@ -252,7 +247,7 @@
             this.btnPesquisar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPesquisar.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPesquisar.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.btnPesquisar.Location = new System.Drawing.Point(823, 10);
+            this.btnPesquisar.Location = new System.Drawing.Point(808, 10);
             this.btnPesquisar.Name = "btnPesquisar";
             this.btnPesquisar.Size = new System.Drawing.Size(155, 30);
             this.btnPesquisar.TabIndex = 3;
@@ -266,58 +261,21 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPesquisa.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtPesquisa.Font = new System.Drawing.Font("Arial", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPesquisa.Location = new System.Drawing.Point(10, 10);
+            this.txtPesquisa.Location = new System.Drawing.Point(25, 10);
             this.txtPesquisa.Margin = new System.Windows.Forms.Padding(0);
             this.txtPesquisa.Name = "txtPesquisa";
-            this.txtPesquisa.Size = new System.Drawing.Size(807, 29);
+            this.txtPesquisa.Size = new System.Drawing.Size(777, 29);
             this.txtPesquisa.TabIndex = 0;
             this.txtPesquisa.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPesquisa_KeyDown);
             // 
-            // flowLayoutPanelProdutos
+            // panelConteudo
             // 
-            this.flowLayoutPanelProdutos.AutoScroll = true;
-            this.flowLayoutPanelProdutos.BackColor = System.Drawing.SystemColors.Control;
-            this.flowLayoutPanelProdutos.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanelProdutos.Location = new System.Drawing.Point(3, 96);
-            this.flowLayoutPanelProdutos.Name = "flowLayoutPanelProdutos";
-            this.flowLayoutPanelProdutos.Padding = new System.Windows.Forms.Padding(20);
-            this.flowLayoutPanelProdutos.Size = new System.Drawing.Size(991, 837);
-            this.flowLayoutPanelProdutos.TabIndex = 1;
-            // 
-            // panel3
-            // 
-            this.panel3.BackColor = System.Drawing.SystemColors.Control;
-            this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel3.Controls.Add(this.btnAtualizarProdutos);
-            this.panel3.Controls.Add(this.btnCadastrarProduto);
-            this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(3, 939);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(991, 99);
-            this.panel3.TabIndex = 2;
-            // 
-            // btnAtualizarProdutos
-            // 
-            this.btnAtualizarProdutos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAtualizarProdutos.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAtualizarProdutos.Location = new System.Drawing.Point(671, 16);
-            this.btnAtualizarProdutos.Name = "btnAtualizarProdutos";
-            this.btnAtualizarProdutos.Size = new System.Drawing.Size(144, 61);
-            this.btnAtualizarProdutos.TabIndex = 1;
-            this.btnAtualizarProdutos.Text = "Atualizar";
-            this.btnAtualizarProdutos.UseVisualStyleBackColor = true;
-            // 
-            // btnCadastrarProduto
-            // 
-            this.btnCadastrarProduto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCadastrarProduto.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCadastrarProduto.Location = new System.Drawing.Point(835, 16);
-            this.btnCadastrarProduto.Name = "btnCadastrarProduto";
-            this.btnCadastrarProduto.Size = new System.Drawing.Size(144, 61);
-            this.btnCadastrarProduto.TabIndex = 0;
-            this.btnCadastrarProduto.Text = "Cadastrar Produto";
-            this.btnCadastrarProduto.UseVisualStyleBackColor = true;
-            this.btnCadastrarProduto.Click += new System.EventHandler(this.btnCadastrarProduto_Click);
+            this.panelConteudo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelConteudo.Location = new System.Drawing.Point(3, 107);
+            this.panelConteudo.Name = "panelConteudo";
+            this.panelConteudo.Padding = new System.Windows.Forms.Padding(25);
+            this.panelConteudo.Size = new System.Drawing.Size(991, 931);
+            this.panelConteudo.TabIndex = 3;
             // 
             // flowLayoutPanel1
             // 
@@ -350,7 +308,6 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
-            this.panel3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -363,10 +320,6 @@
         private System.Windows.Forms.TextBox txtPesquisa;
         private System.Windows.Forms.Button btnPesquisar;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelProdutos;
-        private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.Button btnAtualizarProdutos;
-        private System.Windows.Forms.Button btnCadastrarProduto;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -376,5 +329,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.Panel panelConteudo;
     }
 }

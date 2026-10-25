@@ -23,6 +23,8 @@ namespace ProjetoExtensionista2026_2
         public string FotoOrigem { get; private set; }
 
         private bool _custoVisivel = false;
+        public bool PodeVerCusto { get; private set; } = true;
+        public bool PodeEditar { get; private set; } = true;
 
         public event Action<int, decimal, int> AoAdicionarProduto;
         public event Action<ProdutoDTO> AoClicarParaEditar;
@@ -41,10 +43,23 @@ namespace ProjetoExtensionista2026_2
             VincularCliquesDeEdicao(this);
         }
 
+        /// <summary>
+        /// Configura se o card pode exibir o preço de custo e se permite abrir para edição.
+        /// </summary>
+        public void ConfigurarPermissoes(bool podeVerCusto, bool podeEditar)
+        {
+            PodeVerCusto = podeVerCusto;
+            PodeEditar = podeEditar;
+            if (lblOculto != null) lblOculto.Visible = podeVerCusto;
+            this.Cursor = podeEditar ? Cursors.Hand : Cursors.Default;
+        }
+
         private void VincularCliquesDeEdicao(Control container)
         {
             EventHandler dispararEdicao = (s, e) =>
             {
+                if (!PodeEditar) return;
+
                 if (DadosProduto != null)
                 {
                     AoClicarParaEditar?.Invoke(DadosProduto);
@@ -53,7 +68,6 @@ namespace ProjetoExtensionista2026_2
 
             foreach (Control ctrl in container.Controls)
             {
-                // Ignora explicitamente controles interativos próprios do card
                 if (ctrl == UpDownProduto || ctrl == btnAdicionar || ctrl == lblOculto || ctrl is NumericUpDown || ctrl is Button)
                 {
                     ctrl.Cursor = Cursors.Default;
@@ -61,7 +75,7 @@ namespace ProjetoExtensionista2026_2
                 }
 
                 ctrl.Click += dispararEdicao;
-                ctrl.Cursor = Cursors.Hand;
+                ctrl.Cursor = PodeEditar ? Cursors.Hand : Cursors.Default;
 
                 if (ctrl.HasChildren)
                 {
@@ -70,7 +84,7 @@ namespace ProjetoExtensionista2026_2
             }
 
             container.Click += dispararEdicao;
-            container.Cursor = Cursors.Hand;
+            container.Cursor = PodeEditar ? Cursors.Hand : Cursors.Default;
         }
 
         public void CarregarDados(ProdutoDTO p)
@@ -87,17 +101,16 @@ namespace ProjetoExtensionista2026_2
             Estoque = p.Estoque;
             FotoOrigem = p.FotoUrl;
 
-            // Código iniciado com # e Título apenas com o Nome
             lblCodigo.Text = $"#{p.Id}";
-            lblTitulo.Text = LimitarTexto(p.Nome, 38);
-
-            lblDescricao.Text = LimitarTexto(string.IsNullOrWhiteSpace(p.Descricao) ? "Sem descrição disponível." : p.Descricao, 70);
+            lblTitulo.Text = LimitarTexto(p.Nome, 50);
+            lblDescricao.Text = LimitarTexto(string.IsNullOrWhiteSpace(p.Descricao) ? "Sem descrição disponível." : p.Descricao, 140);
             lblPrecoVenda.Text = p.PrecoVenda.ToString("C2");
 
-            // Reseta o estado do botão de custo oculto
             _custoVisivel = false;
             lblOculto.Text = "👁️‍🗨️ Mostrar Ocultados ...";
             lblOculto.ForeColor = SystemColors.ControlDarkDark;
+
+            lblOculto.Visible = PodeVerCusto;
 
             lblEstoque.Text = $"Estoque: {p.Estoque}";
 
@@ -143,6 +156,8 @@ namespace ProjetoExtensionista2026_2
 
         private void btnOculto_Click(object sender, EventArgs e)
         {
+            if (!PodeVerCusto) return;
+
             _custoVisivel = !_custoVisivel;
 
             if (_custoVisivel)
