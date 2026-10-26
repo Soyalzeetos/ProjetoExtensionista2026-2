@@ -101,7 +101,7 @@ namespace ProjetoExtensionista2026_2
             FotoOrigem = p.FotoUrl;
 
             lblCodigo.Text = $"#{p.Id}";
-            lblTitulo.Text = LimitarTexto(p.Nome, 50);
+            lblTitulo.Text = LimitarTexto(p.Nome, 60);
             lblDescricao.Text = LimitarTexto(string.IsNullOrWhiteSpace(p.Descricao) ? "Sem descrição disponível." : p.Descricao, 140);
             lblPrecoVenda.Text = p.PrecoVenda.ToString("C2");
 

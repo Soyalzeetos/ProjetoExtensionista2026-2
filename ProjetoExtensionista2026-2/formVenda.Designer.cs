@@ -36,6 +36,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.panelCarrinho = new System.Windows.Forms.Panel();
+            this.panel = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer_menu)).BeginInit();
             this.splitContainer_menu.Panel2.SuspendLayout();
             this.splitContainer_menu.SuspendLayout();
@@ -46,6 +47,7 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.panel.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer_menu
@@ -116,12 +118,11 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.panelCarrinho);
+            this.panel1.Controls.Add(this.panel);
             this.panel1.Controls.Add(this.panel2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 159);
             this.panel1.Name = "panel1";
-            this.panel1.Padding = new System.Windows.Forms.Padding(20);
             this.panel1.Size = new System.Drawing.Size(882, 618);
             this.panel1.TabIndex = 0;
             // 
@@ -130,9 +131,9 @@
             this.panel2.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.panel2.Controls.Add(this.label1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel2.Location = new System.Drawing.Point(20, 20);
+            this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(842, 29);
+            this.panel2.Size = new System.Drawing.Size(882, 29);
             this.panel2.TabIndex = 1;
             // 
             // label1
@@ -147,11 +148,21 @@
             // 
             // panelCarrinho
             // 
-            this.panelCarrinho.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelCarrinho.Location = new System.Drawing.Point(20, 89);
+            this.panelCarrinho.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelCarrinho.Location = new System.Drawing.Point(15, 15);
             this.panelCarrinho.Name = "panelCarrinho";
-            this.panelCarrinho.Size = new System.Drawing.Size(842, 509);
-            this.panelCarrinho.TabIndex = 2;
+            this.panelCarrinho.Size = new System.Drawing.Size(852, 479);
+            this.panelCarrinho.TabIndex = 0;
+            // 
+            // panel
+            // 
+            this.panel.Controls.Add(this.panelCarrinho);
+            this.panel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel.Location = new System.Drawing.Point(0, 109);
+            this.panel.Name = "panel";
+            this.panel.Padding = new System.Windows.Forms.Padding(15);
+            this.panel.Size = new System.Drawing.Size(882, 509);
+            this.panel.TabIndex = 2;
             // 
             // formVenda
             // 
@@ -173,6 +184,7 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
+            this.panel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -185,6 +197,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel panel;
         private System.Windows.Forms.Panel panelCarrinho;
     }
 }

@@ -46,11 +46,11 @@
             // lblTitulo
             // 
             this.lblTitulo.AutoEllipsis = true;
-            this.lblTitulo.Font = new System.Drawing.Font("Arial Black", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTitulo.Location = new System.Drawing.Point(125, 27);
+            this.lblTitulo.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitulo.Location = new System.Drawing.Point(122, 27);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Padding = new System.Windows.Forms.Padding(2);
-            this.lblTitulo.Size = new System.Drawing.Size(152, 78);
+            this.lblTitulo.Size = new System.Drawing.Size(155, 78);
             this.lblTitulo.TabIndex = 1;
             this.lblTitulo.Text = "Produto ...";
             // 

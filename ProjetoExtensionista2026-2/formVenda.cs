@@ -40,9 +40,9 @@ namespace ProjetoExtensionista2026_2
             _ucEstoque.BuscarProdutosNoSupabase("");
 
             // Garante que o painel do carrinho role verticalmente
-            if (panelCarrinho != null)
+            if (panel != null)
             {
-                panelCarrinho.AutoScroll = true;
+                panel.AutoScroll = true;
             }
 
             AtualizarTotaisCarrinho();
@@ -50,8 +50,8 @@ namespace ProjetoExtensionista2026_2
 
         private void splitContainer_menu_SplitterMoved(object sender, SplitterEventArgs e)
         {
-            double percMin = 0.15;
-            double percMax = 0.22;
+            double percMin = 0.18;
+            double percMax = 0.25;
 
             int larguraTotal = splitContainer_menu.Width;
             int limiteMinimo = (int)(larguraTotal * percMin);
@@ -96,12 +96,12 @@ namespace ProjetoExtensionista2026_2
 
         private void AdicionarOuIncrementarCarrinho(int idProduto, string nomeProduto, decimal precoVenda, int quantidade, string fotoUrl)
         {
-            if (panelCarrinho == null) return;
+            if (panel == null) return;
 
-            panelCarrinho.SuspendLayout();
+            panel.SuspendLayout();
 
             // 1. Se o produto já estiver no carrinho, apenas incrementa a quantidade
-            foreach (Control ctrl in panelCarrinho.Controls)
+            foreach (Control ctrl in panel.Controls)
             {
                 if (ctrl is UcCardVenda cardExistente && cardExistente.ProdutoId == idProduto)
                 {
@@ -115,7 +115,7 @@ namespace ProjetoExtensionista2026_2
                         cardExistente.FotoOrigem ?? fotoUrl
                     );
 
-                    panelCarrinho.ResumeLayout();
+                    panel.ResumeLayout();
                     AtualizarTotaisCarrinho();
                     return;
                 }
@@ -136,15 +136,15 @@ namespace ProjetoExtensionista2026_2
 
             novoItem.AoRemoverItem += (id, cardRemover) =>
             {
-                panelCarrinho.Controls.Remove(cardRemover);
+                panel.Controls.Remove(cardRemover);
                 cardRemover.Dispose();
                 AtualizarTotaisCarrinho();
             };
 
-            panelCarrinho.Controls.Add(novoItem);
+            panel.Controls.Add(novoItem);
             novoItem.BringToFront(); // Mantém empilhado de cima para baixo
 
-            panelCarrinho.ResumeLayout();
+            panel.ResumeLayout();
             AtualizarTotaisCarrinho();
         }
 
@@ -156,9 +156,9 @@ namespace ProjetoExtensionista2026_2
             decimal totalGeral = 0m;
             int totalItens = 0;
 
-            if (panelCarrinho != null)
+            if (panel != null)
             {
-                foreach (Control ctrl in panelCarrinho.Controls)
+                foreach (Control ctrl in panel.Controls)
                 {
                     if (ctrl is UcCardVenda item)
                     {
@@ -174,7 +174,7 @@ namespace ProjetoExtensionista2026_2
         /// </summary>
         private void btnLimparCarrinho_Click(object sender, EventArgs e)
         {
-            if (panelCarrinho == null || panelCarrinho.Controls.Count == 0) return;
+            if (panel == null || panel.Controls.Count == 0) return;
 
             var confirmacao = MessageBox.Show(
                 "Deseja realmente esvaziar o carrinho de compras?",
@@ -185,14 +185,14 @@ namespace ProjetoExtensionista2026_2
 
             if (confirmacao == DialogResult.Yes)
             {
-                panelCarrinho.SuspendLayout();
-                while (panelCarrinho.Controls.Count > 0)
+                panel.SuspendLayout();
+                while (panel.Controls.Count > 0)
                 {
-                    Control c = panelCarrinho.Controls[0];
-                    panelCarrinho.Controls.Remove(c);
+                    Control c = panel.Controls[0];
+                    panel.Controls.Remove(c);
                     c.Dispose();
                 }
-                panelCarrinho.ResumeLayout();
+                panel.ResumeLayout();
 
                 AtualizarTotaisCarrinho();
             }
