@@ -10,7 +10,7 @@ namespace ProjetoExtensionista2026_2
     public partial class UcEstoque : UserControl
     {
         // Evento atualizado para 5 parâmetros: ID, Nome, Preço, Quantidade e Foto
-        public event Action<int, string, decimal, int, string> AoAdicionarAoCarrinho;
+        public event Action<int, string, decimal, int, string, int> AoAdicionarAoCarrinho;
 
         private bool _podeVerOcultos = true;
         private string _filtroAtual = "";
@@ -197,10 +197,9 @@ namespace ProjetoExtensionista2026_2
                                     }
                                 };
 
-                                // Clique de Adicionar ao Carrinho: repassa os dados completos para a Venda
                                 card.AoAdicionarProduto += (prodId, preco, qtd) =>
                                 {
-                                    AoAdicionarAoCarrinho?.Invoke(prod.Id, prod.Nome, prod.PrecoVenda, qtd, prod.FotoUrl);
+                                    AoAdicionarAoCarrinho?.Invoke(prod.Id, prod.Nome, prod.PrecoVenda, qtd, prod.FotoUrl, prod.Estoque);
                                 };
 
                                 flowLayoutPanelProdutos.Controls.Add(card);

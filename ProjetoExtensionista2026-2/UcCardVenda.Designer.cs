@@ -29,15 +29,16 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.lblQuantidade = new System.Windows.Forms.Label();
             this.btnDiminuir = new System.Windows.Forms.Button();
             this.btnAumentar = new System.Windows.Forms.Button();
-            this.lblPrecoUnitario = new System.Windows.Forms.Label();
-            this.lblPrecoTotal = new System.Windows.Forms.Label();
             this.btnExcluir = new System.Windows.Forms.Button();
             this.lblCodigo = new System.Windows.Forms.Label();
             this.lblNomeProduto = new System.Windows.Forms.Label();
             this.picFoto = new System.Windows.Forms.PictureBox();
+            this.lblQuantidade = new System.Windows.Forms.Label();
+            this.lblPrecoTotal = new System.Windows.Forms.Label();
+            this.lblPrecoUnitario = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picFoto)).BeginInit();
             this.SuspendLayout();
@@ -46,7 +47,7 @@
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.panel2);
             this.panel1.Controls.Add(this.btnDiminuir);
             this.panel1.Controls.Add(this.btnAumentar);
             this.panel1.Controls.Add(this.btnExcluir);
@@ -58,26 +59,14 @@
             this.panel1.Controls.Add(this.lblPrecoUnitario);
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Padding = new System.Windows.Forms.Padding(5);
+            this.panel1.Padding = new System.Windows.Forms.Padding(5, 5, 5, 0);
             this.panel1.Size = new System.Drawing.Size(546, 60);
             this.panel1.TabIndex = 0;
-            // 
-            // lblQuantidade
-            // 
-            this.lblQuantidade.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblQuantidade.BackColor = System.Drawing.Color.Transparent;
-            this.lblQuantidade.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblQuantidade.Location = new System.Drawing.Point(333, 23);
-            this.lblQuantidade.Name = "lblQuantidade";
-            this.lblQuantidade.Size = new System.Drawing.Size(51, 16);
-            this.lblQuantidade.TabIndex = 10;
-            this.lblQuantidade.Text = "123";
-            this.lblQuantidade.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // btnDiminuir
             // 
             this.btnDiminuir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDiminuir.Location = new System.Drawing.Point(311, 21);
+            this.btnDiminuir.Location = new System.Drawing.Point(313, 27);
             this.btnDiminuir.Name = "btnDiminuir";
             this.btnDiminuir.Size = new System.Drawing.Size(26, 20);
             this.btnDiminuir.TabIndex = 9;
@@ -88,7 +77,7 @@
             // btnAumentar
             // 
             this.btnAumentar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAumentar.Location = new System.Drawing.Point(381, 21);
+            this.btnAumentar.Location = new System.Drawing.Point(383, 27);
             this.btnAumentar.Name = "btnAumentar";
             this.btnAumentar.Size = new System.Drawing.Size(26, 20);
             this.btnAumentar.TabIndex = 8;
@@ -96,38 +85,15 @@
             this.btnAumentar.UseVisualStyleBackColor = true;
             this.btnAumentar.Click += new System.EventHandler(this.btnAumentar_Click);
             // 
-            // lblPrecoUnitario
-            // 
-            this.lblPrecoUnitario.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblPrecoUnitario.BackColor = System.Drawing.Color.Transparent;
-            this.lblPrecoUnitario.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPrecoUnitario.Location = new System.Drawing.Point(208, 21);
-            this.lblPrecoUnitario.Name = "lblPrecoUnitario";
-            this.lblPrecoUnitario.Size = new System.Drawing.Size(106, 20);
-            this.lblPrecoUnitario.TabIndex = 7;
-            this.lblPrecoUnitario.Text = "R$ 00,00";
-            this.lblPrecoUnitario.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lblPrecoTotal
-            // 
-            this.lblPrecoTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblPrecoTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPrecoTotal.Location = new System.Drawing.Point(402, 21);
-            this.lblPrecoTotal.Name = "lblPrecoTotal";
-            this.lblPrecoTotal.Size = new System.Drawing.Size(106, 20);
-            this.lblPrecoTotal.TabIndex = 5;
-            this.lblPrecoTotal.Text = "R$ 00,00";
-            this.lblPrecoTotal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // btnExcluir
             // 
             this.btnExcluir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExcluir.FlatAppearance.BorderSize = 0;
             this.btnExcluir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExcluir.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnExcluir.Location = new System.Drawing.Point(504, 11);
+            this.btnExcluir.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExcluir.Location = new System.Drawing.Point(524, 3);
             this.btnExcluir.Name = "btnExcluir";
-            this.btnExcluir.Size = new System.Drawing.Size(41, 35);
+            this.btnExcluir.Size = new System.Drawing.Size(20, 25);
             this.btnExcluir.TabIndex = 4;
             this.btnExcluir.Text = "🗑️";
             this.btnExcluir.UseVisualStyleBackColor = true;
@@ -149,11 +115,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblNomeProduto.AutoEllipsis = true;
             this.lblNomeProduto.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblNomeProduto.Location = new System.Drawing.Point(61, 5);
+            this.lblNomeProduto.Location = new System.Drawing.Point(62, 5);
             this.lblNomeProduto.MaximumSize = new System.Drawing.Size(230, 20);
             this.lblNomeProduto.MinimumSize = new System.Drawing.Size(140, 20);
             this.lblNomeProduto.Name = "lblNomeProduto";
-            this.lblNomeProduto.Size = new System.Drawing.Size(163, 20);
+            this.lblNomeProduto.Size = new System.Drawing.Size(165, 20);
             this.lblNomeProduto.TabIndex = 2;
             this.lblNomeProduto.Text = "Produto ...";
             // 
@@ -166,6 +132,50 @@
             this.picFoto.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.picFoto.TabIndex = 1;
             this.picFoto.TabStop = false;
+            // 
+            // lblQuantidade
+            // 
+            this.lblQuantidade.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblQuantidade.BackColor = System.Drawing.Color.Transparent;
+            this.lblQuantidade.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblQuantidade.Location = new System.Drawing.Point(336, 29);
+            this.lblQuantidade.Name = "lblQuantidade";
+            this.lblQuantidade.Size = new System.Drawing.Size(51, 16);
+            this.lblQuantidade.TabIndex = 10;
+            this.lblQuantidade.Text = "123";
+            this.lblQuantidade.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // lblPrecoTotal
+            // 
+            this.lblPrecoTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblPrecoTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPrecoTotal.Location = new System.Drawing.Point(406, 27);
+            this.lblPrecoTotal.Name = "lblPrecoTotal";
+            this.lblPrecoTotal.Size = new System.Drawing.Size(106, 20);
+            this.lblPrecoTotal.TabIndex = 5;
+            this.lblPrecoTotal.Text = "R$ 00,00";
+            this.lblPrecoTotal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblPrecoUnitario
+            // 
+            this.lblPrecoUnitario.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblPrecoUnitario.BackColor = System.Drawing.Color.Transparent;
+            this.lblPrecoUnitario.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPrecoUnitario.Location = new System.Drawing.Point(211, 27);
+            this.lblPrecoUnitario.Name = "lblPrecoUnitario";
+            this.lblPrecoUnitario.Size = new System.Drawing.Size(106, 20);
+            this.lblPrecoUnitario.TabIndex = 7;
+            this.lblPrecoUnitario.Text = "R$ 00,00";
+            this.lblPrecoUnitario.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.SystemColors.ControlText;
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(5, 59);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(536, 1);
+            this.panel2.TabIndex = 11;
             // 
             // UcCardVenda
             // 
@@ -193,5 +203,6 @@
         private System.Windows.Forms.Button btnDiminuir;
         private System.Windows.Forms.Button btnAumentar;
         private System.Windows.Forms.Label lblQuantidade;
+        private System.Windows.Forms.Panel panel2;
     }
 }

@@ -8,6 +8,13 @@ namespace ProjetoExtensionista2026_2
     {
         private UcEstoque _ucEstoque;
 
+        // Controle numérico dos descontos
+        private long _descontoCentavos = 0;    
+        private int _descontoPorcentagem = 0;
+        private bool _atualizandoDesconto = false;
+
+        private decimal DescontoAtual => _descontoCentavos / 100m;
+
         public formVenda()
         {
             InitializeComponent();
@@ -27,10 +34,7 @@ namespace ProjetoExtensionista2026_2
             _ucEstoque = new UcEstoque();
             _ucEstoque.Dock = DockStyle.Fill;
 
-            // Ativa o modo PDV (oculta custos e botões administrativos de estoque)
             _ucEstoque.ConfigurarPerfilVendedor(true);
-
-            // Vincula o evento que adiciona itens do catálogo ao carrinho
             _ucEstoque.AoAdicionarAoCarrinho += AcaoSelecionarProduto;
 
             panelConteudo.Controls.Clear();
@@ -39,13 +43,39 @@ namespace ProjetoExtensionista2026_2
 
             _ucEstoque.BuscarProdutosNoSupabase("");
 
-            // Garante que o painel do carrinho role verticalmente
             if (panel != null)
             {
                 panel.AutoScroll = true;
             }
 
+            ConfigurarCamposDesconto();
             AtualizarTotaisCarrinho();
+        }
+
+        private void ConfigurarCamposDesconto()
+        {
+
+            if (txtDesconto != null)
+            {
+                txtDesconto.ShortcutsEnabled = false;
+                txtDesconto.Text = "- R$ 0,00";
+
+                txtDesconto.KeyPress += txtDesconto_KeyPress;
+                txtDesconto.KeyDown += txtDesconto_KeyDown;
+                txtDesconto.MouseDown += (s, ev) => txtDesconto.Select(txtDesconto.Text.Length, 0);
+                txtDesconto.GotFocus += (s, ev) => txtDesconto.Select(txtDesconto.Text.Length, 0);
+            }
+
+            if (txtDescontoPorcentagem != null)
+            {
+                txtDescontoPorcentagem.ShortcutsEnabled = false;
+                txtDescontoPorcentagem.Text = "0 %";
+
+                txtDescontoPorcentagem.KeyPress += txtDescontoPorcentagem_KeyPress;
+                txtDescontoPorcentagem.KeyDown += txtDescontoPorcentagem_KeyDown;
+                txtDescontoPorcentagem.MouseDown += (s, ev) => txtDescontoPorcentagem.Select(txtDescontoPorcentagem.Text.Length, 0);
+                txtDescontoPorcentagem.GotFocus += (s, ev) => txtDescontoPorcentagem.Select(txtDescontoPorcentagem.Text.Length, 0);
+            }
         }
 
         private void splitContainer_menu_SplitterMoved(object sender, SplitterEventArgs e)
@@ -78,40 +108,67 @@ namespace ProjetoExtensionista2026_2
                 splitContainer_catalogo.SplitterDistance = limiteMaximo;
         }
 
-        /// <summary>
-        /// Ação principal disparada pelo catálogo repassando ID, nome, preço, quantidade e foto.
-        /// </summary>
-        private void AcaoSelecionarProduto(int idProduto, string nomeProduto, decimal precoVenda, int quantidade, string fotoUrl)
+        private void AcaoSelecionarProduto(int idProduto, string nomeProduto, decimal precoVenda, int quantidade, string fotoUrl, int estoqueDisponivel)
         {
-            AdicionarOuIncrementarCarrinho(idProduto, nomeProduto, precoVenda, quantidade, fotoUrl);
+            AdicionarOuIncrementarCarrinho(idProduto, nomeProduto, precoVenda, quantidade, fotoUrl, estoqueDisponivel);
         }
 
-        /// <summary>
-        /// Sobrecarga de compatibilidade caso o evento envie apenas os dados básicos.
-        /// </summary>
-        private void AcaoSelecionarProduto(int idProduto, string nomeProduto, decimal precoVenda, int quantidade)
-        {
-            AdicionarOuIncrementarCarrinho(idProduto, nomeProduto, precoVenda, quantidade, null);
-        }
-
-        private void AdicionarOuIncrementarCarrinho(int idProduto, string nomeProduto, decimal precoVenda, int quantidade, string fotoUrl)
+        private void AdicionarOuIncrementarCarrinho(int idProduto, string nomeProduto, decimal precoVenda, int quantidade, string fotoUrl, int estoqueDisponivel)
         {
             if (panel == null) return;
 
+            if (estoqueDisponivel <= 0)
+            {
+                MessageBox.Show(
+                    $"O produto '{nomeProduto}' está com o estoque esgotado!",
+                    "Estoque Indisponível",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
+
             panel.SuspendLayout();
 
-            // 1. Se o produto já estiver no carrinho, apenas incrementa a quantidade
             foreach (Control ctrl in panel.Controls)
             {
                 if (ctrl is UcCardVenda cardExistente && cardExistente.ProdutoId == idProduto)
                 {
-                    int novaQuantidade = cardExistente.Quantidade + quantidade;
+                    int limiteEstoque = cardExistente.EstoqueMaximo;
+                    int qtdAtual = cardExistente.Quantidade;
+
+                    if (qtdAtual >= limiteEstoque)
+                    {
+                        panel.ResumeLayout();
+                        MessageBox.Show(
+                            $"Limite atingido! O carrinho já possui todas as {limiteEstoque} unidade(s) disponíveis no estoque para '{cardExistente.NomeProduto}'.",
+                            "Estoque Máximo",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        );
+                        return;
+                    }
+
+                    if (qtdAtual + quantidade > limiteEstoque)
+                    {
+                        panel.ResumeLayout();
+                        int restantePermitido = limiteEstoque - qtdAtual;
+                        MessageBox.Show(
+                            $"Não é possível adicionar mais {quantidade} unidade(s). Você já tem {qtdAtual} no carrinho e restam apenas {restantePermitido} no estoque.",
+                            "Estoque Insuficiente",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        );
+                        return;
+                    }
+
+                    int novaQuantidade = qtdAtual + quantidade;
                     cardExistente.CarregarItem(
                         idProduto,
                         cardExistente.NomeProduto,
                         precoVenda,
                         novaQuantidade,
-                        cardExistente.EstoqueMaximo,
+                        limiteEstoque,
                         cardExistente.FotoOrigem ?? fotoUrl
                     );
 
@@ -121,14 +178,24 @@ namespace ProjetoExtensionista2026_2
                 }
             }
 
-            // 2. Se for um produto novo no carrinho, cria o card
+            if (quantidade > estoqueDisponivel)
+            {
+                panel.ResumeLayout();
+                MessageBox.Show(
+                    $"Não é possível adicionar {quantidade} unidades de '{nomeProduto}'. O estoque atual possui apenas {estoqueDisponivel} unidade(s).",
+                    "Estoque Insuficiente",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
+
             var novoItem = new UcCardVenda();
             novoItem.Dock = DockStyle.Top;
             novoItem.Margin = new Padding(0, 0, 0, 4);
 
-            novoItem.CarregarItem(idProduto, nomeProduto, precoVenda, quantidade, 999, fotoUrl);
+            novoItem.CarregarItem(idProduto, nomeProduto, precoVenda, quantidade, estoqueDisponivel, fotoUrl);
 
-            // 3. Conecta eventos de recalcular totais e remoção
             novoItem.AoAlterarQuantidade += (id, novaQtd, novoTotalItem) =>
             {
                 AtualizarTotaisCarrinho();
@@ -142,18 +209,31 @@ namespace ProjetoExtensionista2026_2
             };
 
             panel.Controls.Add(novoItem);
-            novoItem.BringToFront(); // Mantém empilhado de cima para baixo
+            novoItem.BringToFront();
 
             panel.ResumeLayout();
             AtualizarTotaisCarrinho();
         }
 
-        /// <summary>
-        /// Percorre todos os itens no painel do carrinho e atualiza os rótulos de valores na tela.
-        /// </summary>
+        private decimal ObterSubtotalAtual()
+        {
+            decimal subtotal = 0m;
+            if (panel != null)
+            {
+                foreach (Control ctrl in panel.Controls)
+                {
+                    if (ctrl is UcCardVenda item)
+                    {
+                        subtotal += item.PrecoTotal;
+                    }
+                }
+            }
+            return subtotal;
+        }
+
         private void AtualizarTotaisCarrinho()
         {
-            decimal totalGeral = 0m;
+            decimal subtotal = ObterSubtotalAtual();
             int totalItens = 0;
 
             if (panel != null)
@@ -161,17 +241,168 @@ namespace ProjetoExtensionista2026_2
                 foreach (Control ctrl in panel.Controls)
                 {
                     if (ctrl is UcCardVenda item)
-                    {
-                        totalGeral += item.PrecoTotal;
                         totalItens += item.Quantidade;
-                    }
                 }
+            }
+
+            if (DescontoAtual > subtotal)
+            {
+                _descontoCentavos = (long)Math.Round(subtotal * 100m);
+                AtualizarDescontoPorValor();
+            }
+
+            decimal totalFinal = Math.Max(0m, subtotal - DescontoAtual);
+
+            if (lblSubtotal != null)
+                lblSubtotal.Text = subtotal.ToString("C2");
+
+            if (lblTotal != null)
+                lblTotal.Text = totalFinal.ToString("C2");
+
+            if (lblQtdItens != null)
+                lblQtdItens.Text = $"{totalItens} item(ns)";
+        }
+
+        private void txtDesconto_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+
+            if (char.IsDigit(e.KeyChar))
+            {
+                int digito = e.KeyChar - '0';
+                long proximoCentavos = (_descontoCentavos * 10) + digito;
+                decimal subtotal = ObterSubtotalAtual();
+                long subtotalCentavos = (long)Math.Round(subtotal * 100m);
+
+                if (proximoCentavos > subtotalCentavos)
+                {
+                    _descontoCentavos = subtotalCentavos;
+                }
+                else
+                {
+                    _descontoCentavos = proximoCentavos;
+                }
+
+                AtualizarDescontoPorValor();
             }
         }
 
-        /// <summary>
-        /// Limpa todos os itens do carrinho e zera os totais.
-        /// </summary>
+        private void txtDesconto_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Back)
+            {
+                e.SuppressKeyPress = true;
+                _descontoCentavos /= 10;
+                AtualizarDescontoPorValor();
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                e.SuppressKeyPress = true;
+                _descontoCentavos = 0;
+                AtualizarDescontoPorValor();
+            }
+        }
+
+        private void AtualizarDescontoPorValor()
+        {
+            if (_atualizandoDesconto) return;
+            _atualizandoDesconto = true;
+
+            try
+            {
+                decimal subtotal = ObterSubtotalAtual();
+
+                if (DescontoAtual > subtotal)
+                    _descontoCentavos = (long)Math.Round(subtotal * 100m);
+
+                int pctCalculada = (subtotal > 0m) ? (int)Math.Round((DescontoAtual / subtotal) * 100m) : 0;
+                _descontoPorcentagem = Math.Min(100, Math.Max(0, pctCalculada));
+
+                if (txtDesconto != null)
+                {
+                    txtDesconto.Text = $"- R$ {DescontoAtual:N2}";
+                    txtDesconto.SelectionStart = txtDesconto.Text.Length;
+                }
+
+                if (txtDescontoPorcentagem != null)
+                {
+                    txtDescontoPorcentagem.Text = $"{_descontoPorcentagem} %";
+                }
+
+                AtualizarTotaisCarrinho();
+            }
+            finally
+            {
+                _atualizandoDesconto = false;
+            }
+        }
+
+        private void txtDescontoPorcentagem_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+
+            if (char.IsDigit(e.KeyChar))
+            {
+                int digito = e.KeyChar - '0';
+                int proximoValor = (_descontoPorcentagem * 10) + digito;
+
+                _descontoPorcentagem = Math.Min(100, proximoValor);
+
+                AtualizarDescontoPorPorcentagem();
+            }
+        }
+
+        private void txtDescontoPorcentagem_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Back)
+            {
+                e.SuppressKeyPress = true;
+                _descontoPorcentagem /= 10;
+                AtualizarDescontoPorPorcentagem();
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                e.SuppressKeyPress = true;
+                _descontoPorcentagem = 0;
+                AtualizarDescontoPorPorcentagem();
+            }
+        }
+
+        private void AtualizarDescontoPorPorcentagem()
+        {
+            if (_atualizandoDesconto) return;
+            _atualizandoDesconto = true;
+
+            try
+            {
+                if (_descontoPorcentagem > 100)
+                    _descontoPorcentagem = 100;
+
+                decimal subtotal = ObterSubtotalAtual();
+                decimal valorCalculado = subtotal * (_descontoPorcentagem / 100m);
+
+                valorCalculado = Math.Min(subtotal, Math.Round(valorCalculado, 2));
+                _descontoCentavos = (long)Math.Round(valorCalculado * 100m);
+
+                if (txtDescontoPorcentagem != null)
+                {
+                    txtDescontoPorcentagem.Text = $"{_descontoPorcentagem} %";
+                    txtDescontoPorcentagem.SelectionStart = txtDescontoPorcentagem.Text.Length;
+                }
+
+                if (txtDesconto != null)
+                {
+                    txtDesconto.Text = $"- R$ {DescontoAtual:N2}";
+                }
+
+                AtualizarTotaisCarrinho();
+            }
+            finally
+            {
+                _atualizandoDesconto = false;
+            }
+        }
+
         private void btnLimparCarrinho_Click(object sender, EventArgs e)
         {
             if (panel == null || panel.Controls.Count == 0) return;
@@ -193,6 +424,15 @@ namespace ProjetoExtensionista2026_2
                     c.Dispose();
                 }
                 panel.ResumeLayout();
+
+                _descontoCentavos = 0;
+                _descontoPorcentagem = 0;
+
+                if (txtDesconto != null)
+                    txtDesconto.Text = "- R$ 0,00";
+
+                if (txtDescontoPorcentagem != null)
+                    txtDescontoPorcentagem.Text = "0 %";
 
                 AtualizarTotaisCarrinho();
             }
