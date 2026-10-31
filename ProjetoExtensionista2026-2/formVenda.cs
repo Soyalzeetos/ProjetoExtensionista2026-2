@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace ProjetoExtensionista2026_2
 {
-    public partial class formVenda : Form
+    public partial class formVenda : Form, IMessageFilter
     {
         private UcEstoque _ucEstoque;
         private long _descontoCentavos = 0;
@@ -44,13 +44,16 @@ namespace ProjetoExtensionista2026_2
 
         private void formVenda_Load(object sender, EventArgs e)
         {
+            Application.AddMessageFilter(this);
+
             _ucEstoque = new UcEstoque
             {
                 Dock = DockStyle.Fill
             };
 
+            dgwPesquisa.AutoGenerateColumns = false;
             _ucEstoque.ConfigurarPerfilVendedor(true);
-            _ucEstoque.AoAdicionarAoCarrinho += AcaoSelecionarProduto;
+            _ucEstoque.AoAdicionarAoCarrinho += AdicionarOuIncrementarCarrinho;
 
             panelConteudo.Controls.Clear();
             panelConteudo.Controls.Add(_ucEstoque);
@@ -67,34 +70,10 @@ namespace ProjetoExtensionista2026_2
             AtualizarTotaisCarrinho();
         }
 
-        private void ConfigurarPesquisaCliente()
+        protected override void OnFormClosed(FormClosedEventArgs e)
         {
-            if (dgwPesquisa != null)
-            {
-                dgwPesquisa.Visible = false;
-                dgwPesquisa.ReadOnly = true;
-                dgwPesquisa.AllowUserToAddRows = false;
-                dgwPesquisa.AllowUserToDeleteRows = false;
-                dgwPesquisa.AllowUserToResizeRows = false;
-                dgwPesquisa.RowHeadersVisible = false;
-                dgwPesquisa.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                dgwPesquisa.MultiSelect = false;
-                dgwPesquisa.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                dgwPesquisa.BringToFront();
-
-                dgwPesquisa.CellClick += dgwPesquisa_CellClick;
-                dgwPesquisa.KeyDown += dgwPesquisa_KeyDown;
-                dgwPesquisa.Leave += ControlePesquisa_Leave;
-            }
-
-            if (txtBuscarCliente != null)
-            {
-                txtBuscarCliente.Click += (s, ev) => txtBuscarCliente.SelectAll();
-                txtBuscarCliente.Enter += (s, ev) => txtBuscarCliente.SelectAll();
-                txtBuscarCliente.TextChanged += txtBuscarCliente_TextChanged;
-                txtBuscarCliente.KeyDown += txtBuscarCliente_KeyDown;
-                txtBuscarCliente.Leave += ControlePesquisa_Leave;
-            }
+            Application.RemoveMessageFilter(this);
+            base.OnFormClosed(e);
         }
 
         private void DefinirClientePadrao()
@@ -102,8 +81,8 @@ namespace ProjetoExtensionista2026_2
             SelecionarCliente(new ClienteDTO
             {
                 Id = 1,
-                Nome = "CONSUMIDOR FINAL",
-                Apelido = "BALCÃO",
+                Nome = "Cliente não informado",
+                Apelido = "Cliente não informado",
                 CpfCnpj = string.Empty,
                 Telefone = string.Empty,
                 LimiteCredito = 0m,
@@ -150,10 +129,13 @@ namespace ProjetoExtensionista2026_2
                 lblEnderecoCliente.Text = FormatarEndereco(_clienteSelecionado);
 
             if (lblStatusCliente != null)
-                lblStatusCliente.Text = _clienteSelecionado.Ativo ? "Ativo" : "Inativo";
+            {
+                lblStatusCliente.Text = _clienteSelecionado.Ativo ? "Status: Ativo 🟢" : "Status: Inativo 🔴";
+                lblStatusCliente.ForeColor = _clienteSelecionado.Ativo ? Color.FromArgb(40, 167, 69) : Color.FromArgb(220, 53, 69);
+            }
 
             if (lblLimiteCliente != null)
-                lblLimiteCliente.Text = _clienteSelecionado.LimiteCredito.ToString("C2");
+                lblLimiteCliente.Text = $"Limite de Crédito: {_clienteSelecionado.LimiteCredito:C2}";
         }
 
         private async void txtBuscarCliente_TextChanged(object sender, EventArgs e)
@@ -207,11 +189,6 @@ namespace ProjetoExtensionista2026_2
                         Telefone = FormatarTelefone(c.Telefone)
                     }).ToList();
 
-                    ConfigurarColunaGrid("Id", "Cód.", 18);
-                    ConfigurarColunaGrid("Nome", "Nome / Razão Social", 47);
-                    ConfigurarColunaGrid("Documento", "CPF / CNPJ", 35);
-                    ConfigurarColunaGrid("Telefone", "Telefone", 25);
-
                     dgwPesquisa.Visible = true;
                     dgwPesquisa.BringToFront();
                 }
@@ -224,15 +201,6 @@ namespace ProjetoExtensionista2026_2
             {
                 if (dgwPesquisa != null)
                     dgwPesquisa.Visible = false;
-            }
-        }
-
-        private void ConfigurarColunaGrid(string nomeColuna, string titulo, float peso)
-        {
-            if (dgwPesquisa?.Columns[nomeColuna] is DataGridViewColumn col)
-            {
-                col.HeaderText = titulo;
-                col.FillWeight = peso;
             }
         }
 
@@ -383,19 +351,82 @@ namespace ProjetoExtensionista2026_2
                     {
                         // Garante que o texto reflita o cliente atualmente selecionado
                         _bloquearBuscaCliente = true;
-                        txtBuscarCliente.Text = _clienteSelecionado?.Nome ?? "CONSUMIDOR FINAL";
+                        txtBuscarCliente.Text = _clienteSelecionado?.Nome ?? "Cliente não informado";
                         _bloquearBuscaCliente = false;
                     }
                 }
             }));
         }
 
+        public bool PreFilterMessage(ref Message m)
+        {
+            const int WM_MOUSEWHEEL = 0x020A;
+
+            if (m.Msg == WM_MOUSEWHEEL && dgwPesquisa != null && dgwPesquisa.Visible)
+            {
+                Point posicaoMouse = Cursor.Position;
+                Rectangle areaGrid = dgwPesquisa.RectangleToScreen(dgwPesquisa.ClientRectangle);
+                Rectangle areaTexto = txtBuscarCliente != null
+                    ? txtBuscarCliente.RectangleToScreen(txtBuscarCliente.ClientRectangle)
+                    : Rectangle.Empty;
+
+                if (areaGrid.Contains(posicaoMouse) || areaTexto.Contains(posicaoMouse))
+                {
+                    int delta = (short)((long)m.WParam >> 16);
+                    RolarGridPesquisa(delta);
+                    return true; // Intercepta para não causar efeitos colaterais
+                }
+            }
+
+            return false;
+        }
+
+        private void RolarGridPesquisa(int delta)
+        {
+            if (dgwPesquisa == null || !dgwPesquisa.Visible || dgwPesquisa.Rows.Count == 0) return;
+
+            int passo = delta > 0 ? -1 : 1;
+
+            int indiceAtual = dgwPesquisa.FirstDisplayedScrollingRowIndex;
+            if (indiceAtual < 0) indiceAtual = 0;
+
+            int novoIndice = Math.Max(0, Math.Min(dgwPesquisa.Rows.Count - 1, indiceAtual + passo));
+
+            try
+            {
+                dgwPesquisa.FirstDisplayedScrollingRowIndex = novoIndice;
+            }
+            catch
+            {
+                // Ignora se todas as linhas já estiverem visíveis na tela
+            }
+        }
+
+        private void ConfigurarPesquisaCliente()
+        {
+            if (dgwPesquisa != null)
+            {
+                dgwPesquisa.BringToFront();
+                dgwPesquisa.CellClick += dgwPesquisa_CellClick;
+                dgwPesquisa.KeyDown += dgwPesquisa_KeyDown;
+                dgwPesquisa.Leave += ControlePesquisa_Leave;
+            }
+
+            if (txtBuscarCliente != null)
+            {
+                txtBuscarCliente.Click += (s, ev) => txtBuscarCliente.SelectAll();
+                txtBuscarCliente.Enter += (s, ev) => txtBuscarCliente.SelectAll();
+                txtBuscarCliente.TextChanged += txtBuscarCliente_TextChanged;
+                txtBuscarCliente.KeyDown += txtBuscarCliente_KeyDown;
+                txtBuscarCliente.Leave += ControlePesquisa_Leave;
+            }
+        }
         /// <summary>
         /// Formata no padrão: "Rua das Flores, 123, Apto 45, Centro, Frutal - MG, CEP: 38200-000"
         /// </summary>
         private static string FormatarEndereco(ClienteDTO c)
         {
-            if (c == null) return "Não informado";
+            if (c == null) return "Endereco: Não informado";
 
             var partes = new List<string>();
 
@@ -424,7 +455,7 @@ namespace ProjetoExtensionista2026_2
             if (!string.IsNullOrWhiteSpace(c.Cep))
                 partes.Add($"CEP: {FormatarCep(c.Cep)}");
 
-            return partes.Count > 0 ? string.Join(", ", partes) : "Não informado";
+            return partes.Count > 0 ? string.Join(", ", partes) : "Endereco: Não informado";
         }
 
         private static string FormatarCep(string cep)
@@ -437,26 +468,26 @@ namespace ProjetoExtensionista2026_2
 
         private static string FormatarCpfCnpj(string doc)
         {
-            if (string.IsNullOrWhiteSpace(doc)) return "Não informado";
+            if (string.IsNullOrWhiteSpace(doc)) return "CPF/CNPJ: Não informado";
 
             string digitos = ExtrairDigitos(doc);
             if (digitos.Length == 11)
-                return Convert.ToUInt64(digitos).ToString(@"000\.000\.000\-00");
+                return Convert.ToUInt64(digitos).ToString(@"CPF: 000\.000\.000\-00");
             if (digitos.Length == 14)
-                return Convert.ToUInt64(digitos).ToString(@"00\.000\.000\/0000\-00");
+                return Convert.ToUInt64(digitos).ToString(@"CNPJ: 00\.000\.000\/0000\-00");
 
             return doc.Trim();
         }
 
         private static string FormatarTelefone(string fone)
         {
-            if (string.IsNullOrWhiteSpace(fone)) return "Não informado";
+            if (string.IsNullOrWhiteSpace(fone)) return "Telefone: Não informado";
 
             string digitos = ExtrairDigitos(fone);
             if (digitos.Length == 11)
-                return Convert.ToUInt64(digitos).ToString(@"\(00\) 00000\-0000");
+                return Convert.ToUInt64(digitos).ToString(@"Telefone: \(00\) 00000\-0000");
             if (digitos.Length == 10)
-                return Convert.ToUInt64(digitos).ToString(@"\(00\) 0000\-0000");
+                return Convert.ToUInt64(digitos).ToString(@"Telefone: \(00\) 0000\-0000");
 
             return fone.Trim();
         }
@@ -466,9 +497,11 @@ namespace ProjetoExtensionista2026_2
             return string.IsNullOrEmpty(texto) ? string.Empty : Regex.Replace(texto, @"\D", string.Empty);
         }
 
-        private void AcaoSelecionarProduto(int idProduto, string nomeProduto, decimal precoVenda, int quantidade, string fotoUrl, int estoqueDisponivel)
+        private void btnLimparCliente_Click(object sender, EventArgs e)
         {
-            AdicionarOuIncrementarCarrinho(idProduto, nomeProduto, precoVenda, quantidade, fotoUrl, estoqueDisponivel);
+            _ctsBuscaCliente?.Cancel();
+            _clientesPesquisados.Clear();
+            DefinirClientePadrao();
         }
 
         private void AdicionarOuIncrementarCarrinho(int idProduto, string nomeProduto, decimal precoVenda, int quantidade, string fotoUrl, int estoqueDisponivel)
@@ -745,7 +778,7 @@ namespace ProjetoExtensionista2026_2
 
         private void splitContainer_catalogo_SplitterMoved(object sender, SplitterEventArgs e)
         {
-            LimitarSplitter(splitContainer_catalogo, 0.60, 0.70);
+            LimitarSplitter(splitContainer_catalogo, 0.58, 0.67);
         }
 
         private static void LimitarSplitter(SplitContainer split, double percMin, double percMax)
